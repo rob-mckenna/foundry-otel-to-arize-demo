@@ -9,6 +9,11 @@ Function (transform) -> Arize pipeline (see `/.github/copilot-instructions.md` �
 Start here: [`architecture.md`](architecture.md) — the authoritative current-state Mermaid
 diagram set (end-to-end pipeline + zoomed Event Hub → Azure Function transform view).
 
+See [`prompt-agent-execution-validation.md`](prompt-agent-execution-validation.md) for the
+Prompt Agent execution validation procedure, checklist, and evidence record (#49), including an
+explicit breakdown of what is proven by static tests/code review versus what still requires a
+live Foundry deployment.
+
 Only describe behavior that has been implemented under `/src` and `/infra` and verified. Known
 limitations, unvalidated assumptions, and schema-mapping gaps must be called out explicitly here
 rather than silently omitted (see `/.github/copilot-instructions.md` §16).
