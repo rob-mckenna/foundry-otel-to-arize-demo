@@ -19,6 +19,8 @@
     "networkExistingSubnetResourceId": { "value": "" },
     "eventHubSkuName": { "value": "Standard" },
     "eventHubThroughputUnits": { "value": 1 },
-    "eventHubPartitionCount": { "value": 2 }
+    "eventHubPartitionCount": { "value": 2 },
+    "functionHostingPlanTier": { "value": "Consumption" },
+    "functionPythonVersion": { "value": "3.11" }
   }
 }

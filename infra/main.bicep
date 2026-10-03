@@ -102,6 +102,21 @@ param eventHubThroughputUnits int = 1
 @maxValue(32)
 param eventHubPartitionCount int = 2
 
+@description('Function App hosting plan tier (issue #19). "Consumption" (cold-start tolerant, near-zero idle cost) is the demo default; "Premium" is a single-parameter upgrade for POCs needing no cold start/VNet integration.')
+@allowed([
+  'Consumption'
+  'Premium'
+])
+param functionHostingPlanTier string = 'Consumption'
+
+@description('Python runtime version for the Function App telemetry transform pipeline (issue #19).')
+@allowed([
+  '3.10'
+  '3.11'
+  '3.12'
+])
+param functionPythonVersion string = '3.11'
+
 module foundryProject 'modules/foundry-project.bicep' = {
   name: 'foundry-project-deployment'
   params: {
@@ -137,10 +152,9 @@ module appInsights 'modules/app-insights.bicep' = {
 // Key Vault shell + phase-2 cross-wiring: the Foundry project's
 // system-assigned managed identity is granted "Key Vault Secrets User" so it
 // can read secrets (e.g. the Arize API key, entered manually post-deploy).
-// A future Function App module (telemetry pipeline, Milestone 2) should add
-// its own principal ID to readerPrincipalIds once it exists - see the
-// cross-wiring pattern documented in modules/key-vault.bicep and
-// infra/README.md.
+// The Function App module (issue #19, below) grants itself "Key Vault
+// Secrets User" directly via its own keyVaultName-scoped role assignment,
+// so no readerPrincipalIds cross-wire is needed here for it.
 module keyVault 'modules/key-vault.bicep' = {
   name: 'key-vault-deployment'
   params: {
@@ -160,10 +174,10 @@ module keyVault 'modules/key-vault.bicep' = {
 
 // Event Hub namespace + hub (issue #17): sits between Application
 // Insights/Log Analytics (export source) and the Azure Function transform
-// pipeline (issue #19, Milestone 2). RBAC-only by default (no sender/
-// receiver principal IDs yet) - a future Function App module should add its
-// system-assigned identity to receiverPrincipalIds once it exists, following
-// the same two-phase cross-wiring pattern used by modules/key-vault.bicep.
+// pipeline (issue #19). RBAC-only by default - the Function App module
+// below grants itself "Azure Event Hubs Data Receiver" on this namespace
+// directly (via its own eventHubNamespaceResourceId-scoped role
+// assignment), so no receiverPrincipalIds cross-wire is needed here.
 module eventHub 'modules/event-hub.bicep' = {
   name: 'event-hub-deployment'
   params: {
@@ -176,6 +190,30 @@ module eventHub 'modules/event-hub.bicep' = {
     skuName: eventHubSkuName
     throughputUnits: eventHubThroughputUnits
     partitionCount: eventHubPartitionCount
+  }
+}
+
+// Azure Function App telemetry transform pipeline (issue #19): consumes
+// from the Event Hub above and transforms/forwards telemetry on toward
+// Arize (transform code deployed separately by Telemetry, Milestone 2).
+// Identity-based bindings only - the module grants itself "Azure Event Hubs
+// Data Receiver" on eventHub (via eventHubNamespaceResourceId) and "Key
+// Vault Secrets User" on keyVault (via keyVaultName) directly, so the whole
+// chain is RBAC-wired in this single deployment with no follow-up required.
+module functionApp 'modules/function-app.bicep' = {
+  name: 'function-app-deployment'
+  params: {
+    projectToken: projectToken
+    environment: environment
+    location: location
+    regionToken: regionToken
+    ownerTag: ownerTag
+    costCenterTag: costCenterTag
+    hostingPlanTier: functionHostingPlanTier
+    pythonVersion: functionPythonVersion
+    keyVaultName: keyVault.outputs.keyVaultName
+    eventHubNamespaceFqdn: eventHub.outputs.eventHubNamespaceFqdn
+    eventHubNamespaceResourceId: eventHub.outputs.eventHubNamespaceResourceId
   }
 }
 
@@ -208,6 +246,18 @@ output eventHubName string = eventHub.outputs.eventHubName
 
 @description('Name of the consumer group provisioned for the Azure Function transform pipeline (issue #19).')
 output eventHubFunctionConsumerGroupName string = eventHub.outputs.functionConsumerGroupName
+
+@description('Name of the Function App telemetry transform pipeline (issue #19).')
+output functionAppName string = functionApp.outputs.functionAppName
+
+@description('Default host name of the Function App, e.g. <name>.azurewebsites.net.')
+output functionAppDefaultHostName string = functionApp.outputs.functionAppDefaultHostName
+
+@description('System-assigned managed identity principal ID of the Function App.')
+output functionAppPrincipalId string = functionApp.outputs.functionAppPrincipalId
+
+@description('True if the Function App is on the Premium (EP1) hosting plan instead of the Consumption (Y1) default.')
+output functionAppIsPremiumHostingPlan bool = functionApp.outputs.isPremiumHostingPlan
 
 // Optional private-endpoint upgrade path (issue #21) - disabled by default.
 // See infra/README.md "Network posture" for the baseline-vs-private-endpoint
