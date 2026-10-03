@@ -9,13 +9,16 @@ needed to run the demo pipeline described in the repo root README.
 
 ```
 infra/
+├── bicepconfig.json            # Enables Bicep compile-time imports (needed by naming.bicep)
 ├── main.bicep                 # Deployment entry point, wires modules together
 ├── main.parameters.json       # Example/default parameter values (no secrets)
+├── scripts/
+│   └── validate-naming.ps1    # CI/pre-merge lint: fails if a module skips the shared naming/tagging helpers (issue #20)
 └── modules/
+    ├── naming.bicep           # Shared naming/tagging helpers (issue #20) ✅ - import this from every new module
     ├── foundry-project.bicep  # Azure AI Foundry hub + project (issue #15) ✅
     ├── app-insights.bicep     # Log Analytics + Application Insights (issue #16) ✅
     ├── key-vault.bicep        # Key Vault (RBAC) + managed identity wiring pattern (issue #18) ✅
-    ├── naming.bicep           # Shared naming/tagging helpers (issue #20)
     └── networking.bicep       # Optional private endpoint module (issue #21)
 ```
 
@@ -36,7 +39,35 @@ Example: `fotoa-demo-aiproj-eastus2`, `fotoa-dev-kv-eastus2`.
 
 See `modules/naming.bicep` (issue #20) for the shared Bicep implementation of
 this pattern, and `/.github/copilot-instructions.md` section 7 for the
-authoritative definition.
+authoritative definition. Every module **must** `import { buildResourceName,
+buildRequiredTags, resourceTypeTokens } from 'naming.bicep'` and use those
+functions to build its resource name(s) and `tags:` object - do not re-derive
+the pattern or the tag keys locally. `infra/bicepconfig.json` enables Bicep's
+`compileTimeImports` experimental feature flag that some Bicep CLI versions
+still require for cross-file `import { ... } from '...'` statements.
+
+### Enforcing the convention (issue #20)
+
+`infra/scripts/validate-naming.ps1` is a lightweight static check (no Azure
+or Bicep-compiler dependency) that fails if any module under `infra/modules`
+(other than `naming.bicep` itself) does not import and call
+`buildResourceName`/`buildRequiredTags`. Run it locally:
+
+```
+pwsh ./infra/scripts/validate-naming.ps1
+```
+
+**CI wiring status:** a `.github/workflows/infra-validate.yml` workflow
+(running this script plus `az bicep build` on every PR touching `infra/**`)
+was authored and verified locally, but could not be pushed in this pass -
+the `gh`/git credential in this automated environment lacks the `workflow`
+OAuth scope required to create or update workflow files
+(`refusing to allow an OAuth App to create or update workflow ... without
+'workflow' scope`). **Manual pre-merge step until that workflow is added:**
+run `pwsh ./infra/scripts/validate-naming.ps1` and `az bicep build`/
+`az deployment group what-if` locally before merging any `infra/**` PR. A
+team member with `workflow` scope should add the CI workflow as a fast
+follow-up (the script itself is already committed and ready to wire in).
 
 ## Required tags
 

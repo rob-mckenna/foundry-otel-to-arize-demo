@@ -33,10 +33,12 @@
 //   glass/operator access) should receive that role, and that grant is
 //   intentionally NOT automated here.
 //
-// Naming/tagging: {project}-{env}-{resourceType}-{region}, e.g.
-//   fotoa-demo-kv-eastus2
-// Issue #20 will retrofit this module onto the shared naming.bicep helper.
+// Naming/tagging: resource names and required tags are built via the shared
+// infra/modules/naming.bicep helpers (buildResourceName/buildRequiredTags),
+// enforced repo-wide per issue #20.
 // =============================================================================
+
+import { buildResourceName, buildRequiredTags, resourceTypeTokens } from 'naming.bicep'
 
 @description('Short project token used in resource names, e.g. "fotoa" for foundry-otel-to-arize-demo.')
 @minLength(2)
@@ -90,16 +92,8 @@ param readerPrincipalIds array = []
 @description('Array of managed identity principal IDs to grant the "Key Vault Secrets Officer" role to (can create/update/delete secrets, but not manage the vault itself). Use sparingly - most compute identities only need read access via readerPrincipalIds.')
 param writerPrincipalIds array = []
 
-var namingSuffix = '${projectToken}-${environment}'
-var keyVaultName = '${namingSuffix}-kv-${regionToken}'
-
-var requiredTags = {
-  environment: environment
-  owner: ownerTag
-  project: 'foundry-otel-to-arize-demo'
-  costCenter: costCenterTag
-  dataClassification: dataClassificationTag
-}
+var keyVaultName = buildResourceName(projectToken, environment, resourceTypeTokens.keyVault, regionToken)
+var requiredTags = buildRequiredTags(environment, ownerTag, costCenterTag, dataClassificationTag)
 
 // Built-in Azure RBAC role definition IDs (stable GUIDs, safe to reference directly).
 var keyVaultSecretsUserRoleId = '4633458b-17de-408a-b874-0445c86b69e6'

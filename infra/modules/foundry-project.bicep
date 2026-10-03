@@ -5,14 +5,13 @@
 // Agent is deployed into and the source of OTel/OpenInference traces for the
 // demo pipeline.
 //
-// Naming/tagging: resource names follow the repo convention
-//   {project}-{env}-{resourceType}-{region}
-// e.g. fotoa-demo-aihub-eastus2 / fotoa-demo-aiproj-eastus2
-// Required tags: environment, owner, project, costCenter, dataClassification
-// (see /.github/copilot-instructions.md section 7). Issue #20 will retrofit
-// this module onto the shared naming.bicep helper; until then the pattern is
-// applied inline so it is not blocked on that follow-up work.
+// Naming/tagging: resource names and required tags are built via the shared
+// infra/modules/naming.bicep helpers (buildResourceName/buildRequiredTags),
+// enforced repo-wide per issue #20. See /.github/copilot-instructions.md
+// section 7 for the authoritative convention definition.
 // =============================================================================
+
+import { buildResourceName, buildRequiredTags, resourceTypeTokens } from 'naming.bicep'
 
 @description('Short project token used in resource names, e.g. "fotoa" for foundry-otel-to-arize-demo.')
 @minLength(2)
@@ -66,17 +65,9 @@ param keyVaultResourceId string = ''
 @description('Optional resource ID of an existing Storage Account to associate with the Foundry hub. Leave empty to let Azure provision a managed default.')
 param storageAccountResourceId string = ''
 
-var namingSuffix = '${projectToken}-${environment}'
-var hubName = '${namingSuffix}-aihub-${regionToken}'
-var projectName = '${namingSuffix}-aiproj-${regionToken}'
-
-var requiredTags = {
-  environment: environment
-  owner: ownerTag
-  project: 'foundry-otel-to-arize-demo'
-  costCenter: costCenterTag
-  dataClassification: dataClassificationTag
-}
+var hubName = buildResourceName(projectToken, environment, resourceTypeTokens.foundryHub, regionToken)
+var projectName = buildResourceName(projectToken, environment, resourceTypeTokens.foundryProject, regionToken)
+var requiredTags = buildRequiredTags(environment, ownerTag, costCenterTag, dataClassificationTag)
 
 // Azure AI Foundry hub - the parent workspace that owns shared dependencies
 // (Key Vault, storage, App Insights) for one or more Foundry projects.

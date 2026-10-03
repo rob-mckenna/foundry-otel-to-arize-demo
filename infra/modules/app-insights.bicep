@@ -10,10 +10,12 @@
 //     secret, so the plaintext connection string is never emitted as a
 //     deployment output (see acceptance criteria on issue #16).
 //
-// Naming/tagging: {project}-{env}-{resourceType}-{region}, e.g.
-//   fotoa-demo-law-eastus2 / fotoa-demo-appi-eastus2
-// Issue #20 will retrofit this module onto the shared naming.bicep helper.
+// Naming/tagging: resource names and required tags are built via the shared
+// infra/modules/naming.bicep helpers (buildResourceName/buildRequiredTags),
+// enforced repo-wide per issue #20.
 // =============================================================================
+
+import { buildResourceName, buildRequiredTags, resourceTypeTokens } from 'naming.bicep'
 
 @description('Short project token used in resource names, e.g. "fotoa" for foundry-otel-to-arize-demo.')
 @minLength(2)
@@ -63,17 +65,11 @@ param keyVaultName string = ''
 @description('Name of the Key Vault secret used to store the Application Insights connection string, when keyVaultName is provided.')
 param connectionStringSecretName string = 'appinsights-connection-string'
 
-var namingSuffix = '${projectToken}-${environment}'
-var workspaceName = '${namingSuffix}-law-${regionToken}'
-var appInsightsName = '${namingSuffix}-appi-${regionToken}'
+var workspaceName = buildResourceName(projectToken, environment, resourceTypeTokens.logAnalyticsWorkspace, regionToken)
+var appInsightsName = buildResourceName(projectToken, environment, resourceTypeTokens.applicationInsights, regionToken)
+var requiredTags = buildRequiredTags(environment, ownerTag, costCenterTag, dataClassificationTag)
 
-var requiredTags = {
-  environment: environment
-  owner: ownerTag
-  project: 'foundry-otel-to-arize-demo'
-  costCenter: costCenterTag
-  dataClassification: dataClassificationTag
-}
+var namingSuffix = '${projectToken}-${environment}'
 
 var storeConnectionStringInKeyVault = !empty(keyVaultName)
 var wireFoundryDiagnostics = !empty(foundryProjectName)

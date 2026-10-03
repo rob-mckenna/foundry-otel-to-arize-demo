@@ -10,6 +10,11 @@
 // Scope: resource group. Deploy with:
 //   az deployment group create -g <rg> -f infra/main.bicep -p infra/main.parameters.json
 //   az deployment group what-if -g <rg> -f infra/main.bicep -p infra/main.parameters.json
+//
+// Naming/tagging: every module below imports and uses the shared helpers in
+// modules/naming.bicep (buildResourceName/buildRequiredTags), enforced via
+// infra/scripts/validate-naming.ps1 (issue #20) - do not add a new module
+// that re-derives the naming/tag pattern locally.
 // =============================================================================
 
 targetScope = 'resourceGroup'
