@@ -11,6 +11,8 @@
     "foundrySkuName": { "value": "Basic" },
     "projectDisplayName": { "value": "Foundry OTel to Arize Demo" },
     "logAnalyticsRetentionInDays": { "value": 30 },
-    "logAnalyticsDailyQuotaGb": { "value": 1 }
+    "logAnalyticsDailyQuotaGb": { "value": 1 },
+    "keyVaultSkuName": { "value": "standard" },
+    "keyVaultSoftDeleteRetentionInDays": { "value": 90 }
   }
 }

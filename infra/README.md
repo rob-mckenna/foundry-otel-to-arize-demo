@@ -14,7 +14,7 @@ infra/
 └── modules/
     ├── foundry-project.bicep  # Azure AI Foundry hub + project (issue #15) ✅
     ├── app-insights.bicep     # Log Analytics + Application Insights (issue #16) ✅
-    ├── key-vault.bicep        # Key Vault (RBAC) + managed identity wiring pattern (issue #18)
+    ├── key-vault.bicep        # Key Vault (RBAC) + managed identity wiring pattern (issue #18) ✅
     ├── naming.bicep           # Shared naming/tagging helpers (issue #20)
     └── networking.bicep       # Optional private endpoint module (issue #21)
 ```

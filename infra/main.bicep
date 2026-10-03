@@ -59,6 +59,18 @@ param logAnalyticsRetentionInDays int = 30
 @description('Daily data ingestion cap in GB for the Log Analytics workspace (demo cost control). -1 disables the cap.')
 param logAnalyticsDailyQuotaGb int = 1
 
+@description('Key Vault SKU: standard or premium (HSM-backed).')
+@allowed([
+  'standard'
+  'premium'
+])
+param keyVaultSkuName string = 'standard'
+
+@description('Key Vault soft-delete retention period in days (minimum 7, Azure default 90).')
+@minValue(7)
+@maxValue(90)
+param keyVaultSoftDeleteRetentionInDays int = 90
+
 module foundryProject 'modules/foundry-project.bicep' = {
   name: 'foundry-project-deployment'
   params: {
@@ -85,11 +97,33 @@ module appInsights 'modules/app-insights.bicep' = {
     retentionInDays: logAnalyticsRetentionInDays
     dailyQuotaGb: logAnalyticsDailyQuotaGb
     foundryProjectName: foundryProject.outputs.projectName
-    // keyVaultName intentionally omitted here - the Key Vault shell (issue
-    // #18) does not exist yet in this module set. Once it is deployed, pass
-    // its name here (or run a follow-up cross-wiring deployment) so the
-    // Application Insights connection string is stored as a Key Vault secret
-    // instead of being emitted as a plaintext output.
+    // Key Vault now exists (issue #18) - wire the connection string into it
+    // as a secret instead of emitting it as a plaintext output.
+    keyVaultName: keyVault.outputs.keyVaultName
+  }
+}
+
+// Key Vault shell + phase-2 cross-wiring: the Foundry project's
+// system-assigned managed identity is granted "Key Vault Secrets User" so it
+// can read secrets (e.g. the Arize API key, entered manually post-deploy).
+// A future Function App module (telemetry pipeline, Milestone 2) should add
+// its own principal ID to readerPrincipalIds once it exists - see the
+// cross-wiring pattern documented in modules/key-vault.bicep and
+// infra/README.md.
+module keyVault 'modules/key-vault.bicep' = {
+  name: 'key-vault-deployment'
+  params: {
+    projectToken: projectToken
+    environment: environment
+    location: location
+    regionToken: regionToken
+    ownerTag: ownerTag
+    costCenterTag: costCenterTag
+    skuName: keyVaultSkuName
+    softDeleteRetentionInDays: keyVaultSoftDeleteRetentionInDays
+    readerPrincipalIds: [
+      foundryProject.outputs.projectPrincipalId
+    ]
   }
 }
 
@@ -107,3 +141,9 @@ output logAnalyticsWorkspaceId string = appInsights.outputs.logAnalyticsWorkspac
 
 @description('Resource ID of the Application Insights resource.')
 output appInsightsResourceId string = appInsights.outputs.appInsightsResourceId
+
+@description('Resource ID of the Key Vault.')
+output keyVaultResourceId string = keyVault.outputs.keyVaultResourceId
+
+@description('Name of the Key Vault - needed by downstream modules (e.g. a future Function App) to wire additional RBAC role assignments.')
+output keyVaultName string = keyVault.outputs.keyVaultName
