@@ -17,6 +17,10 @@ live Foundry deployment.
 Operational runbooks for standing up, tearing down, and troubleshooting a demo environment:
 [`runbooks.md`](runbooks.md).
 
+For a capability-by-capability implementation status check (done / partial / not started, each
+cross-checked against the actual code/IaC), see
+[`/docs/architecture/capability-matrix.md`](../architecture/capability-matrix.md).
+
 Only describe behavior that has been implemented under `/src` and `/infra` and verified. Known
 limitations, unvalidated assumptions, and schema-mapping gaps must be called out explicitly here
 rather than silently omitted (see `/.github/copilot-instructions.md` §16).
