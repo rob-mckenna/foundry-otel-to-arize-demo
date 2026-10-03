@@ -18,6 +18,10 @@ authors = [
 dependencies = [
     "opentelemetry-api>=1.24.0",
     "opentelemetry-sdk>=1.24.0",
+    # Pinned to the 0.1.x OpenInference trace semantic-convention spec (see
+    # https://github.com/Arize-ai/openinference/tree/main/spec) — #28 maps
+    # these attribute names onto our spans.
+    "openinference-semantic-conventions>=0.1.39,<0.2.0",
 ]
 
 [project.optional-dependencies]
@@ -35,3 +39,6 @@ prompt-agent = "prompt_agent.main:main"
 
 [tool.setuptools.packages.find]
 include = ["prompt_agent*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
