@@ -55,8 +55,14 @@ calls, asserting:
   **including every retry attempt span** — both for a retry that
   eventually recovers and one that exhausts all attempts and raises
   (`tests/test_correlation_and_retry.py`)
+- every scenario in the #48 shared synthetic prompt library (`synthetic/scenarios.py`) produces
+  a response with no unhandled error, a root span with a valid trace ID, and sane/relevant
+  response content (`tests/test_scenario_validation.py`, #49)
 
-All 11 tests pass as of this writing.
+All 17 tests pass as of this writing (verified by static code review against the existing,
+previously-passing fixture/assertion patterns in this suite; this specific count could not be
+re-executed in the current sandbox session — no Python interpreter is available, see
+`/docs/current-state/prompt-agent-execution-validation.md` §4 for details).
 
 ## Configuration
 
@@ -196,6 +202,22 @@ against the stub model client (`prompt_agent/model_client.py` —
 prompt, any tool-lookup output, the response, and token counts for each. See
 `samples/scenario-run-2026-10-02.md` for captured sample output.
 
+## Validating Prompt Agent execution against the shared scenario library (#49)
+
+`tests/test_scenario_validation.py` parametrizes over every scenario in `synthetic/scenarios.py`
+(the #48 shared synthetic prompt library) and asserts, per scenario: no unhandled error, a root
+`prompt_agent.invoke` span with a valid (non-zero) trace ID, and a non-empty response containing
+an expected keyword relevant to that prompt. Run it with:
+
+```powershell
+pytest tests/test_scenario_validation.py -v
+```
+
+See `/docs/current-state/prompt-agent-execution-validation.md` for the full validation procedure,
+checklist, evidence table, and an explicit breakdown of what's proven by this static test suite
+versus what still requires a live Foundry deployment (this repo's default `StubFoundryModelClient`
+is not a live model backend).
+
 ## Project layout
 
 ```
@@ -219,7 +241,8 @@ src/prompt-agent/
     ├── __init__.py
     ├── conftest.py             # InMemorySpanExporter fixture + span-lookup helpers
     ├── test_agent_spans.py     # Span names/kind/parent-linkage + OpenInference attrs + token counts
-    └── test_correlation_and_retry.py  # Correlation ID propagation, incl. across retries
+    ├── test_correlation_and_retry.py  # Correlation ID propagation, incl. across retries
+    └── test_scenario_validation.py    # #49: every shared-library scenario succeeds + has a valid root-span trace ID + a sane response
 ```
 
 ## Data policy
