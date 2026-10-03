@@ -10,6 +10,7 @@
 <!-- Append new learnings below. Each entry is something lasting about the project. -->
 - This repo must clearly separate current-state (validated, implemented) from future-state (conceptual, direct-OTLP) architecture, in both docs and directory structure.
 - Audience is enterprise healthcare customers — synthetic data only, no real PII/PHI anywhere in the repo, including demo transcripts and issue forms.
+- 📌 Team update (2026-10-03T05:58:32-04:00): The squash-merge-stacking quirk you hit on the #102→#105→#108 chain (a downstream stacked PR falsely shows CONFLICTING after its predecessor squash-merges, because the squashed commit on `main` has a different hash than the branch commits the next PR still references — fixed by rebasing, not re-merging) is now recorded in the shared log (`.squad/log/2026-10-03T05-58-32-milestones-3-4-5-completion.md`) as a reusable lesson for future stacked-PR work in this repo. Your `src/telemetry-pipeline/README.md` drift finding is also logged in `.squad/decisions.md`, with Telemetry's resolution (PR #121) appended to the same entry.
 
 ### Wave 2 backlog generation (2026-10-02)
 

@@ -421,6 +421,438 @@ Network isolation becomes a legitimate requirement once a prospect wants a
 real POC/pilot using their own data. The optional module exists for exactly
 that scenario, without forcing every demo deployer to pay the setup cost.
 
+### 2026-10-03: Prompt Agent execution validation (#49) — static-test coverage now, live evidence deferred
+
+**By:** Agent
+
+**Affects:** QA/Demo Validation track (#48 shared plan, #50–#58 downstream validation steps), Infra (#15/#16/#18), Lead (demo readiness sign-off)
+
+**What:**
+
+#### Context
+
+Issue #49 asks for proof that every synthetic prompt in the #48 shared library produces a
+successful Prompt Agent response with a valid root-span trace ID and sane content. This sandbox has
+**no live Foundry/Azure environment deployed** and, as of this session, **no usable Python
+interpreter** (`python`/`py` both fail to launch), so the agent could not actually be executed here.
+
+#### Decision
+
+- Added `src/prompt-agent/tests/test_scenario_validation.py`: a pytest module parametrized over
+  every scenario in `synthetic/scenarios.py`, asserting #49's three acceptance criteria (no
+  unhandled error, valid non-zero root-span trace ID with no parent, non-empty/relevant response)
+  using the same `span_exporter`/`find_span` fixtures as the existing, previously-passing suite.
+  This is new static-test scaffolding, **not executed in this session** — it needs a working Python
+  interpreter (or CI) to actually run and confirm green.
+- Added `docs/current-state/prompt-agent-execution-validation.md`: the full validation procedure,
+  checklist, and an honest evidence table. It is explicit that current "Pass" verdicts cover the
+  current-state `StubFoundryModelClient` backend validated via code review + the new static suite +
+  a prior session's captured sample output — **not** a live Foundry Prompt Agent deployment, which
+  does not exist anywhere in this repo yet (#25's `FoundryModelClient` is still a documented stub).
+- Flagged a pre-existing (not introduced here) stub-fidelity gap: `StubFoundryModelClient`'s
+  keyword router answers any "network"/"in-network" prompt with PPO-plan language regardless of
+  which plan was actually asked about (see validation doc §5, row 4). Not fixed in this PR to keep
+  scope to validation per #49 — flagging for whoever next touches `model_client.py`'s synthetic
+  answer routing.
+
+#### Requested action
+
+- **Demo Validation Plan owners (#50–#58):** when a live environment becomes available, re-run the
+  checklist in `docs/current-state/prompt-agent-execution-validation.md` §3 to capture a real
+  per-scenario trace-ID table and file the `demo-validation.yml` form; the "Pass with caveats"
+  verdict here should be revisited once that's done.
+- **Infra (#15/#16/#18):** this is a second, independent confirmation (after #25's own note) that
+  #49 cannot produce live-environment evidence until a real Foundry project/deployment exists.
+- **Whoever next touches `model_client.py`:** consider the PPO/HMO stub-fidelity gap noted above if
+  response fidelity becomes demo-relevant before a real `FoundryModelClient` is implemented.
+
+### 2026-10-03: End-to-end deployment validation script (issue #22)
+
+**By:** Infra
+
+**What:**
+
+#### Decision
+
+`infra/scripts/validate-deployment.ps1` runs `az deployment group what-if`
+then `az deployment group create` against a scratch resource group, checks
+every module's resource(s) for `provisioningState: Succeeded` (resolved
+dynamically from `main.bicep`'s own outputs, not hardcoded resource name
+guesses), spot-checks three RBAC assignments documented in
+`infra/README.md` (Function App -> Key Vault Secrets User, Function App ->
+Event Hub Data Receiver, Foundry project -> Key Vault Secrets User), and
+prints a single pass/fail summary table with timestamps.
+
+#### Rationale
+
+- Dependency ordering is left to Bicep/ARM itself (via the `module` graph
+  in `main.bicep`) rather than re-implemented in the script - avoids a
+  second, driftable source of truth for module order.
+- Resource identification is driven off `main.bicep`'s own outputs so the
+  script stays in sync automatically as modules are added, instead of a
+  hardcoded resource-name list that silently goes stale.
+- `-SkipCreate` (what-if only) and `-CreateResourceGroupIfMissing` (opt-in
+  resource group creation) are separate switches so a fast, free pre-PR
+  check and a full paid validation run are both single commands without
+  accidentally creating billable infrastructure by default.
+
+#### Sandbox limitation (carried forward from Milestone 1/2)
+
+`az` CLI is still not usable in this automated authoring environment (same
+`PermissionError` reading `~/.azure/azureProfile.json` documented in
+`.squad/agents/infra/history.md`), and `pwsh` (PowerShell 7, which this
+script - like the existing `validate-naming.ps1` - targets) is present only
+as an unprovisioned Windows Store execution-alias stub, not a real
+installation. The script was validated by:
+
+1. Static PowerShell parse-checking
+   (`[System.Management.Automation.Language.Parser]::ParseFile`) - zero
+   syntax errors.
+2. A logic smoke test of the `az`-missing / not-logged-in failure paths,
+   run under Windows PowerShell 5.1 with a temporary 2-arg `Join-Path`
+   substitution (PS 5.1 does not support the 3-arg `Join-Path` form this
+   script - and the existing `validate-naming.ps1` - uses; PS7/`pwsh` does).
+
+A team member with real `az` CLI access and a scratch subscription should
+run both the `-SkipCreate` and full-deploy example commands in
+`infra/README.md` ("End-to-end deployment validation script" section)
+before treating this script as demo-ready, per issue #22's validation
+steps (success run + an intentionally-broken-parameter run).
+
+### 2026-10-03: Demo resource teardown/cleanup script (issue #23)
+
+**By:** Infra
+
+**Related PR:** squad/23-cleanup-teardown-script
+
+**What:**
+
+#### Decision
+
+Added `infra/scripts/teardown-deployment.ps1` to safely tear down the demo
+resource group (or a targeted subset of resources) provisioned by
+`infra/main.bicep`, as a companion to the `validate-deployment.ps1` script
+from issue #22.
+
+#### Design choices
+
+- **Resource-group-level deletion is the default/primary mode** (one
+  parameter, `-ResourceGroupName`), since that mirrors how the demo is
+  actually provisioned (one RG per demo environment) and is the fastest
+  path to a clean slate. **Targeted resource deletion** (`-ResourceIds`) is
+  supported as a secondary mode for partial cleanup without tearing down
+  the whole environment (e.g. only the Function App while iterating).
+- **Two independent, separately-confirmed destructive actions**, not one:
+  resource/group delete vs. Key Vault soft-delete purge. Azure Key Vault's
+  soft-delete model means a vault can be recovered within its retention
+  window after the resource-group delete; purging it is a second,
+  irreversible step with its own blast radius (secrets become permanently
+  unrecoverable), so it gets its own confirmation prompt rather than being
+  bundled into the main "are you sure?" prompt.
+- **`-Force` switch** skips both confirmation prompts for non-interactive
+  CI/scripted use (e.g. a scheduled "nightly demo cleanup" job), consistent
+  with the pattern requested in the issue.
+- **Polling for absence** after delete (`az group show`/`az resource show`
+  retried with backoff) rather than trusting `--no-wait` blindly, so the
+  script's final pass/fail summary reflects reality rather than merely
+  "the delete command was accepted."
+- **Orphaned role-assignment check** after deletion: Azure normally cleans
+  up role assignments when their scope resource is deleted, but this is
+  documented as an eventually-consistent/edge-case behavior worth
+  confirming explicitly rather than assuming, given this demo's RBAC-heavy
+  (no shared keys) design.
+- **Reused `main.bicep` outputs** (`keyVaultName`, etc.) where possible so
+  the script doesn't need hardcoded resource names, consistent with the
+  issue #22 script's approach.
+
+#### Sandbox limitation and validation approach
+
+`az` CLI is present in this authoring sandbox but every invocation throws a
+Python traceback (`PermissionError` on the cached profile at
+`~/.azure/azureProfile.json`) - a previously-documented environment issue,
+not something fixed by this script. The script cannot be run end-to-end
+against a real Azure subscription from this environment.
+
+**Validation performed instead:**
+1. `[System.Management.Automation.Language.Parser]::ParseFile` - 0 syntax
+   errors.
+2. A Windows PowerShell 5.1 smoke test (with a local, non-committed 3-arg
+   `Join-Path` -> 2-arg-chained substitution, since the script targets
+   `pwsh`/PowerShell 7 like the existing `validate-naming.ps1`) exercising
+   the "az present but not authenticated" failure path: confirmed clean
+   `[FAIL]` reporting, a correctly-populated Passed/Failed summary table,
+   and exit code 1 - i.e. the script degrades gracefully instead of
+   crashing when `az` is broken.
+
+**New reusable PowerShell lesson found during this work:** under
+`$ErrorActionPreference = 'Stop'` (set script-wide for fail-fast behavior),
+piping a native command's stderr into the success stream via `2>&1` (e.g.
+`$raw = & az @args 2>&1`) causes the merged `ErrorRecord` objects to throw
+as **terminating** errors the instant they're produced, bypassing the
+script's own custom fail-handling/summary logic entirely. Fixed by
+introducing `Invoke-AzJson`/`Invoke-AzCommand` helper functions that
+temporarily scope `$ErrorActionPreference = 'Continue'` around each
+individual native `az` call (restored in a `finally` block), capture
+`$LASTEXITCODE`, and wrap any JSON parsing in its own try/catch returning
+`$null` on failure. This pattern should be reused by any future script in
+this repo that shells out to `az`/`gh`/other native CLIs under a
+`Stop`-preference script.
+
+A team member with real Azure access must run this script end-to-end
+against a scratch resource group before relying on it for demo cleanup,
+confirming: resource-group deletion, targeted-resource deletion, Key Vault
+purge, and the orphaned-role-assignment check all behave as documented.
+
+#### Alternatives considered
+
+- **Single confirmation prompt covering delete + purge together:** rejected
+  - purge is meaningfully more dangerous (permanent vs. recoverable-within-
+    window) and deserves its own explicit "yes."
+- **Always purge Key Vault automatically on group delete:** rejected - an
+  operator may want the soft-delete retention window as a safety net before
+  committing to full purge; `-PurgeKeyVault` keeps that an explicit opt-in.
+
+### 2026-10-03: src/telemetry-pipeline/README.md overstates implementation status
+
+**By:** Lead
+
+**Affects:** Telemetry track (owner of `/src/telemetry-pipeline`)
+
+**Related:** Issue #14 (current/future-state separation audit), issue #60 (capability matrix), issue #19, #36
+
+**What:**
+
+#### Finding
+
+`src/telemetry-pipeline/README.md` currently opens with `**Status: CURRENT-STATE (validated,
+implemented)**` and states the directory "holds the Azure Function transform/mapping code and
+Event Hub consumer logic that forms the validated telemetry pipeline." In reality the directory
+contains only that README — no Function transform/consumer code exists yet under
+`/src/telemetry-pipeline`.
+
+This was surfaced during the Milestone 4 current-state/future-state separation audit (issue #14,
+see `/docs/current-state/separation-audit.md` Finding 3) and reflected as a "Partial" capability in
+`/docs/architecture/capability-matrix.md` (issue #60, capability #7).
+
+#### Why this wasn't fixed directly
+
+`/src/telemetry-pipeline` is owned by the Telemetry track per `.squad/agents/telemetry/charter.md`.
+Lead's charter is explicit about not writing telemetry pipeline code or editing another track's
+owned files directly — this is filed as a decision/finding for Telemetry to action instead.
+
+#### Suggested resolution (either is acceptable)
+
+1. **Soften the claim** to match `src/prompt-agent/README.md`'s pattern — that README carries the
+   same `Status: CURRENT-STATE` header but is accurate because it explicitly flags what's still a
+   placeholder. A similar callout in `src/telemetry-pipeline/README.md` (e.g. "Function transform
+   code is tracked in #19/#36 and not yet implemented as of this writing") would resolve the drift
+   without any code change.
+2. **Implement the Function transform code** referenced by issues #19 (provision Function App —
+   already closed, infra only) and #36 (field-by-field mapping doc — already closed, doc only), so
+   the README's claim becomes true.
+
+#### Action requested
+
+Telemetry (or whoever picks up #19/#36 follow-on work) should apply option 1 or 2 above. No
+action is required from Infrastructure, Prompt Agent, or QA tracks.
+
+**Resolution (2026-10-03, by Telemetry):** actioned option 1 — `src/telemetry-pipeline/README.md`
+corrected in PR #121 as part of the Milestone 4 Wave B batch; issue #37 (correlation-ID evidence)
+was also reopened in the same pass as a related honesty finding (see below).
+
+### 2026-10-03: Doc-drift checklist (issue #62)
+
+**By:** QA
+
+**What:** Added `CONTRIBUTING.md` at the repo root with a 5-question doc-drift checklist PR
+authors should run through before opening a PR (does this change current-state behavior,
+future-state design, a referenced setup step, the telemetry transform path, or add a new known
+limitation — if so, update the matching doc in the same PR). Validated it retroactively against
+PR #74 (network requirements, issue #21) as a worked example showing it would have passed with no
+gaps.
+
+**Why:** Per QA's charter, stale docs should be treated as a bug, not a follow-up chore. This is
+intentionally lightweight (a mental checklist, not a blocking gate) so it doesn't slow down PR
+velocity, while giving reviewers a concrete, repeatable thing to check for rather than relying on
+memory.
+
+**Ask for whoever owns `.github/pull_request_template.md` (Lead/Scribe):** please add a short
+reference line to `CONTRIBUTING.md` under the template's existing **Documentation Updates**
+section (e.g. "See CONTRIBUTING.md's doc-drift checklist").
+
+### 2026-10-03: Event Hub partition-key and Function checkpointing requirements for correlation-ID preservation
+
+**By:** Telemetry
+
+**Affects:** Infra (#17 Event Hub, #19 Azure Function)
+
+**What:**
+
+#### Context
+
+While documenting trace/span/correlation-ID preservation across Event Hub and Function hops (#37),
+two implementation requirements were identified that Infra's #17/#19 Bicep modules and any
+accompanying Function code should satisfy to avoid breaking cross-system trace correlation:
+
+1. **Event Hub partition key:** whatever writes spans to Event Hub (Log Analytics Data Export, #35)
+   should use `operation_Id` (the App Insights trace ID) as the partition key, so every span
+   belonging to one trace stays in relative order within a single partition. Without this, spans
+   from one trace could be delivered out of order across partitions.
+2. **Function checkpointing strategy:** the Azure Function's Event Hub trigger should use
+   whole-batch checkpointing (checkpoint only after the full batch succeeds), not per-event
+   checkpointing with silent drop-on-failure. Per-event checkpointing risks orphaning child spans
+   if a parent span's event fails mid-batch while children already succeeded.
+
+#### Why this matters
+
+Both are flagged in `/docs/telemetry/trace-correlation-preservation.md` §3/§4 as **blocking
+concerns** for correlation-ID preservation, not optional tuning — per Telemetry's charter policy of
+treating any hop where correlation IDs could be dropped as a blocking defect unless Lead explicitly
+accepts it as a known limitation.
+
+#### Requested action
+
+Infra: please consider these two requirements when implementing #17 (Event Hub) and #19 (Azure
+Function). Not blocking #17/#19's current scope — flagging now so the requirement is visible before
+those modules are built, rather than discovered as a bug afterward.
+
+**Note:** this note's original inbox file was never found on disk by a later Scribe pass (see
+Infra's `agents/infra/history.md` team-update entry, 2026-10-03T03:18:22-04:00) — reconstructed and
+merged here from the copy preserved in Telemetry's own inbox drop for this batch.
+
+### 2026-10-03: Milestone 3 (Arize Integration) deliverables — doc/spec-only, live-environment validation still pending
+
+**By:** Telemetry
+
+**What:**
+
+#### What was delivered
+
+All 10 Milestone 3 issues (#89, #90, #91, #92, #38, #39, #40, #41, #42, #43) were delivered as
+doc/spec/query-pack/test-scaffold PRs, each in its own dedicated worktree + branch + PR (no
+self-merge), per the same "no live Azure/Arize environment in this sandbox" posture Telemetry used
+in Milestone 2:
+
+- #89-#92: field-by-field mapping specs under `docs/telemetry/mapping/` for the four field groups
+  `field-mapping.md` (#36) already indexes.
+- #41: a 5-query KQL validation pack under `docs/telemetry/kql/`.
+- #38: OTLP export conformance spec + a reference-transform test scaffold
+  (`tests/export/test_otlp_export_conformance.py`) proving the mapping specs are internally
+  consistent — explicitly **not** a test of the production Azure Function, which does not exist in
+  this repo yet.
+- #39, #40, #42, #43: cross-system trace join, Arize token-analysis view, Arize trace-visualization
+  dashboard, and token-analysis parity-check specs, each with hand-computed/hand-traced synthetic
+  evidence where executable validation wasn't possible.
+
+#### Standing risk/decision for the team
+
+**None of Milestone 3's acceptance criteria that require a live Application Insights instance, a
+live Arize space, or the as-yet-unwritten Azure Function transform code (src/telemetry-pipeline/ is
+still a placeholder) have been executed.** Every doc in this milestone explicitly splits
+"validated-via-review" (field inventory, query syntax, arithmetic, cross-references to already-
+merged Milestone 1/2 docs — all correct independent of environment) from "requires
+live-environment re-verification" (anything needing a real KQL run, a real Arize query, or a real
+OTLP export). Whoever implements #19's Function transform code should treat these 10 docs as the
+spec to build against and re-run every validation query/test listed once live infra exists — do not
+treat "PR merged" as equivalent to "live-validated" for this milestone.
+
+#### Follow-up risk carried forward
+
+Reconfirms the Milestone 2 flag already in Infra's history: Event Hub partition-key choice and
+Function batch-checkpointing strategy remain the two places a correlation ID could still be lost
+end-to-end, and nothing in this milestone's doc work closes that gap — it can only be closed once
+#19's Function code and live infra exist to test against.
+
+### 2026-10-03: Milestone 4 (Customer Demo Readiness) telemetry-validation batch — #37 reopened, #130 filed
+
+**By:** Telemetry
+
+**Affects:** Whoever picks up #19's Function implementation; Lead (Milestone 5 planning); QA
+
+**Related:** #50-#58, #37 (reopened), #121-#129, #131, #130 (new gap issue)
+
+**What:**
+
+#### Summary
+
+Delivered validation docs for all 9 Milestone 4 issues assigned (#50-#58) plus a README-drift fix
+(#121, addressing Lead's `src/telemetry-pipeline/README.md` drift finding above). No live
+Azure/Arize environment or Python interpreter exists in this sandbox, so every doc is explicit about
+validated-via-review vs. blocked/requires-live-environment, per repo convention.
+
+#### Net result, grouped by what's actually provable today
+
+- **Source-side (Prompt Agent) telemetry capture is solid.** #50 (App Insights capture, partial —
+  exporter wiring + span-attribute shape proven, live ingestion blocked), #51 (prompt/response
+  fidelity, pre-export proven exact-match; long-prompt truncation test identified as a genuine gap
+  and not yet written), #52 (token metrics, fully proven by an existing 25-span test suite),
+  and #58 part (a) (retry visibility, fully proven) are all backed by real, already-written,
+  already-passing-by-design unit tests in `src/prompt-agent/tests/`.
+- **Everything downstream of the Prompt Agent is blocked, not partially passing.** #53
+  (cross-system correlation), #54 (export-pipeline execution), #55 (transformation correctness),
+  #56 (Arize ingestion), #57 (Arize visualization), and #58 part (b) (export-pipeline outage
+  handling) all terminate at the same root cause: **no Azure Function transform/consumer code
+  exists under `src/telemetry-pipeline`, and no Arize instance has ever been deployed in this
+  repo's history.** These are marked Blocked, not Pass-with-caveats — there is a real difference
+  between "an acceptance criterion that's awkward to test" and "an acceptance criterion whose
+  subject doesn't exist yet," and conflating them would misrepresent demo readiness to Lead/QA.
+
+#### Issue #37 reopened
+
+While fixing the README drift, found issue #37 ("Trace/span/parent-span/correlation-ID
+preservation across Event Hub and Function hops") was closed (`COMPLETED`, zero comments, no
+linked PR) despite requiring live KQL+Arize evidence that doesn't exist. Reopened it with an
+explanatory comment.
+
+#### New gap filed: #130 (exporter observability)
+
+Found a concrete, fixable-today gap while validating #58: `telemetry.py`'s `shutdown_tracing()`
+discards `force_flush()`'s return value, and no export success/failure counter exists. Filed as
+issue #130 (Effort: S, no new infra required) — assigned to Milestone 4, labeled
+Observability/OpenTelemetry/Priority-Medium.
+
+#### Recommendation for Milestone 5 / whoever implements #19
+
+Treat #53-#57 and #58(b) as the concrete scope of "implement + validate the export pipeline,"
+using the Milestone 3 specs (`docs/telemetry/*.md`) as the build spec and the Milestone 4 docs
+created in this batch (`docs/current-state/*-validation.md`) as the checklists to re-run once
+real infrastructure exists — do not treat any of those 6 items as already passing.
+
+### 2026-10-03: README enhancement for clarity/navigation (issue #132, PR #133)
+
+**By:** QA
+
+**What:**
+
+#### Context
+
+User explicitly asked to "make the README more informative" after the prior accuracy pass (#59 /
+PR #106). Opened issue #132 and built the enhancement in a dedicated worktree
+(`.worktrees/readme-enhance`, branch `squad/readme-enhance`) rather than the main checkout, per
+mandatory worktree convention.
+
+#### What changed
+
+Added to root `README.md` (additive, not a rewrite — all previously accuracy-passed content
+preserved): an Overview/customer-scenario section, a table of contents, a Quick Start table that
+distinguishes steps requiring zero Azure/Arize access from steps requiring a live environment, a
+Documentation map linking every doc the task asked for, and a Known Limitations section that
+explicitly surfaces #37 (trace-correlation preservation across Event Hub/Function — reopened) and
+#130 (exporter observability gap) rather than hiding them.
+
+#### Note for other agents / Scribe
+
+The task description referenced `docs/telemetry/queries/` as an expected path. That directory does
+not exist in the repo — the actual KQL query pack lives at `docs/telemetry/kql/`. QA linked to the
+real path (`docs/telemetry/kql/`) instead of creating a broken link or a new directory. If a future
+issue intends `docs/telemetry/queries/` as a distinct future directory, that should be clarified
+explicitly rather than assumed equivalent to `docs/telemetry/kql/`.
+
+#### Status
+
+PR #133 opened against `main`, `mergeStateStatus: CLEAN`, `mergeable: MERGEABLE`. Not merged by QA —
+coordinator to verify and merge.
+
 ## Governance
 
 - All meaningful changes require team consensus
