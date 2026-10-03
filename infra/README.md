@@ -20,7 +20,8 @@ infra/
     ├── foundry-project.bicep  # Azure AI Foundry hub + project (issue #15) ✅
     ├── app-insights.bicep     # Log Analytics + Application Insights (issue #16) ✅
     ├── key-vault.bicep        # Key Vault (RBAC) + managed identity wiring pattern (issue #18) ✅
-    └── networking.bicep       # Optional private endpoint module (issue #21) ✅
+    ├── networking.bicep       # Optional private endpoint module (issue #21) ✅
+    └── event-hub.bicep        # Event Hub namespace + hub for telemetry streaming (issue #17) ✅
 ```
 
 Each module is independently parameterized (no hardcoded names, regions, or
@@ -182,6 +183,41 @@ with this PR) or a follow-up decision entry.
 
 This decision is also recorded in
 `.squad/decisions/inbox/infra-network-posture.md` for the Scribe to merge.
+
+## Event Hub telemetry streaming (issue #17)
+
+`modules/event-hub.bicep` provisions a Standard-tier Event Hub namespace +
+hub sitting between Application Insights/Log Analytics (export source) and
+the Azure Function transform pipeline (issue #19, Milestone 2). Throughput
+units (`eventHubThroughputUnits`, default 1, auto-inflate to 2) and
+partition count (`eventHubPartitionCount`, default 2) are parameterized at
+demo scale - not sized for production ingestion volume.
+
+**Auth model: RBAC-only by default, no connection strings.** The namespace
+is provisioned with `disableLocalAuth: true` (SAS keys disabled). Producers
+and consumers are granted least-privilege data-plane roles instead:
+
+- `senderPrincipalIds` -> **Azure Event Hubs Data Sender**
+- `receiverPrincipalIds` -> **Azure Event Hubs Data Receiver**
+
+Both arrays default to empty in `main.bicep` - the Azure Function transform
+pipeline (issue #19) should add its system-assigned managed identity
+principal ID to `receiverPrincipalIds` once it exists, following the same
+two-phase cross-wiring pattern used by `modules/key-vault.bicep`
+(provision the shell first, cross-wire principal IDs in a follow-up
+deployment or parameter update).
+
+An **optional** connection-string fallback (`storeConnectionStringInKeyVault:
+true` + `keyVaultName`) is available for tooling that cannot use
+identity-based Event Hub bindings - it requires explicitly re-enabling local
+auth (`disableLocalAuth: false`) and writes the connection string only into
+an existing Key Vault secret, never as a plaintext Bicep output. RBAC is the
+recommended and default posture per `/.github/copilot-instructions.md`
+section 8; this fallback is off by default and not wired in `main.bicep`.
+
+A dedicated consumer group (`functionConsumerGroupName`, default
+`function-transform`) is provisioned alongside `$Default` for the Function
+App to read from without competing with other consumers.
 
 ## Validating a deployment
 
