@@ -100,7 +100,7 @@ src/prompt-agent/
 │   ├── __init__.py
 │   ├── main.py               # Entry point (placeholder hello + --scenarios runner)
 │   ├── config.py             # Env-var configuration loading (no secrets committed)
-│   ├── agent.py               # Core prompt/response flow + synthetic tool call (#25)
+│   ├── agent.py               # Core prompt/response flow + span instrumentation (#25, #27)
 │   ├── model_client.py        # Model backend interface + stub Foundry client (#25)
 │   └── telemetry.py           # OpenTelemetry SDK bootstrap: TracerProvider, exporter, shutdown hook (#26)
 ├── synthetic/                # Synthetic fixture data — no real customer data, ever

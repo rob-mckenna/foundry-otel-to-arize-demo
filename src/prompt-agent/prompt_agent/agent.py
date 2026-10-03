@@ -4,16 +4,23 @@ This module implements the primary request/response pipeline described in
 #25: accept a user prompt, optionally resolve it via a small lookup "tool"
 call, invoke the model, and return a response.
 
-OpenTelemetry span instrumentation is added around these calls in #27/#28;
-this module intentionally has no tracing code yet so each issue's diff stays
-reviewable on its own.
+#27 wraps every externally-visible call (the tool lookup and the model
+call) in its own OpenTelemetry span, nested under a top-level
+`prompt_agent.invoke` span so parent-child relationships are correct for a
+full request. OpenInference semantic-convention attributes (prompt,
+completion, token usage) are added on top of these spans in #28.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
 
+from opentelemetry.trace import SpanKind, Status, StatusCode
+
 from prompt_agent.config import PromptAgentConfig, load_config
 from prompt_agent.model_client import ModelClient, ModelResponse, StubFoundryModelClient
+from prompt_agent.telemetry import get_tracer
+
+_tracer = get_tracer("prompt_agent.agent")
 
 # Synthetic plan directory used by the `lookup_plan_details` tool call below.
 # Entirely fabricated — see synthetic/README.md.
@@ -26,14 +33,21 @@ _SYNTHETIC_PLAN_DIRECTORY: dict[str, str] = {
 def lookup_plan_details(plan_name: str) -> str:
     """Synthetic "tool" call: looks up fabricated plan details by name.
 
-    Exists so the agent has at least one tool/function call in its request
-    path (in addition to the model call) for #27's span instrumentation to
-    wrap. Entirely synthetic data — never a real plan lookup.
+    Wrapped in its own span (`tool.lookup_plan_details`) so every tool
+    invocation is independently traceable, timed, and status-tagged — not
+    just the model call. `start_as_current_span` is used as a context
+    manager, so if this function ever raises, OpenTelemetry's default
+    behavior (`record_exception=True`, `set_status_on_exception=True`)
+    records the exception as a span event and marks the span `ERROR`
+    automatically before the exception propagates.
     """
-    return _SYNTHETIC_PLAN_DIRECTORY.get(
-        plan_name.strip().lower(),
-        f"No synthetic plan details on file for '{plan_name}'.",
-    )
+    with _tracer.start_as_current_span("tool.lookup_plan_details", kind=SpanKind.CLIENT) as span:
+        result = _SYNTHETIC_PLAN_DIRECTORY.get(
+            plan_name.strip().lower(),
+            f"No synthetic plan details on file for '{plan_name}'.",
+        )
+        span.set_status(Status(StatusCode.OK))
+        return result
 
 
 @dataclass(frozen=True)
@@ -57,15 +71,22 @@ class PromptAgent:
     def invoke(self, prompt: str, plan_name: str | None = None) -> AgentResult:
         """Run one request through the core prompt/response flow.
 
-        If `plan_name` is given, the `lookup_plan_details` tool call runs
-        first and its output is folded into the prompt sent to the model —
-        a minimal "tool use" path for #27 to instrument.
+        Every externally-visible call in this method (the optional tool
+        lookup, and the model call) executes inside its own child span of
+        the top-level `prompt_agent.invoke` span, so a full request's span
+        tree has correct parent-child nesting end-to-end — no call path
+        here is left uninstrumented.
         """
-        tool_output: str | None = None
-        effective_prompt = prompt
-        if plan_name:
-            tool_output = lookup_plan_details(plan_name)
-            effective_prompt = f"{prompt}\n\n[Synthetic plan lookup result: {tool_output}]"
+        with _tracer.start_as_current_span("prompt_agent.invoke", kind=SpanKind.INTERNAL) as invoke_span:
+            tool_output: str | None = None
+            effective_prompt = prompt
+            if plan_name:
+                tool_output = lookup_plan_details(plan_name)
+                effective_prompt = f"{prompt}\n\n[Synthetic plan lookup result: {tool_output}]"
 
-        response = self._model_client.complete(effective_prompt)
-        return AgentResult(prompt=prompt, response=response, tool_output=tool_output)
+            with _tracer.start_as_current_span("llm.chat_completion", kind=SpanKind.CLIENT) as model_span:
+                response = self._model_client.complete(effective_prompt)
+                model_span.set_status(Status(StatusCode.OK))
+
+            invoke_span.set_status(Status(StatusCode.OK))
+            return AgentResult(prompt=prompt, response=response, tool_output=tool_output)
