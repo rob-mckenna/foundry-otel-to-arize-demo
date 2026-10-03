@@ -13,3 +13,9 @@ the top. Do not add implementation code, stubs, or partial implementations here 
 `/src` or `/infra` for ideas described in this directory until an `architecture-decision` issue has
 been accepted and `/.github/copilot-instructions.md` has been updated to describe the design as
 current-state.
+
+## Contents
+
+- [`direct-otlp.md`](direct-otlp.md) — the direct-OTLP export design proposal, dashed-line
+  diagram, assumptions, and risks (issue #63).
+
