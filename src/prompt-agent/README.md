@@ -87,6 +87,26 @@ stub — see `model_client.py`), not re-derived at the span layer. See
 evidence, including a cross-check that `total == prompt + completion` for
 every scenario.
 
+## Correlation ID propagation (#29)
+
+`PromptAgent.invoke()` accepts an optional `correlation_id` argument; if the
+caller doesn't supply one (e.g. no upstream request ID to preserve), a new
+one is generated (`prompt_agent.correlation.generate_correlation_id()`, a
+`uuid4`) at the start of that call. The same correlation ID is then attached
+as a `correlation.id` attribute on **every span in that request's tree** —
+`prompt_agent.invoke`, `tool.lookup_plan_details`, and `llm.chat_completion`
+— and is also returned on `AgentResult.correlation_id` so a calling layer
+can log or return it without inspecting span data.
+
+**Telemetry coordination note:** the attribute key is exactly `correlation.id`
+(see `correlation.py`) — this is a custom key (OpenTelemetry/OpenInference
+have no first-party "correlation ID" semantic convention), distinct from
+OTel's own `trace_id`. It exists specifically so a request remains joinable
+by one key regardless of how many traces its work happens to span (see
+`samples/correlation-id-propagation-validation.md` for why this matters even
+in a single-process demo where every request currently shares one
+`trace_id`).
+
 ## Running locally
 
 ```powershell
@@ -122,8 +142,9 @@ src/prompt-agent/
 │   ├── __init__.py
 │   ├── main.py               # Entry point (placeholder hello + --scenarios runner)
 │   ├── config.py             # Env-var configuration loading (no secrets committed)
-│   ├── agent.py               # Core prompt/response flow + span instrumentation (#25, #27)
+│   ├── agent.py               # Core prompt/response flow + span instrumentation + OpenInference/correlation ID attrs (#25, #27, #28, #29)
 │   ├── model_client.py        # Model backend interface + stub Foundry client (#25)
+│   ├── correlation.py         # Correlation ID generation + attribute key constant (#29)
 │   └── telemetry.py           # OpenTelemetry SDK bootstrap: TracerProvider, exporter, shutdown hook (#26)
 ├── synthetic/                # Synthetic fixture data — no real customer data, ever
 │   ├── README.md

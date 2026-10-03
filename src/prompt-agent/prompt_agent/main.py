@@ -35,12 +35,17 @@ def run_scenarios() -> int:
     """Run every synthetic member-services scenario and print the result.
 
     All prompts/responses here are synthetic (see synthetic/scenarios.py and
-    synthetic/README.md) — never real member/benefits data.
+    synthetic/README.md) — never real member/benefits data. Each scenario is
+    treated as an independent request, so each gets its own freshly
+    generated correlation ID (#29) — printed alongside the result so the
+    correlation ID -> trace mapping is visible without needing a trace
+    backend.
     """
     agent = PromptAgent()
     for scenario in SCENARIOS:
         result = agent.invoke(scenario.prompt, plan_name=scenario.synthetic_plan_name)
         print(f"--- scenario: {scenario.scenario_id} (synthetic_member_id={scenario.synthetic_member_id}) ---")
+        print(f"correlation_id: {result.correlation_id}")
         print(f"prompt:    {result.prompt}")
         if result.tool_output:
             print(f"tool_out:  {result.tool_output}")
