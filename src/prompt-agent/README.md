@@ -49,6 +49,22 @@ fake placeholder values so the scaffold runs without any Azure resources.
 None of the defaults above are real credentials or endpoints — they are
 intentionally obvious placeholders.
 
+## OpenTelemetry / Application Insights export (#26)
+
+| Variable | Purpose | Local default |
+|---|---|---|
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | App Insights connection string (set by Infrastructure's #16 provisioning) | unset → falls back to console exporter |
+
+- If `APPLICATIONINSIGHTS_CONNECTION_STRING` is set, spans export to
+  Application Insights via `azure-monitor-opentelemetry-exporter` (install
+  with `pip install -e ".[azure]"`).
+- If it is unset (e.g. local dev, this sandbox, or CI), spans export to the
+  console via `ConsoleSpanExporter` instead — the SDK still runs and is
+  fully testable without any live Azure resources.
+- `prompt_agent.telemetry.configure_tracing()` is idempotent (safe to call
+  more than once) and registers an `atexit` flush/shutdown hook so buffered
+  spans are not lost on process exit.
+
 ## Running locally
 
 ```powershell
@@ -85,7 +101,8 @@ src/prompt-agent/
 │   ├── main.py               # Entry point (placeholder hello + --scenarios runner)
 │   ├── config.py             # Env-var configuration loading (no secrets committed)
 │   ├── agent.py               # Core prompt/response flow + synthetic tool call (#25)
-│   └── model_client.py        # Model backend interface + stub Foundry client (#25)
+│   ├── model_client.py        # Model backend interface + stub Foundry client (#25)
+│   └── telemetry.py           # OpenTelemetry SDK bootstrap: TracerProvider, exporter, shutdown hook (#26)
 ├── synthetic/                # Synthetic fixture data — no real customer data, ever
 │   ├── README.md
 │   └── scenarios.py           # 5 synthetic member-services demo scenarios (#25)

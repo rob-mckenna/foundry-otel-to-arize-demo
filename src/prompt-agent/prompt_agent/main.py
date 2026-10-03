@@ -3,7 +3,8 @@
 Running with no arguments prints the placeholder "hello agent" line (kept
 for #24's acceptance criteria). Pass `--scenarios` to run all synthetic
 member-services scenarios from #25 end-to-end and print each prompt/response
-pair.
+pair. The OpenTelemetry SDK (#26) is bootstrapped once at startup regardless
+of mode, so every run emits at least a startup span.
 """
 from __future__ import annotations
 
@@ -11,6 +12,7 @@ import argparse
 
 from prompt_agent.agent import PromptAgent
 from prompt_agent.config import load_config
+from prompt_agent.telemetry import configure_tracing, get_tracer, shutdown_tracing
 
 try:  # synthetic/ lives at the project root, alongside prompt_agent/
     from synthetic.scenarios import SCENARIOS
@@ -60,11 +62,20 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    if args.scenarios:
-        return run_scenarios()
-
-    print(hello_agent())
-    return 0
+    configure_tracing()
+    tracer = get_tracer(__name__)
+    try:
+        # Manual startup span — proves the SDK/exporter pipeline is wired up
+        # end-to-end (#26's validation step), independent of the model/tool
+        # call spans added in #27.
+        with tracer.start_as_current_span("prompt_agent.startup"):
+            if args.scenarios:
+                return run_scenarios()
+            print(hello_agent())
+            return 0
+    finally:
+        # Flush-on-shutdown so spans are not dropped on process exit.
+        shutdown_tracing()
 
 
 if __name__ == "__main__":
