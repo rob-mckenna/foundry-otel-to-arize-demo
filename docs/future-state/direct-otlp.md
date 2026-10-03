@@ -66,11 +66,14 @@ been benchmarked or validated (see Validation Status below).
 
 ## Product Dependency
 
-Summary: this design depends on OTLP export support existing (or being added) somewhere in the
-Foundry Prompt Agent hosting environment, and on network/security posture allowing an Azure-hosted
-workload to call an external OTLP endpoint directly. A full living tracking table of specific
-product/platform dependencies, their status, and sources is tracked under issue #64 and will be
-added as `/docs/future-state/dependencies.md` in a follow-on PR stacked on this one.
+This design depends on OTLP export support existing (or being added) somewhere in the Foundry
+Prompt Agent hosting environment, and on network/security posture allowing that environment to call
+an external OTLP endpoint directly. See
+[`/docs/future-state/dependencies.md`](dependencies.md) for the full living tracking table of
+specific product/platform dependencies, their status, and cited sources (issue #64). Headline
+findings as of 2026-10-03: Arize's OTLP ingestion endpoint is confirmed-available per Arize's own
+docs; whether this repo's specific Prompt Agent product surface (as opposed to the related but
+distinct "hosted agent" surface Microsoft documents) supports a custom OTLP exporter is unconfirmed.
 
 ## Assumptions
 
@@ -132,5 +135,4 @@ assumption, not a tested result.
 - [x] "CONCEPTUAL — NOT IMPLEMENTED" label present near the top
 - [x] Dashed-line Mermaid diagram included, styled per `copilot-instructions.md` future-state conventions
 - [x] Explicit list of product/platform dependencies not yet confirmed (summarized above; full
-      tracking table added as `/docs/future-state/dependencies.md` in the stacked follow-on PR for
-      issue #64)
+      tracking table committed as `/docs/future-state/dependencies.md`, issue #64)

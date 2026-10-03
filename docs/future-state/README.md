@@ -18,4 +18,6 @@ current-state.
 
 - [`direct-otlp.md`](direct-otlp.md) — the direct-OTLP export design proposal, dashed-line
   diagram, assumptions, and risks (issue #63).
+- [`dependencies.md`](dependencies.md) — living product-dependency tracking table for the
+  direct-OTLP proposal, with cited status per dependency (issue #64).
 
