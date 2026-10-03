@@ -61,6 +61,19 @@ Expected output (placeholder "hello agent" response):
 Hello from Foundry Prompt Agent 'foundry-prompt-agent' v0.1.0 (dev) — deployment='synthetic-gpt-demo' mode=SYNTHETIC/PLACEHOLDER.
 ```
 
+To run the synthetic member-services/benefits-lookup scenarios end-to-end
+(#25):
+
+```powershell
+python -m prompt_agent.main --scenarios
+```
+
+This calls `PromptAgent.invoke()` for each fixture in `synthetic/scenarios.py`
+against the stub model client (`prompt_agent/model_client.py` —
+`# STUB: replace with real Foundry Prompt Agent SDK call`) and prints the
+prompt, any tool-lookup output, the response, and token counts for each. See
+`samples/scenario-run-2026-10-02.md` for captured sample output.
+
 ## Project layout
 
 ```
@@ -69,10 +82,14 @@ src/prompt-agent/
 ├── README.md                # This file
 ├── prompt_agent/
 │   ├── __init__.py
-│   ├── main.py               # Entry point
-│   └── config.py             # Env-var configuration loading (no secrets committed)
+│   ├── main.py               # Entry point (placeholder hello + --scenarios runner)
+│   ├── config.py             # Env-var configuration loading (no secrets committed)
+│   ├── agent.py               # Core prompt/response flow + synthetic tool call (#25)
+│   └── model_client.py        # Model backend interface + stub Foundry client (#25)
 ├── synthetic/                # Synthetic fixture data — no real customer data, ever
-│   └── README.md
+│   ├── README.md
+│   └── scenarios.py           # 5 synthetic member-services demo scenarios (#25)
+├── samples/                  # Captured sample prompt/response output (#25)
 └── tests/                    # pytest unit tests
 ```
 
