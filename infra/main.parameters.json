@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "projectToken": { "value": "fotoa" },
+    "environment": { "value": "demo" },
+    "location": { "value": "eastus2" },
+    "regionToken": { "value": "eastus2" },
+    "ownerTag": { "value": "infra-team" },
+    "costCenterTag": { "value": "demo-engineering" },
+    "foundrySkuName": { "value": "Basic" },
+    "projectDisplayName": { "value": "Foundry OTel to Arize Demo" },
+    "logAnalyticsRetentionInDays": { "value": 30 },
+    "logAnalyticsDailyQuotaGb": { "value": 1 },
+    "keyVaultSkuName": { "value": "standard" },
+    "keyVaultSoftDeleteRetentionInDays": { "value": 90 },
+    "enablePrivateEndpoints": { "value": false },
+    "networkCreateVirtualNetwork": { "value": true },
+    "networkExistingSubnetResourceId": { "value": "" }
+  }
+}
