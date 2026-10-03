@@ -49,4 +49,6 @@ status. Current-state (validated) code lives only under `/src` and `/infra`; fut
 
 This repo is maintained using the [Squad](.squad) team framework. See
 [`.github/copilot-instructions.md`](.github/copilot-instructions.md) for conventions on
-architecture, security, telemetry, testing, and documentation that apply to every contribution.
+architecture, security, telemetry, testing, and documentation that apply to every contribution,
+and [`CONTRIBUTING.md`](CONTRIBUTING.md) for the short doc-drift checklist to run through before
+opening a PR that changes architecture or behavior.
