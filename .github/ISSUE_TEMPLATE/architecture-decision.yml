@@ -1,0 +1,90 @@
+name: Architecture Decision
+description: Propose or record an architecture decision affecting the Foundry-to-Arize observability demo (current-state or future-state).
+title: "[Architecture]: "
+labels: ["Architecture"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for architecture decisions that affect more than one track (Prompt Agent, Infra, Telemetry Pipeline, Arize integration) or that change what counts as current-state vs. future-state.
+
+        Once this decision is recommended/accepted, record it as a durable ADR under [`/docs/adr`](../../docs/adr/README.md) using the [ADR template](../../docs/adr/template.md) — see `/docs/adr/README.md` for the full process and numbering rules.
+
+        **Synthetic data only.** Do not include secrets, connection strings, or any real healthcare/personal data in this form.
+  - type: textarea
+    id: decision-title
+    attributes:
+      label: Decision Title
+      description: A short, specific name for the decision being made.
+      placeholder: "e.g., Adopt OpenInference span naming convention for retriever spans"
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What situation or problem prompts this decision? What's the current state of things?
+    validations:
+      required: true
+  - type: textarea
+    id: current-state-impact
+    attributes:
+      label: Current-State Impact
+      description: How does this decision affect the validated, implemented pipeline under /src and /infra? State "None" explicitly if there is no current-state impact.
+    validations:
+      required: true
+  - type: textarea
+    id: future-state-impact
+    attributes:
+      label: Future-State Impact
+      description: How does this decision affect the conceptual direct-OTLP future-state design under /docs/future-state? State "None" explicitly if there is no future-state impact.
+    validations:
+      required: true
+  - type: textarea
+    id: options-considered
+    attributes:
+      label: Options Considered
+      description: List the alternatives considered, with brief pros/cons for each.
+      placeholder: |
+        1. Option A — pros / cons
+        2. Option B — pros / cons
+    validations:
+      required: true
+  - type: textarea
+    id: recommended-decision
+    attributes:
+      label: Recommended Decision
+      description: Which option is recommended, and why?
+    validations:
+      required: true
+  - type: textarea
+    id: security-considerations
+    attributes:
+      label: Security Considerations
+      description: Secrets/Key Vault impact, managed identity impact, data classification, PII/PHI exposure risk. State "None" explicitly if there are none.
+    validations:
+      required: true
+  - type: textarea
+    id: observability-considerations
+    attributes:
+      label: Observability Considerations
+      description: Impact on trace/span/correlation-ID preservation, token-usage telemetry, Application Insights custom dimensions, or Arize ingestion.
+    validations:
+      required: true
+  - type: textarea
+    id: open-questions
+    attributes:
+      label: Open Questions
+      description: Anything unresolved, unvalidated, or dependent on product/platform behavior not yet confirmed.
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Checklist of conditions that must be true for this decision to be considered adopted/closed.
+      placeholder: |
+        - [ ] Decision recorded as an ADR under /docs/adr (see /docs/adr/README.md)
+        - [ ] copilot-instructions.md updated if architecture/conventions changed
+        - [ ] Current-state/future-state separation preserved
+        - [ ] Affected tracks (Infra/Agent/Telemetry/QA) notified
+    validations:
+      required: true

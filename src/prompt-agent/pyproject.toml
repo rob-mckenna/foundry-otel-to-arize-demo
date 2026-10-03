@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prompt-agent"
+version = "0.1.0"
+description = "Foundry Prompt Agent (current-state) — instrumented with OpenTelemetry/OpenInference for the foundry-otel-to-arize-demo repo."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Squad: Agent (Application / Prompt Agent Developer)" },
+]
+# NOTE: This is current-state demo code. Dependencies are kept minimal and
+# synthetic-data-safe. No credentials are declared here — see config.py for
+# how configuration/secrets are sourced (env vars / Key Vault references only).
+dependencies = [
+    "opentelemetry-api>=1.24.0",
+    "opentelemetry-sdk>=1.24.0",
+    # Pinned to the 0.1.x OpenInference trace semantic-convention spec (see
+    # https://github.com/Arize-ai/openinference/tree/main/spec) — #28 maps
+    # these attribute names onto our spans.
+    "openinference-semantic-conventions>=0.1.39,<0.2.0",
+]
+
+[project.optional-dependencies]
+# Azure Monitor exporter is optional so the scaffold still builds/runs/tests
+# in sandboxes without Azure credentials or network access (see #26).
+azure = [
+    "azure-monitor-opentelemetry-exporter>=1.0.0b21",
+]
+test = [
+    "pytest>=8.0.0",
+]
+
+[project.scripts]
+prompt-agent = "prompt_agent.main:main"
+
+[tool.setuptools.packages.find]
+include = ["prompt_agent*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
