@@ -120,11 +120,14 @@ scenarios.
 
 ## 6. In-memory validation performed in this pass
 
-Ran the existing `src/prompt-agent` unit test suite (`pytest`), which exercises the exact span tree
-and attribute set described above via `InMemorySpanExporter` (no live Azure resources required) —
-see `src/prompt-agent/tests/test_agent_spans.py::test_llm_span_has_openinference_attributes_and_token_counts`
-and `::test_tool_span_has_openinference_attributes` for the assertions backing §3's "Validated
-in-memory" column.
+No Python interpreter was available in this validation environment to re-run the suite, so this
+pass cross-checked §3's attribute/type/value claims by direct code inspection of
+`src/prompt-agent/prompt_agent/agent.py` / `retry.py` against the existing assertions in
+`src/prompt-agent/tests/test_agent_spans.py::test_llm_span_has_openinference_attributes_and_token_counts`
+and `::test_tool_span_has_openinference_attributes` (which exercise the exact span tree and
+attribute set described above via `InMemorySpanExporter`, no live Azure resources required). Anyone
+with a working Python 3.10+ environment can re-run `pytest` under `src/prompt-agent` to confirm
+these assertions still pass.
 
 ## Related
 
