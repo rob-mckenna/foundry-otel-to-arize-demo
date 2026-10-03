@@ -21,6 +21,10 @@ For a capability-by-capability implementation status check (done / partial / not
 cross-checked against the actual code/IaC), see
 [`/docs/architecture/capability-matrix.md`](../architecture/capability-matrix.md).
 
+See [`separation-audit.md`](separation-audit.md) for the Milestone 4 current-state/future-state
+separation audit (issue #14) — the latest full-repo check confirming no conceptual content has
+leaked into `/src` or `/infra`, and no current-state claim is unlabeled or overstated.
+
 Only describe behavior that has been implemented under `/src` and `/infra` and verified. Known
 limitations, unvalidated assumptions, and schema-mapping gaps must be called out explicitly here
 rather than silently omitted (see `/.github/copilot-instructions.md` §16).
