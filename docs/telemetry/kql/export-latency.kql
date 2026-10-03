@@ -1,0 +1,19 @@
+// export-latency.kql
+// Description: Measures the latency between a span's recorded timestamp and its Log Analytics
+// ingestion time (ingestion_time()), as a proxy for how long the App Insights -> Log Analytics hop
+// of the pipeline takes before a row is even available to the Event Hub export rule (#35). Large or
+// growing latency here is an early warning sign for downstream Event Hub/Function lag, independent
+// of anything Arize-side.
+// Expected output shape: a table with columns [bucket (1h), p50LatencySeconds, p95LatencySeconds,
+// maxLatencySeconds], one row per hour bucket in the last 24 hours. Healthy result for this demo's
+// low-volume synthetic traffic: p95 well under a few minutes; any multi-hour latency indicates an
+// export pipeline stall worth investigating before blaming the Function/Arize hop.
+AppDependencies
+| where timestamp > ago(24h)
+| extend ingestionLatencySeconds = datetime_diff('second', ingestion_time(), timestamp)
+| summarize
+    p50LatencySeconds = percentile(ingestionLatencySeconds, 50),
+    p95LatencySeconds = percentile(ingestionLatencySeconds, 95),
+    maxLatencySeconds = max(ingestionLatencySeconds)
+    by bucket = bin(timestamp, 1h)
+| order by bucket asc

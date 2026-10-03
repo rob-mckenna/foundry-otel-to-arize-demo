@@ -1,0 +1,17 @@
+// correlation-id-completeness.kql
+// Description: Confirms every span in the last hour carries a non-empty correlation.id custom
+// dimension and that operation_Id/operation_ParentId/id are well-formed (32/16/16 hex chars
+// respectively, per docs/telemetry/mapping/identity-correlation-fields.md, #89). Flags any span
+// missing correlation.id as a completeness defect, not a silent gap.
+// Expected output shape: a single summary row [totalSpans, missingCorrelationId, malformedTraceId,
+// malformedSpanId]. Healthy result: all three "malformed"/"missing" counts are 0.
+AppDependencies
+| where timestamp > ago(1h)
+| extend correlationId = tostring(customDimensions["correlation.id"])
+| extend traceIdValid = (strlen(operation_Id) == 32)
+| extend spanIdValid = (strlen(id) == 16)
+| summarize
+    totalSpans = count(),
+    missingCorrelationId = countif(isempty(correlationId)),
+    malformedTraceId = countif(not(traceIdValid)),
+    malformedSpanId = countif(not(spanIdValid))

@@ -1,0 +1,13 @@
+// span-kind-coverage.kql
+// Description: Counts spans by OpenInference span kind over the last hour, to confirm every
+// expected span kind (CHAIN, TOOL, LLM) is present and no kind is silently missing from the
+// synthetic demo traffic. Retry-attempt spans (which carry no openinference.span.kind) surface
+// under the "" (empty string) bucket, which is itself useful drift signal if its count diverges
+// unexpectedly from the number of llm.chat_completion.attempt rows.
+// Expected output shape: a table with columns [kind, spanCount], one row per distinct span kind
+// seen (including one row for "" if any retry-attempt spans exist in the window), each with a
+// non-zero count for a healthy synthetic run.
+AppDependencies
+| where timestamp > ago(1h)
+| summarize spanCount = count() by kind = tostring(customDimensions["openinference.span.kind"])
+| order by spanCount desc

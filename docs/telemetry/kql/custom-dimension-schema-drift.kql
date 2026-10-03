@@ -1,0 +1,17 @@
+// custom-dimension-schema-drift.kql
+// Description: Detects schema drift in customDimensions keys relative to the documented schema
+// (docs/telemetry/custom-dimensions-schema.md, #33) - e.g. a Prompt Agent code change that renames
+// or adds an attribute without a corresponding mapping-doc/Function update. Lists every distinct
+// customDimensions key seen per span Name in the last 24 hours so an unexpected new/renamed key
+// stands out immediately against the known schema.
+// Expected output shape: a table with columns [Name, customDimensionKeys (dynamic array), sampleCount].
+// Healthy result: each span Name's customDimensionKeys set exactly matches the documented set for
+// that span kind in custom-dimensions-schema.md - any key not in that doc is schema drift requiring
+// a mapping-doc update (and likely a Function change) before it's silently dropped or mis-typed
+// downstream.
+AppDependencies
+| where timestamp > ago(24h)
+| extend keys = bag_keys(customDimensions)
+| mv-expand key = keys to typeof(string)
+| summarize customDimensionKeys = make_set(key), sampleCount = count() by Name
+| order by Name asc
