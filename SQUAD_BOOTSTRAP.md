@@ -77,18 +77,16 @@ demo-validation, architecture-decision, future-state-proposal), and `.github/pul
 
 ## GitHub Project Board
 
-A GitHub Project (v2) board titled **"Foundry OTel to Arize Demo"** was intended to track issues through
-Backlog → Ready → In Progress → Review → Demo Validation → Complete. **Project (v2) creation could not be
-completed by automation in this environment** — the `gh` CLI token in use has `repo, workflow, gist,
-read:org, read:packages` scopes but lacks the `project` scope required by `gh project create` /
-`gh api graphql` project mutations, and `gh auth refresh` cannot run non-interactively while `GH_TOKEN` is
-set. **Manual setup (~2 minutes):**
-1. Go to the repo → **Projects** tab → **New project** → choose **Board** → title it
-   "Foundry OTel to Arize Demo".
-2. Open the default **Status** single-select field → **Edit field** → replace/add options:
-   `Backlog`, `Ready`, `In Progress`, `Review`, `Demo Validation`, `Complete`.
-3. Use the **Add item** bulk-add flow (or `gh project item-add` once a maintainer's token has the `project`
-   scope) to add all 65 issues (#1–#65).
+A GitHub Project (v2) board titled **"Foundry OTel to Arize Demo"** is live at
+**https://github.com/users/rob-mckenna/projects/7** and tracks all 65 issues (#1–#65) through the following
+**Status** columns, in order:
+
+`Backlog` → `Ready` → `In Progress` → `Review` → `Demo Validation` → `Complete`
+
+All 65 issues were added and currently sit in **Backlog** (the starting column) as of 2026-10-02. The board
+was created and configured via `gh project create` + `gh api graphql` (`updateProjectV2Field` mutation on
+the single-select `Status` field) once the `gh` CLI token's `project`/`read:project` scopes were restored —
+the prior scope limitation documented here previously is resolved.
 
 ## Project Name (legacy)
 
