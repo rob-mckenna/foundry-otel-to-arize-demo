@@ -65,6 +65,28 @@ intentionally obvious placeholders.
   more than once) and registers an `atexit` flush/shutdown hook so buffered
   spans are not lost on process exit.
 
+## OpenInference attribute mapping (#28)
+
+Every model/tool span (see "Span instrumentation" below) carries
+[OpenInference](https://github.com/Arize-ai/openinference) trace
+semantic-convention attributes, using the `openinference-semantic-conventions`
+package **pinned to the `0.1.x` spec** (`>=0.1.39,<0.2.0` in `pyproject.toml`)
+so attribute key names track the upstream spec rather than being hand-typed
+string literals that could drift.
+
+| Span | `openinference.span.kind` | Other attributes |
+|---|---|---|
+| `prompt_agent.invoke` | `CHAIN` | `input.value` (original user prompt), `output.value` (final response text) |
+| `tool.lookup_plan_details` | `TOOL` | `input.value` (plan name), `output.value` (lookup result) |
+| `llm.chat_completion` | `LLM` | `input.value` (effective prompt sent to the model), `output.value` (model response text), `llm.model_name`, `llm.token_count.prompt`, `llm.token_count.completion`, `llm.token_count.total` |
+
+Token counts come straight from `ModelResponse` (real API-reported counts
+once a real Foundry client is wired in; whitespace-estimated for the current
+stub — see `model_client.py`), not re-derived at the span layer. See
+`samples/openinference-attribute-validation.md` for captured validation
+evidence, including a cross-check that `total == prompt + completion` for
+every scenario.
+
 ## Running locally
 
 ```powershell

@@ -7,13 +7,17 @@ call, invoke the model, and return a response.
 #27 wraps every externally-visible call (the tool lookup and the model
 call) in its own OpenTelemetry span, nested under a top-level
 `prompt_agent.invoke` span so parent-child relationships are correct for a
-full request. OpenInference semantic-convention attributes (prompt,
-completion, token usage) are added on top of these spans in #28.
+full request. #28 adds OpenInference semantic-convention attributes
+(prompt/completion text, token counts, `openinference.span.kind`) on top of
+these same spans, using the `openinference-semantic-conventions` package
+pinned to the 0.1.x spec (see pyproject.toml) so attribute key names track
+the upstream spec rather than being hand-typed string literals.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
 
+from openinference.semconv.trace import OpenInferenceSpanKindValues, SpanAttributes
 from opentelemetry.trace import SpanKind, Status, StatusCode
 
 from prompt_agent.config import PromptAgentConfig, load_config
@@ -42,10 +46,15 @@ def lookup_plan_details(plan_name: str) -> str:
     automatically before the exception propagates.
     """
     with _tracer.start_as_current_span("tool.lookup_plan_details", kind=SpanKind.CLIENT) as span:
+        span.set_attribute(
+            SpanAttributes.OPENINFERENCE_SPAN_KIND, OpenInferenceSpanKindValues.TOOL.value
+        )
+        span.set_attribute(SpanAttributes.INPUT_VALUE, plan_name)
         result = _SYNTHETIC_PLAN_DIRECTORY.get(
             plan_name.strip().lower(),
             f"No synthetic plan details on file for '{plan_name}'.",
         )
+        span.set_attribute(SpanAttributes.OUTPUT_VALUE, result)
         span.set_status(Status(StatusCode.OK))
         return result
 
@@ -78,6 +87,10 @@ class PromptAgent:
         here is left uninstrumented.
         """
         with _tracer.start_as_current_span("prompt_agent.invoke", kind=SpanKind.INTERNAL) as invoke_span:
+            invoke_span.set_attribute(
+                SpanAttributes.OPENINFERENCE_SPAN_KIND, OpenInferenceSpanKindValues.CHAIN.value
+            )
+            invoke_span.set_attribute(SpanAttributes.INPUT_VALUE, prompt)
             tool_output: str | None = None
             effective_prompt = prompt
             if plan_name:
@@ -85,8 +98,18 @@ class PromptAgent:
                 effective_prompt = f"{prompt}\n\n[Synthetic plan lookup result: {tool_output}]"
 
             with _tracer.start_as_current_span("llm.chat_completion", kind=SpanKind.CLIENT) as model_span:
+                model_span.set_attribute(
+                    SpanAttributes.OPENINFERENCE_SPAN_KIND, OpenInferenceSpanKindValues.LLM.value
+                )
+                model_span.set_attribute(SpanAttributes.INPUT_VALUE, effective_prompt)
                 response = self._model_client.complete(effective_prompt)
+                model_span.set_attribute(SpanAttributes.OUTPUT_VALUE, response.text)
+                model_span.set_attribute(SpanAttributes.LLM_MODEL_NAME, response.model_name)
+                model_span.set_attribute(SpanAttributes.LLM_TOKEN_COUNT_PROMPT, response.prompt_tokens)
+                model_span.set_attribute(SpanAttributes.LLM_TOKEN_COUNT_COMPLETION, response.completion_tokens)
+                model_span.set_attribute(SpanAttributes.LLM_TOKEN_COUNT_TOTAL, response.total_tokens)
                 model_span.set_status(Status(StatusCode.OK))
 
+            invoke_span.set_attribute(SpanAttributes.OUTPUT_VALUE, response.text)
             invoke_span.set_status(Status(StatusCode.OK))
             return AgentResult(prompt=prompt, response=response, tool_output=tool_output)
