@@ -75,3 +75,52 @@
   (`git worktree add`), never from a shared checkout's `main`, and should re-fetch/re-diff against
   `origin/main` right before merging, not just at branch-creation time — the base can move under
   you in a multi-agent repo even within a single cleanup session.
+
+### Milestone 4/5 docs: audits and future-state design (2026-10-03)
+
+- Worked 5 issues end-to-end with per-issue worktrees (`.worktrees/lead-{N}`, removed immediately
+  after each PR was pushed): #60 (architecture-docs sync, PR #96), #14 (current/future-state
+  separation audit, PR #100), #63 (future-state direct-OTLP design doc, PR #102), #64 (product-
+  dependency tracking, PR #105), #65 (trace/correlation-ID preservation risk assessment, PR #108).
+  No shared-checkout work; the Milestone 1 worktree-isolation lesson held up cleanly across all 5.
+- **Stacked-branch pattern for textually-dependent issues:** #63/#64/#65 all extend the *same* file
+  (`docs/future-state/direct-otlp.md`), and the task required one branch + one PR per issue (no
+  combining). Rather than branching all three from `main` (which would force one giant merge
+  conflict or an artificial ordering fight), I branched #64 off `squad/63-...` and #65 off
+  `squad/64-...` — a standard stacked-PR pattern. Each worktree was still fully isolated
+  (`git worktree add .worktrees/lead-64 -b squad/64-... origin/squad/63-...`), so this is NOT the
+  same thing as working in a shared checkout; it's a deliberate content dependency, stated
+  explicitly in each PR body ("merge order: #63 → #64 → #65") so the reviewer doesn't merge out of
+  sequence and create a spurious conflict. Recommend this pattern whenever a cluster of issues is
+  explicitly chained via "Depends on #N" and all touch the same doc/file.
+- **Drift-finding handling respects track ownership — don't fix what you don't own, route it
+  instead:** found the same `src/telemetry-pipeline/README.md` drift (claims
+  `Status: CURRENT-STATE (validated, implemented)` and describes Function transform code, but the
+  directory holds only that README, no code) independently from three different angles — issue
+  #60's capability matrix, issue #14's audit, and issue #65's cross-reference check against #37's
+  (closed) "preservation proof" acceptance criteria, which also turned out to have no corresponding
+  artifact in the repo. Did not touch `/src/telemetry-pipeline` in any of the three PRs (owned by
+  the Telemetry track per `.squad/agents/telemetry/charter.md` and Lead's own charter boundary).
+  Filed one decision note (`.squad/decisions/inbox/lead-telemetry-pipeline-readme-drift.md`) from
+  #14 with two suggested resolutions, then *referenced* that same note from #60 and #65 rather than
+  re-filing duplicates — one drift, one decision record, multiple honest cross-references.
+- **"Closed" issue ≠ "artifact exists" — verify files, not issue state, every time.** Issue #37
+  ("trace/span/correlation-ID preservation proof") is closed, but no conversion-logic doc, round-
+  trip test, or KQL/Arize query evidence matching its acceptance criteria exists anywhere in
+  `/docs/current-state` or `/src/telemetry-pipeline`. This matters beyond the drift finding itself:
+  it meant issue #65's risk assessment had no validated current-state baseline to compare the
+  future-state design against, so I explicitly documented that gap in the risk assessment ("no
+  baseline artifact to be inconsistent with yet") instead of silently assuming #37's proof existed
+  somewhere I hadn't looked, or quietly skipping the comparison #65 asked for.
+  Recommend any future milestone audit treat "closed" as "claims to be done," never as "is done" —
+  grep the actual files every time.
+- **Verify vendor/product claims against live docs, not memory or assumption, before letting them
+  into a design doc.** For #64's dependency table, used `web_fetch` against Arize's own
+  documentation and Microsoft Learn's Foundry telemetry docs rather than guessing. Caught a subtle
+  but important distinction in the process: Microsoft's docs confirm OTLP export for Foundry
+  **hosted agents**, which is a related but not necessarily identical product surface to this
+  repo's "Prompt Agent." Marked that specific dependency "Unconfirmed" rather than "Confirmed-
+  available" to avoid quietly overclaiming — a future-state doc's credibility depends on every
+  single claim being this careful, not just the headline ones.
+- Ended the task with zero `lead-*` worktrees left open (`git worktree list` shows only this
+  history-append on `main`, plus other squad members' in-flight worktrees, untouched).
