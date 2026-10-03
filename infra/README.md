@@ -20,7 +20,8 @@ infra/
     ├── foundry-project.bicep  # Azure AI Foundry hub + project (issue #15) ✅
     ├── app-insights.bicep     # Log Analytics + Application Insights (issue #16) ✅
     ├── key-vault.bicep        # Key Vault (RBAC) + managed identity wiring pattern (issue #18) ✅
-    └── networking.bicep       # Optional private endpoint module (issue #21) ✅
+    ├── networking.bicep       # Optional private endpoint module (issue #21) ✅
+    └── function-app.bicep     # Azure Function App shell for telemetry transform pipeline (issue #19) ✅
 ```
 
 Each module is independently parameterized (no hardcoded names, regions, or
@@ -182,6 +183,64 @@ with this PR) or a follow-up decision entry.
 
 This decision is also recorded in
 `.squad/decisions/inbox/infra-network-posture.md` for the Scribe to merge.
+
+## Function App telemetry transform pipeline (issue #19)
+
+`modules/function-app.bicep` provisions the Function App "shell" for the
+Event Hub -> OTLP transform pipeline: a dedicated storage account, an App
+Service plan, and the Function App itself, ready for Telemetry to deploy
+the actual transform code (Milestone 2).
+
+**Hosting plan: Consumption (Y1) by default.** This demo pipeline runs
+against bursty, low-volume manual/scripted demo traffic, not a
+latency-sensitive production workload - a few seconds of cold start after
+idle is an acceptable trade-off for near-zero idle cost, and reinforces the
+"low operational overhead" pitch in issue #19. Set `hostingPlanTier:
+'Premium'` for a single-parameter upgrade to an Elastic Premium (EP1) plan
+when a POC needs no cold start and/or VNet integration - no template
+rewrite required, same pattern as the private-endpoint upgrade path.
+
+**No inline secrets, no shared keys:**
+
+- System-assigned managed identity is enabled on the Function App.
+- `AzureWebJobsStorage` uses the identity-based connection
+  (`AzureWebJobsStorage__accountName` / `__credential: managedidentity`)
+  instead of a storage connection-string app setting. The identity is
+  granted least-privilege Storage Blob/Queue/Table Data Contributor roles
+  on the dedicated storage account.
+- The Event Hub (issue #17) trigger binding uses the identity-based
+  `<prefix>__fullyQualifiedNamespace` / `__credential: managedidentity`
+  pattern (the namespace host name is not a secret) when
+  `eventHubNamespaceFqdn` is supplied; the identity is granted "Azure Event
+  Hubs Data Receiver" when `eventHubNamespaceResourceId` is also supplied.
+  A Key-Vault-backed connection-string fallback is available via
+  `eventHubConnectionSecretName` for tooling that cannot use identity-based
+  bindings.
+- `APPLICATIONINSIGHTS_CONNECTION_STRING` is wired as a Key Vault reference
+  (`@Microsoft.KeyVault(SecretUri=...)`) against the secret
+  `app-insights.bicep` already writes (issue #16) - never a plaintext app
+  setting. `extraKeyVaultReferenceAppSettings` supports additional secrets
+  (e.g. a future Arize API key) the same way.
+- The module grants itself the necessary "Key Vault Secrets User" /
+  "Azure Event Hubs Data Receiver" roles when the corresponding Key
+  Vault/Event Hub namespace identifiers are supplied as parameters. If they
+  are not (e.g. deploying this module stand-alone before those resources'
+  names are known), grant the roles in a later cross-wiring deployment by
+  adding the Function App's `functionAppPrincipalId` output to
+  `modules/key-vault.bicep`'s `readerPrincipalIds` and
+  `modules/event-hub.bicep`'s `receiverPrincipalIds` - the same two-phase
+  pattern used throughout this stack.
+
+**Not yet wired into `main.bicep`.** Issue #17 (Event Hub) was still an
+open, unmerged PR when this module was authored; per the lesson recorded
+in `.squad/agents/infra/history.md` ("parallel branches editing
+`main.bicep`'s structure compounds conflicts"), this PR intentionally adds
+only the new, additive `modules/function-app.bicep` file and leaves
+`main.bicep`/`main.parameters*.json` wiring (plus cross-wiring
+`eventHub`'s `receiverPrincipalIds` and `keyVault`'s `readerPrincipalIds`
+to this module's `functionAppPrincipalId` output) as a fast-follow once
+both #17 and #19 have merged into `main`, avoiding a structural
+add/add conflict on the shared entry-point file.
 
 ## Validating a deployment
 
