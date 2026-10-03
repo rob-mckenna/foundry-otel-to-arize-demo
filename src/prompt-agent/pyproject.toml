@@ -39,3 +39,6 @@ prompt-agent = "prompt_agent.main:main"
 
 [tool.setuptools.packages.find]
 include = ["prompt_agent*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -30,6 +30,34 @@ python -m venv .venv
 pip install -e ".[test]"
 ```
 
+## Running tests (#31)
+
+```powershell
+cd src/prompt-agent
+pip install -e ".[test]"
+pytest
+```
+
+The suite uses OpenTelemetry's `InMemorySpanExporter` (attached alongside
+the normal console/Azure Monitor exporter — see `tests/conftest.py`) so
+every assertion runs fully in-process, with no console noise or network
+calls, asserting:
+
+- spans are created with the expected names, `SpanKind`, and correct
+  parent-child linkage (`tests/test_agent_spans.py`)
+- OpenInference attributes (`openinference.span.kind`, `input.value`,
+  `output.value`, `llm.model_name`, `llm.token_count.*`) are present and
+  correct (`tests/test_agent_spans.py`)
+- token counts are captured on both the span attributes and
+  `AgentResult.response` (`tests/test_agent_spans.py`)
+- the correlation ID is generated when absent, honored when the caller
+  supplies one, and is attached to **every** span in a request's tree,
+  **including every retry attempt span** — both for a retry that
+  eventually recovers and one that exhausts all attempts and raises
+  (`tests/test_correlation_and_retry.py`)
+
+All 11 tests pass as of this writing.
+
 ## Configuration
 
 All configuration is read from environment variables — **never hardcoded**.
@@ -187,7 +215,11 @@ src/prompt-agent/
 │   ├── README.md
 │   └── scenarios.py           # 5 synthetic member-services demo scenarios (#25)
 ├── samples/                  # Captured sample prompt/response output (#25)
-└── tests/                    # pytest unit tests
+└── tests/                    # pytest unit tests (#31)
+    ├── __init__.py
+    ├── conftest.py             # InMemorySpanExporter fixture + span-lookup helpers
+    ├── test_agent_spans.py     # Span names/kind/parent-linkage + OpenInference attrs + token counts
+    └── test_correlation_and_retry.py  # Correlation ID propagation, incl. across retries
 ```
 
 ## Data policy
