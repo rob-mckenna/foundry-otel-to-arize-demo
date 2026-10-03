@@ -85,6 +85,23 @@ param networkCreateVirtualNetwork bool = true
 @description('Resource ID of an existing subnet to deploy private endpoints into, used only when enablePrivateEndpoints is true and networkCreateVirtualNetwork is false.')
 param networkExistingSubnetResourceId string = ''
 
+@description('Event Hub namespace SKU (issue #17). Standard is required for consumer groups.')
+@allowed([
+  'Basic'
+  'Standard'
+])
+param eventHubSkuName string = 'Standard'
+
+@description('Event Hub namespace throughput units, sized for demo-scale load (issue #17).')
+@minValue(1)
+@maxValue(20)
+param eventHubThroughputUnits int = 1
+
+@description('Event Hub partition count, sized for a single-Function-App demo consumer (issue #17).')
+@minValue(1)
+@maxValue(32)
+param eventHubPartitionCount int = 2
+
 module foundryProject 'modules/foundry-project.bicep' = {
   name: 'foundry-project-deployment'
   params: {
@@ -141,6 +158,27 @@ module keyVault 'modules/key-vault.bicep' = {
   }
 }
 
+// Event Hub namespace + hub (issue #17): sits between Application
+// Insights/Log Analytics (export source) and the Azure Function transform
+// pipeline (issue #19, Milestone 2). RBAC-only by default (no sender/
+// receiver principal IDs yet) - a future Function App module should add its
+// system-assigned identity to receiverPrincipalIds once it exists, following
+// the same two-phase cross-wiring pattern used by modules/key-vault.bicep.
+module eventHub 'modules/event-hub.bicep' = {
+  name: 'event-hub-deployment'
+  params: {
+    projectToken: projectToken
+    environment: environment
+    location: location
+    regionToken: regionToken
+    ownerTag: ownerTag
+    costCenterTag: costCenterTag
+    skuName: eventHubSkuName
+    throughputUnits: eventHubThroughputUnits
+    partitionCount: eventHubPartitionCount
+  }
+}
+
 @description('Resource ID of the Foundry project - the entry point the Prompt Agent is deployed into.')
 output foundryProjectResourceId string = foundryProject.outputs.projectResourceId
 
@@ -161,6 +199,15 @@ output keyVaultResourceId string = keyVault.outputs.keyVaultResourceId
 
 @description('Name of the Key Vault - needed by downstream modules (e.g. a future Function App) to wire additional RBAC role assignments.')
 output keyVaultName string = keyVault.outputs.keyVaultName
+
+@description('Name of the Event Hub namespace (issue #17) - needed by the Azure Function transform pipeline (issue #19) to bind via identity-based RBAC.')
+output eventHubNamespaceName string = eventHub.outputs.eventHubNamespaceName
+
+@description('Name of the Event Hub (within the namespace) that the transform pipeline should consume from.')
+output eventHubName string = eventHub.outputs.eventHubName
+
+@description('Name of the consumer group provisioned for the Azure Function transform pipeline (issue #19).')
+output eventHubFunctionConsumerGroupName string = eventHub.outputs.functionConsumerGroupName
 
 // Optional private-endpoint upgrade path (issue #21) - disabled by default.
 // See infra/README.md "Network posture" for the baseline-vs-private-endpoint
