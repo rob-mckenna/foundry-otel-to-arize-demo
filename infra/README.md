@@ -21,7 +21,8 @@ infra/
     ├── app-insights.bicep     # Log Analytics + Application Insights (issue #16) ✅
     ├── key-vault.bicep        # Key Vault (RBAC) + managed identity wiring pattern (issue #18) ✅
     ├── networking.bicep       # Optional private endpoint module (issue #21) ✅
-    └── event-hub.bicep        # Event Hub namespace + hub for telemetry streaming (issue #17) ✅
+    ├── event-hub.bicep        # Event Hub namespace + hub for telemetry streaming (issue #17) ✅
+    └── function-app.bicep     # Azure Function App shell for telemetry transform pipeline (issue #19) ✅
 ```
 
 Each module is independently parameterized (no hardcoded names, regions, or
@@ -200,12 +201,10 @@ and consumers are granted least-privilege data-plane roles instead:
 - `senderPrincipalIds` -> **Azure Event Hubs Data Sender**
 - `receiverPrincipalIds` -> **Azure Event Hubs Data Receiver**
 
-Both arrays default to empty in `main.bicep` - the Azure Function transform
-pipeline (issue #19) should add its system-assigned managed identity
-principal ID to `receiverPrincipalIds` once it exists, following the same
-two-phase cross-wiring pattern used by `modules/key-vault.bicep`
-(provision the shell first, cross-wire principal IDs in a follow-up
-deployment or parameter update).
+As of the Function App module (issue #19) being wired into `main.bicep`,
+the Function App's system-assigned managed identity is passed into
+`receiverPrincipalIds` automatically - no manual cross-wiring step is
+required for a fresh deployment.
 
 An **optional** connection-string fallback (`storeConnectionStringInKeyVault:
 true` + `keyVaultName`) is available for tooling that cannot use
@@ -218,6 +217,57 @@ section 8; this fallback is off by default and not wired in `main.bicep`.
 A dedicated consumer group (`functionConsumerGroupName`, default
 `function-transform`) is provisioned alongside `$Default` for the Function
 App to read from without competing with other consumers.
+
+## Function App telemetry transform pipeline (issue #19)
+
+`modules/function-app.bicep` provisions the Function App "shell" for the
+Event Hub -> OTLP transform pipeline: a dedicated storage account, an App
+Service plan, and the Function App itself, ready for Telemetry to deploy
+the actual transform code (Milestone 2).
+
+**Hosting plan: Consumption (Y1) by default.** This demo pipeline runs
+against bursty, low-volume manual/scripted demo traffic, not a
+latency-sensitive production workload - a few seconds of cold start after
+idle is an acceptable trade-off for near-zero idle cost, and reinforces the
+"low operational overhead" pitch in issue #19. Set `hostingPlanTier:
+'Premium'` for a single-parameter upgrade to an Elastic Premium (EP1) plan
+when a POC needs no cold start and/or VNet integration - no template
+rewrite required, same pattern as the private-endpoint upgrade path.
+
+**No inline secrets, no shared keys:**
+
+- System-assigned managed identity is enabled on the Function App.
+- `AzureWebJobsStorage` uses the identity-based connection
+  (`AzureWebJobsStorage__accountName` / `__credential: managedidentity`)
+  instead of a storage connection-string app setting. The identity is
+  granted least-privilege Storage Blob/Queue/Table Data Contributor roles
+  on the dedicated storage account.
+- The Event Hub (issue #17) trigger binding uses the identity-based
+  `<prefix>__fullyQualifiedNamespace` / `__credential: managedidentity`
+  pattern (the namespace host name is not a secret) when
+  `eventHubNamespaceFqdn` is supplied; the identity is granted "Azure Event
+  Hubs Data Receiver" when `eventHubNamespaceResourceId` is also supplied.
+  A Key-Vault-backed connection-string fallback is available via
+  `eventHubConnectionSecretName` for tooling that cannot use identity-based
+  bindings.
+- `APPLICATIONINSIGHTS_CONNECTION_STRING` is wired as a Key Vault reference
+  (`@Microsoft.KeyVault(SecretUri=...)`) against the secret
+  `app-insights.bicep` already writes (issue #16) - never a plaintext app
+  setting. `extraKeyVaultReferenceAppSettings` supports additional secrets
+  (e.g. a future Arize API key) the same way.
+- The module grants itself the necessary "Key Vault Secrets User" /
+  "Azure Event Hubs Data Receiver" roles when the corresponding Key
+  Vault/Event Hub namespace identifiers are supplied as parameters - which
+  `main.bicep` now does for both automatically.
+
+**Now wired into `main.bicep`.** `main.bicep` passes
+`eventHub.outputs.eventHubNamespaceFqdn` /
+`eventHub.outputs.eventHubNamespaceResourceId` into this module's
+`eventHubNamespaceFqdn`/`eventHubNamespaceResourceId` parameters, and this
+module's `functionAppPrincipalId` output into both
+`keyVault`'s `readerPrincipalIds` and `eventHub`'s `receiverPrincipalIds` -
+a single deployment now provisions the whole chain with RBAC fully
+cross-wired, no manual follow-up deployment required.
 
 ## Validating a deployment
 
