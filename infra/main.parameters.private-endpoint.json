@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "projectToken": { "value": "fotoa" },
-    "environment": { "value": "demo" },
+    "environment": { "value": "dev" },
     "location": { "value": "eastus2" },
     "regionToken": { "value": "eastus2" },
     "ownerTag": { "value": "infra-team" },
@@ -14,7 +14,7 @@
     "logAnalyticsDailyQuotaGb": { "value": 1 },
     "keyVaultSkuName": { "value": "standard" },
     "keyVaultSoftDeleteRetentionInDays": { "value": 90 },
-    "enablePrivateEndpoints": { "value": false },
+    "enablePrivateEndpoints": { "value": true },
     "networkCreateVirtualNetwork": { "value": true },
     "networkExistingSubnetResourceId": { "value": "" }
   }

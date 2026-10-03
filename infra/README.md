@@ -11,7 +11,8 @@ needed to run the demo pipeline described in the repo root README.
 infra/
 ├── bicepconfig.json            # Enables Bicep compile-time imports (needed by naming.bicep)
 ├── main.bicep                 # Deployment entry point, wires modules together
-├── main.parameters.json       # Example/default parameter values (no secrets)
+├── main.parameters.json       # Example/default parameter values - public-access baseline (no secrets)
+├── main.parameters.private-endpoint.json  # Example parameters with the private-endpoint variant enabled (no secrets)
 ├── scripts/
 │   └── validate-naming.ps1    # CI/pre-merge lint: fails if a module skips the shared naming/tagging helpers (issue #20)
 └── modules/
@@ -19,7 +20,7 @@ infra/
     ├── foundry-project.bicep  # Azure AI Foundry hub + project (issue #15) ✅
     ├── app-insights.bicep     # Log Analytics + Application Insights (issue #16) ✅
     ├── key-vault.bicep        # Key Vault (RBAC) + managed identity wiring pattern (issue #18) ✅
-    └── networking.bicep       # Optional private endpoint module (issue #21)
+    └── networking.bicep       # Optional private endpoint module (issue #21) ✅
 ```
 
 Each module is independently parameterized (no hardcoded names, regions, or
@@ -119,11 +120,68 @@ reasoning behind this split.
 
 ## Network posture
 
+### Decision: public access + RBAC is the demo default
+
 **Default (demo) posture: public network access, secured by Azure AD/RBAC
-auth** - no private endpoints are deployed by default, to keep demo setup
-time low for prospects evaluating the pipeline. See `modules/networking.bicep`
-(issue #21) for the optional, parameterized private-endpoint variant and the
-full rationale/validation notes.
+auth** - no private endpoints are deployed by default. Every resource in
+this stack (Foundry project, Application Insights/Log Analytics, Key Vault)
+authenticates and authorizes via Azure AD/RBAC (managed identity + role
+assignments, never shared keys where avoidable); "public network access" in
+this repo means reachable over the internet with that auth still enforced,
+not open/anonymous access.
+
+**Rationale:** this is a sales-engineering demo, not a production
+deployment. Healthcare prospects evaluating the pipeline need to go from
+clone to working demo quickly; requiring a VNet, private DNS zones, and
+VPN/ExpressRoute/bastion connectivity just to view synthetic trace data
+would add setup friction with no corresponding benefit for a demo using
+only synthetic data (see `/.github/copilot-instructions.md` section 1).
+Network isolation is a legitimate requirement for a real POC/pilot using a
+customer's own data, which is exactly the scenario the optional upgrade
+path below exists for.
+
+### Optional upgrade path: private endpoints
+
+`modules/networking.bicep` (issue #21) is an **optional, parameterized**
+module, disabled by default (`enablePrivateEndpoints: false` in
+`main.bicep`/`main.parameters.json`). When a prospect needs network
+isolation during a POC, set `enablePrivateEndpoints: true` (see
+`main.parameters.private-endpoint.json` for a ready-made example) to
+additionally:
+
+- Provision a small scratch VNet + subnet with
+  `privateEndpointNetworkPolicies: 'Disabled'` (required by Azure for
+  private endpoints), or reuse an existing subnet via
+  `networkExistingSubnetResourceId` / `networkCreateVirtualNetwork: false`.
+- Create a `Microsoft.Network/privateEndpoints` resource for the Key Vault
+  (`groupId: 'vault'`) and the Foundry project
+  (`groupId: 'amlworkspace'`), without rewriting either module - the
+  private-endpoint wiring lives entirely in `networking.bicep` and is
+  parameterized from `main.bicep`.
+- No template changes are required to toggle between the two postures -
+  it is a single boolean parameter plus (optionally) an existing-subnet
+  resource ID.
+
+Adding private endpoints for a given resource does **not** automatically
+disable its public network access flag in this module set - for a true
+network-isolated POC, also set that resource's own
+`publicNetworkAccess`/`networkAcls` parameter to deny public traffic (left
+as an explicit, separate choice so the default demo path is never
+accidentally broken by this module existing).
+
+**Validation performed:** the private-endpoint variant (`enablePrivateEndpoints:
+true`, `networkCreateVirtualNetwork: true`) was reviewed for Bicep syntax
+correctness (conditional resource/module deployment, `for` loop over
+`privateEndpointTargets`, DNS-free connection wiring). It was **not**
+deployed+torn-down against a live/scratch Azure subscription from this
+automated environment - see the `az` CLI limitation noted below. A team
+member with Azure access should run the deploy/teardown validation steps
+from issue #21 before treating this variant as demo-ready, and record the
+result in `.squad/decisions/inbox/infra-network-posture.md` (already filed
+with this PR) or a follow-up decision entry.
+
+This decision is also recorded in
+`.squad/decisions/inbox/infra-network-posture.md` for the Scribe to merge.
 
 ## Validating a deployment
 

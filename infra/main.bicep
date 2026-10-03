@@ -76,6 +76,15 @@ param keyVaultSkuName string = 'standard'
 @maxValue(90)
 param keyVaultSoftDeleteRetentionInDays int = 90
 
+@description('Optional private-endpoint upgrade path (issue #21). Defaults to false - the demo baseline posture is public access + Azure AD/RBAC auth. Set true to additionally deploy private endpoints for the Key Vault and Foundry project into a scratch VNet (or an existing subnet via networkExistingSubnetResourceId).')
+param enablePrivateEndpoints bool = false
+
+@description('When enablePrivateEndpoints is true: if true, provisions a scratch VNet+subnet for the private endpoints; if false, networkExistingSubnetResourceId must be supplied instead.')
+param networkCreateVirtualNetwork bool = true
+
+@description('Resource ID of an existing subnet to deploy private endpoints into, used only when enablePrivateEndpoints is true and networkCreateVirtualNetwork is false.')
+param networkExistingSubnetResourceId string = ''
+
 module foundryProject 'modules/foundry-project.bicep' = {
   name: 'foundry-project-deployment'
   params: {
@@ -152,3 +161,36 @@ output keyVaultResourceId string = keyVault.outputs.keyVaultResourceId
 
 @description('Name of the Key Vault - needed by downstream modules (e.g. a future Function App) to wire additional RBAC role assignments.')
 output keyVaultName string = keyVault.outputs.keyVaultName
+
+// Optional private-endpoint upgrade path (issue #21) - disabled by default.
+// See infra/README.md "Network posture" for the baseline-vs-private-endpoint
+// rationale and infra/modules/networking.bicep for implementation notes.
+module networking 'modules/networking.bicep' = {
+  name: 'networking-deployment'
+  params: {
+    enablePrivateEndpoints: enablePrivateEndpoints
+    projectToken: projectToken
+    environment: environment
+    location: location
+    regionToken: regionToken
+    ownerTag: ownerTag
+    costCenterTag: costCenterTag
+    createVirtualNetwork: networkCreateVirtualNetwork
+    existingSubnetResourceId: networkExistingSubnetResourceId
+    privateEndpointTargets: enablePrivateEndpoints ? [
+      {
+        name: 'kv'
+        targetResourceId: keyVault.outputs.keyVaultResourceId
+        groupId: 'vault'
+      }
+      {
+        name: 'aiproj'
+        targetResourceId: foundryProject.outputs.projectResourceId
+        groupId: 'amlworkspace'
+      }
+    ] : []
+  }
+}
+
+@description('True if this deployment provisioned private endpoints (issue #21 upgrade path) rather than the public-access demo baseline.')
+output privateEndpointsEnabled bool = networking.outputs.privateEndpointsEnabled
