@@ -41,6 +41,9 @@ class PromptAgentConfig:
     service_name: str
     service_version: str
     deployment_environment: str
+    retry_max_attempts: int
+    retry_initial_backoff_seconds: float
+    retry_backoff_multiplier: float
 
     @property
     def has_placeholder_credentials(self) -> bool:
@@ -65,6 +68,9 @@ def load_config() -> PromptAgentConfig:
       - OTEL_SERVICE_NAME
       - OTEL_SERVICE_VERSION
       - DEPLOYMENT_ENVIRONMENT
+      - RETRY_MAX_ATTEMPTS               (default 3)
+      - RETRY_INITIAL_BACKOFF_SECONDS    (default 0.1)
+      - RETRY_BACKOFF_MULTIPLIER         (default 2.0)
     """
     return PromptAgentConfig(
         foundry_endpoint=_env("FOUNDRY_ENDPOINT", "https://synthetic-placeholder.foundry.azure.com"),
@@ -73,4 +79,7 @@ def load_config() -> PromptAgentConfig:
         service_name=_env("OTEL_SERVICE_NAME", "foundry-prompt-agent"),
         service_version=_env("OTEL_SERVICE_VERSION", "0.1.0"),
         deployment_environment=_env("DEPLOYMENT_ENVIRONMENT", "dev"),
+        retry_max_attempts=int(_env("RETRY_MAX_ATTEMPTS", "3")),
+        retry_initial_backoff_seconds=float(_env("RETRY_INITIAL_BACKOFF_SECONDS", "0.1")),
+        retry_backoff_multiplier=float(_env("RETRY_BACKOFF_MULTIPLIER", "2.0")),
     )

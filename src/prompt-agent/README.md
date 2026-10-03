@@ -107,6 +107,42 @@ by one key regardless of how many traces its work happens to span (see
 in a single-process demo where every request currently shares one
 `trace_id`).
 
+## Retry / error-handling with full traceability (#30)
+
+The model call (`llm.chat_completion`) is wrapped in bounded
+exponential-backoff retry logic (`prompt_agent/retry.py`,
+`call_with_retry`). Configuration (env vars, all optional, see
+`config.py`):
+
+| Variable | Purpose | Default |
+|---|---|---|
+| `RETRY_MAX_ATTEMPTS` | Max attempts before giving up | `3` |
+| `RETRY_INITIAL_BACKOFF_SECONDS` | Sleep before the 2nd attempt | `0.1` |
+| `RETRY_BACKOFF_MULTIPLIER` | Multiplier applied to the backoff after each failed attempt | `2.0` |
+
+Only exceptions in `RetryConfig.retryable_exceptions` (currently
+`TransientModelError` — see `model_client.py`) are retried; anything else
+fails immediately. Behavior:
+
+- **Every attempt is its own child span** (`llm.chat_completion.attempt`),
+  carrying `retry.attempt` (1-indexed), `retry.max_attempts`, and
+  `correlation.id` — so every retry attempt remains traceable back to the
+  original request, not just the final outcome.
+- A successful attempt returns immediately; **a recovered retry still
+  reports the overall call as a success** (`llm.chat_completion` and
+  `prompt_agent.invoke` both end up `OK`).
+- A failed attempt is explicitly marked `ERROR` with a recorded exception
+  event (needed because the exception is caught *inside* the attempt span
+  rather than left to propagate — see `retry.py`'s module docstring for why
+  OTel's default exception-recording behavior alone isn't enough here).
+- If every attempt fails, the final exception propagates up through
+  `llm.chat_completion` and `prompt_agent.invoke`, marking both `ERROR` too
+  — a terminal failure after exhausting retries is exactly as traceable as
+  a single failed call was in #27.
+
+See `samples/retry-validation.md` for captured evidence of both a
+recovered-after-2-failures case and an exhausted-all-retries failure case.
+
 ## Running locally
 
 ```powershell
@@ -142,9 +178,10 @@ src/prompt-agent/
 │   ├── __init__.py
 │   ├── main.py               # Entry point (placeholder hello + --scenarios runner)
 │   ├── config.py             # Env-var configuration loading (no secrets committed)
-│   ├── agent.py               # Core prompt/response flow + span instrumentation + OpenInference/correlation ID attrs (#25, #27, #28, #29)
-│   ├── model_client.py        # Model backend interface + stub Foundry client (#25)
+│   ├── agent.py               # Core prompt/response flow + span instrumentation + OpenInference/correlation ID attrs + retry wiring (#25, #27, #28, #29, #30)
+│   ├── model_client.py        # Model backend interface + stub Foundry client + TransientModelError + demo-only flaky client (#25, #30)
 │   ├── correlation.py         # Correlation ID generation + attribute key constant (#29)
+│   ├── retry.py                # Bounded exponential-backoff retry-with-tracing helper (#30)
 │   └── telemetry.py           # OpenTelemetry SDK bootstrap: TracerProvider, exporter, shutdown hook (#26)
 ├── synthetic/                # Synthetic fixture data — no real customer data, ever
 │   ├── README.md

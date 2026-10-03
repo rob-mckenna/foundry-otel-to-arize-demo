@@ -16,6 +16,17 @@ from typing import Protocol
 from prompt_agent.config import PromptAgentConfig
 
 
+class TransientModelError(RuntimeError):
+    """Raised for a model-call failure that is safe to retry (#30).
+
+    A real Foundry/OpenAI-compatible SDK call would raise something like a
+    rate-limit (429) or transient-5xx error here; `ModelClient` implementations
+    should raise `TransientModelError` (or a subclass) for anything the retry
+    logic in `prompt_agent/retry.py` should attempt again, and any other
+    exception type for errors that should fail immediately without retrying.
+    """
+
+
 @dataclass(frozen=True)
 class ModelResponse:
     """Result of a single model invocation.
@@ -111,3 +122,29 @@ class StubFoundryModelClient:
             "This is a synthetic member-services response for demo purposes only — "
             "no real benefits data is represented."
         )
+
+
+class FlakyStubFoundryModelClient(StubFoundryModelClient):
+    """Demo/validation-only client that fails transiently before succeeding.
+
+    Used **only** to validate the retry-with-backoff logic added in #30 (see
+    `samples/retry-validation.md`) — never wired into `main.py`'s default
+    code path, which always uses the reliable `StubFoundryModelClient`. Not a
+    "# STUB: replace with real Foundry Prompt Agent SDK call" seam; it exists
+    purely to prove retry/backoff + full traceability work end-to-end without
+    needing a real flaky backend to test against.
+    """
+
+    def __init__(self, config: PromptAgentConfig, fail_first_n_calls: int) -> None:
+        super().__init__(config)
+        self._fail_first_n_calls = fail_first_n_calls
+        self._calls = 0
+
+    def complete(self, prompt: str) -> ModelResponse:
+        self._calls += 1
+        if self._calls <= self._fail_first_n_calls:
+            raise TransientModelError(
+                f"synthetic transient failure on attempt {self._calls} (demo/validation only)"
+            )
+        return super().complete(prompt)
+

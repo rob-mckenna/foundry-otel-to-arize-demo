@@ -15,7 +15,11 @@ the upstream spec rather than being hand-typed string literals. #29 adds a
 correlation ID (accepted from the caller, or generated if absent) that is
 attached as a `correlation.id` attribute on every span in the request's
 tree, giving a trace-system-agnostic join key alongside OTel's own
-`trace_id` (see `correlation.py`).
+`trace_id` (see `correlation.py`). #30 wraps the model call with bounded
+exponential-backoff retry logic (`retry.py`) — every retry attempt is its
+own child span, still carrying the same `correlation.id`, so a retried
+request remains fully traceable back to the original request even across
+multiple attempts.
 """
 from __future__ import annotations
 
@@ -27,6 +31,7 @@ from opentelemetry.trace import SpanKind, Status, StatusCode
 from prompt_agent.config import PromptAgentConfig, load_config
 from prompt_agent.correlation import CORRELATION_ID_ATTRIBUTE, generate_correlation_id
 from prompt_agent.model_client import ModelClient, ModelResponse, StubFoundryModelClient
+from prompt_agent.retry import RetryConfig, call_with_retry
 from prompt_agent.telemetry import get_tracer
 
 _tracer = get_tracer("prompt_agent.agent")
@@ -87,6 +92,11 @@ class PromptAgent:
         # Real-SDK wiring lives behind the ModelClient protocol — swap this
         # default for a real Foundry-backed client once credentials exist.
         self._model_client = model_client or StubFoundryModelClient(self._config)
+        self._retry_config = RetryConfig(
+            max_attempts=self._config.retry_max_attempts,
+            initial_backoff_seconds=self._config.retry_initial_backoff_seconds,
+            backoff_multiplier=self._config.retry_backoff_multiplier,
+        )
 
     def invoke(self, prompt: str, plan_name: str | None = None, correlation_id: str | None = None) -> AgentResult:
         """Run one request through the core prompt/response flow.
@@ -95,7 +105,11 @@ class PromptAgent:
         lookup, and the model call) executes inside its own child span of
         the top-level `prompt_agent.invoke` span, so a full request's span
         tree has correct parent-child nesting end-to-end — no call path
-        here is left uninstrumented.
+        here is left uninstrumented. The model call is further wrapped in
+        bounded exponential-backoff retry logic (#30, `retry.py`) — every
+        attempt is its own child span (`llm.chat_completion.attempt`), and a
+        retry that eventually succeeds still reports this call as an
+        overall success.
 
         `correlation_id`: if the caller already has a request/correlation ID
         (e.g. from an upstream API gateway header), pass it here so it is
@@ -122,7 +136,13 @@ class PromptAgent:
                 )
                 model_span.set_attribute(CORRELATION_ID_ATTRIBUTE, correlation_id)
                 model_span.set_attribute(SpanAttributes.INPUT_VALUE, effective_prompt)
-                response = self._model_client.complete(effective_prompt)
+                response = call_with_retry(
+                    lambda: self._model_client.complete(effective_prompt),
+                    tracer=_tracer,
+                    span_name="llm.chat_completion",
+                    correlation_id=correlation_id,
+                    config=self._retry_config,
+                )
                 model_span.set_attribute(SpanAttributes.OUTPUT_VALUE, response.text)
                 model_span.set_attribute(SpanAttributes.LLM_MODEL_NAME, response.model_name)
                 model_span.set_attribute(SpanAttributes.LLM_TOKEN_COUNT_PROMPT, response.prompt_tokens)
