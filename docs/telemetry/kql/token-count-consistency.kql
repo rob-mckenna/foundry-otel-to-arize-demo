@@ -1,0 +1,16 @@
+// token-count-consistency.kql
+// Description: Validates that every LLM-kind span's prompt_tokens + completion_tokens == total_tokens
+// and that all three token-count customDimensions are present (non-null after int cast). See
+// docs/telemetry/mapping/token-fields.md (#90) for the mapping spec this query validates.
+// Expected output shape: a single summary row [count_, countif_missing, countif_inconsistent].
+// Healthy result: count_ >= 20 (per issue #34's synthetic-sample bar), countif_missing == 0,
+// countif_inconsistent == 0.
+AppDependencies
+| where timestamp > ago(1h)
+| where customDimensions["openinference.span.kind"] == "LLM"
+| extend promptTok = toint(customDimensions["llm.token_count.prompt"])
+| extend compTok = toint(customDimensions["llm.token_count.completion"])
+| extend totalTok = toint(customDimensions["llm.token_count.total"])
+| extend isMissing = (isnull(promptTok) or isnull(compTok) or isnull(totalTok))
+| extend isInconsistent = (not(isMissing) and (promptTok + compTok != totalTok))
+| summarize count(), countif_missing = countif(isMissing), countif_inconsistent = countif(isInconsistent)
