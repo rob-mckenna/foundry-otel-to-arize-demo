@@ -16,6 +16,9 @@
     "keyVaultSoftDeleteRetentionInDays": { "value": 90 },
     "enablePrivateEndpoints": { "value": false },
     "networkCreateVirtualNetwork": { "value": true },
-    "networkExistingSubnetResourceId": { "value": "" }
+    "networkExistingSubnetResourceId": { "value": "" },
+    "eventHubSkuName": { "value": "Standard" },
+    "eventHubThroughputUnits": { "value": 1 },
+    "eventHubPartitionCount": { "value": 2 }
   }
 }

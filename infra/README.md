@@ -21,6 +21,7 @@ infra/
     ├── app-insights.bicep     # Log Analytics + Application Insights (issue #16) ✅
     ├── key-vault.bicep        # Key Vault (RBAC) + managed identity wiring pattern (issue #18) ✅
     ├── networking.bicep       # Optional private endpoint module (issue #21) ✅
+    ├── event-hub.bicep        # Event Hub namespace + hub for telemetry streaming (issue #17) ✅
     └── function-app.bicep     # Azure Function App shell for telemetry transform pipeline (issue #19) ✅
 ```
 
@@ -184,6 +185,39 @@ with this PR) or a follow-up decision entry.
 This decision is also recorded in
 `.squad/decisions/inbox/infra-network-posture.md` for the Scribe to merge.
 
+## Event Hub telemetry streaming (issue #17)
+
+`modules/event-hub.bicep` provisions a Standard-tier Event Hub namespace +
+hub sitting between Application Insights/Log Analytics (export source) and
+the Azure Function transform pipeline (issue #19, Milestone 2). Throughput
+units (`eventHubThroughputUnits`, default 1, auto-inflate to 2) and
+partition count (`eventHubPartitionCount`, default 2) are parameterized at
+demo scale - not sized for production ingestion volume.
+
+**Auth model: RBAC-only by default, no connection strings.** The namespace
+is provisioned with `disableLocalAuth: true` (SAS keys disabled). Producers
+and consumers are granted least-privilege data-plane roles instead:
+
+- `senderPrincipalIds` -> **Azure Event Hubs Data Sender**
+- `receiverPrincipalIds` -> **Azure Event Hubs Data Receiver**
+
+As of the Function App module (issue #19) being wired into `main.bicep`,
+the Function App's system-assigned managed identity is passed into
+`receiverPrincipalIds` automatically - no manual cross-wiring step is
+required for a fresh deployment.
+
+An **optional** connection-string fallback (`storeConnectionStringInKeyVault:
+true` + `keyVaultName`) is available for tooling that cannot use
+identity-based Event Hub bindings - it requires explicitly re-enabling local
+auth (`disableLocalAuth: false`) and writes the connection string only into
+an existing Key Vault secret, never as a plaintext Bicep output. RBAC is the
+recommended and default posture per `/.github/copilot-instructions.md`
+section 8; this fallback is off by default and not wired in `main.bicep`.
+
+A dedicated consumer group (`functionConsumerGroupName`, default
+`function-transform`) is provisioned alongside `$Default` for the Function
+App to read from without competing with other consumers.
+
 ## Function App telemetry transform pipeline (issue #19)
 
 `modules/function-app.bicep` provisions the Function App "shell" for the
@@ -223,24 +257,17 @@ rewrite required, same pattern as the private-endpoint upgrade path.
   (e.g. a future Arize API key) the same way.
 - The module grants itself the necessary "Key Vault Secrets User" /
   "Azure Event Hubs Data Receiver" roles when the corresponding Key
-  Vault/Event Hub namespace identifiers are supplied as parameters. If they
-  are not (e.g. deploying this module stand-alone before those resources'
-  names are known), grant the roles in a later cross-wiring deployment by
-  adding the Function App's `functionAppPrincipalId` output to
-  `modules/key-vault.bicep`'s `readerPrincipalIds` and
-  `modules/event-hub.bicep`'s `receiverPrincipalIds` - the same two-phase
-  pattern used throughout this stack.
+  Vault/Event Hub namespace identifiers are supplied as parameters - which
+  `main.bicep` now does for both automatically.
 
-**Not yet wired into `main.bicep`.** Issue #17 (Event Hub) was still an
-open, unmerged PR when this module was authored; per the lesson recorded
-in `.squad/agents/infra/history.md` ("parallel branches editing
-`main.bicep`'s structure compounds conflicts"), this PR intentionally adds
-only the new, additive `modules/function-app.bicep` file and leaves
-`main.bicep`/`main.parameters*.json` wiring (plus cross-wiring
-`eventHub`'s `receiverPrincipalIds` and `keyVault`'s `readerPrincipalIds`
-to this module's `functionAppPrincipalId` output) as a fast-follow once
-both #17 and #19 have merged into `main`, avoiding a structural
-add/add conflict on the shared entry-point file.
+**Now wired into `main.bicep`.** `main.bicep` passes
+`eventHub.outputs.eventHubNamespaceFqdn` /
+`eventHub.outputs.eventHubNamespaceResourceId` into this module's
+`eventHubNamespaceFqdn`/`eventHubNamespaceResourceId` parameters, and this
+module's `functionAppPrincipalId` output into both
+`keyVault`'s `readerPrincipalIds` and `eventHub`'s `receiverPrincipalIds` -
+a single deployment now provisions the whole chain with RBAC fully
+cross-wired, no manual follow-up deployment required.
 
 ## Validating a deployment
 
