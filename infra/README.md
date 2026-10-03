@@ -14,7 +14,8 @@ infra/
 ├── main.parameters.json       # Example/default parameter values - public-access baseline (no secrets)
 ├── main.parameters.private-endpoint.json  # Example parameters with the private-endpoint variant enabled (no secrets)
 ├── scripts/
-│   └── validate-naming.ps1    # CI/pre-merge lint: fails if a module skips the shared naming/tagging helpers (issue #20)
+│   ├── validate-naming.ps1     # CI/pre-merge lint: fails if a module skips the shared naming/tagging helpers (issue #20)
+│   └── validate-deployment.ps1 # End-to-end what-if/deploy/verify validation against a scratch resource group (issue #22)
 └── modules/
     ├── naming.bicep           # Shared naming/tagging helpers (issue #20) ✅ - import this from every new module
     ├── foundry-project.bicep  # Azure AI Foundry hub + project (issue #15) ✅
@@ -282,3 +283,56 @@ az deployment group create  -g <resource-group> -f infra/main.bicep -p infra/mai
 > available in that sandbox). Templates were manually reviewed for Bicep
 > syntax correctness. Run `az bicep build` and `az deployment group what-if`
 > against a real/scratch resource group before merging or demoing.
+
+### End-to-end deployment validation script (issue #22)
+
+`infra/scripts/validate-deployment.ps1` is the one-command pre-demo
+confidence check: it runs `what-if`, deploys the full stack to a scratch
+resource group, confirms every module's resource(s) reached provisioning
+state `Succeeded`, spot-checks the managed-identity RBAC wiring documented
+above (Function App -> Key Vault Secrets User, Function App -> Event Hub
+Data Receiver, Foundry project -> Key Vault Secrets User), and prints a
+pass/fail summary table with timestamps.
+
+```powershell
+# Fast sanity check - what-if only, no resources created/modified:
+pwsh ./infra/scripts/validate-deployment.ps1 -ResourceGroupName fotoa-validate-demo -SkipCreate
+
+# Full validation - creates the scratch resource group if missing, deploys,
+# and verifies every resource + RBAC spot check:
+pwsh ./infra/scripts/validate-deployment.ps1 `
+  -ResourceGroupName fotoa-validate-demo `
+  -CreateResourceGroupIfMissing
+```
+
+Requires the `az` CLI installed and authenticated (`az login`) against a
+real subscription. Expected duration for a full run: roughly 10-20 minutes
+end-to-end (Foundry project and Key Vault purge-protection-enabled create
+are the slowest steps) - plan for that lead time before a demo, not a
+same-minute check.
+
+To exercise the induced-failure path (issue #22 validation step 2), pass a
+parameters file with a deliberately invalid value (e.g. set
+`eventHubPartitionCount` above its `@maxValue(32)` bound in a copy of
+`main.parameters.json`) and confirm the script reports the `what-if`/deploy
+failure clearly instead of a false pass.
+
+**Sandbox limitation:** this script could not be executed end-to-end from
+the automated environment that authored it - the same `az` CLI
+unavailability documented above and in
+`.squad/agents/infra/history.md` applies. It was validated by: (1) static
+PowerShell parse-checking
+(`[System.Management.Automation.Language.Parser]::ParseFile`, zero errors),
+and (2) a logic smoke test of the `az`-missing/not-logged-in failure paths
+(temporarily run under Windows PowerShell 5.1 with a 2-arg `Join-Path`
+substitution, since this script - like `validate-naming.ps1` - targets
+`pwsh`/PowerShell 7, which is only present in this sandbox as an
+unprovisioned Windows Store execution alias). A team member with `az` CLI
+access should run both example commands above against a real scratch
+resource group before treating this script as demo-ready.
+
+### Teardown / cleanup script (issue #23)
+
+`infra/scripts/teardown-deployment.ps1` removes everything the validation
+script above provisions, with explicit confirmation safeguards since it is
+destructive - see that section below for usage.
