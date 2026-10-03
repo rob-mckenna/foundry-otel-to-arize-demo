@@ -15,7 +15,8 @@ infra/
 ├── main.parameters.private-endpoint.json  # Example parameters with the private-endpoint variant enabled (no secrets)
 ├── scripts/
 │   ├── validate-naming.ps1     # CI/pre-merge lint: fails if a module skips the shared naming/tagging helpers (issue #20)
-│   └── validate-deployment.ps1 # End-to-end what-if/deploy/verify validation against a scratch resource group (issue #22)
+│   ├── validate-deployment.ps1 # End-to-end what-if/deploy/verify validation against a scratch resource group (issue #22)
+│   └── teardown-deployment.ps1 # Safely tears down demo resources with confirmation safeguards (issue #23)
 └── modules/
     ├── naming.bicep           # Shared naming/tagging helpers (issue #20) ✅ - import this from every new module
     ├── foundry-project.bicep  # Azure AI Foundry hub + project (issue #15) ✅
@@ -333,6 +334,65 @@ resource group before treating this script as demo-ready.
 
 ### Teardown / cleanup script (issue #23)
 
-`infra/scripts/teardown-deployment.ps1` removes everything the validation
-script above provisions, with explicit confirmation safeguards since it is
-destructive - see that section below for usage.
+`infra/scripts/teardown-deployment.ps1` safely deletes the demo resource
+group (or a targeted set of resource IDs) provisioned by `main.bicep`,
+with explicit confirmation safeguards since this is a destructive,
+hard-to-reverse operation - it removes everything the validation script
+above provisions.
+
+```
+# Delete an entire demo resource group (prompts for confirmation):
+pwsh ./infra/scripts/teardown-deployment.ps1 -ResourceGroupName rg-fotoa-demo-eastus2
+
+# Delete a targeted set of resources instead of the whole group:
+pwsh ./infra/scripts/teardown-deployment.ps1 -ResourceGroupName rg-fotoa-demo-eastus2 `
+  -ResourceIds @('/subscriptions/.../resourceGroups/.../providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2')
+
+# Also purge the Key Vault's soft-deleted record (separate, irreversible,
+# separately confirmed):
+pwsh ./infra/scripts/teardown-deployment.ps1 -ResourceGroupName rg-fotoa-demo-eastus2 -PurgeKeyVault
+
+# Non-interactive (CI/scripted) teardown - skips both confirmation prompts:
+pwsh ./infra/scripts/teardown-deployment.ps1 -ResourceGroupName rg-fotoa-demo-eastus2 -PurgeKeyVault -Force
+```
+
+What it does:
+
+1. Checks `az` CLI presence and login/auth state before doing anything else.
+2. Prompts for an explicit "yes" confirmation (unless `-Force`) before
+   deleting the resource group or targeted resources - this is the
+   irreversible step, so it is never skipped silently.
+3. Deletes the resource group (`--no-wait`) or the specific resource IDs
+   supplied via `-ResourceIds`, then polls `az group show`/`az resource
+   show` until the target(s) are confirmed absent (or a timeout is hit,
+   in which case it tells you how to check manually).
+4. If `-PurgeKeyVault` is set, asks for a **second, separate** explicit
+   confirmation before permanently purging the Key Vault's soft-deleted
+   record (`az keyvault purge`) - soft-delete and purge are independent,
+   differently-risky operations and are never bundled behind one prompt.
+5. Checks for orphaned role assignments still scoped to the deleted
+   resource(s)/group (Azure normally cleans these up, but this is a
+   documented edge case worth confirming rather than assuming).
+6. Prints a pass/fail summary table and exits non-zero if any check
+   failed, so it can be wired into a CI "demo cleanup" job.
+
+> **Sandbox limitation:** `az` CLI is present in the automated environment
+> that authored this script, but every invocation fails with a Python
+> traceback (`PermissionError` reading the cached profile at
+> `~/.azure/azureProfile.json`) - the script was validated via
+> `[System.Management.Automation.Language.Parser]::ParseFile` (0 errors)
+> and a smoke test of its "az present but not authenticated" failure path
+> (clean `[FAIL]` reporting, correct summary counts, exit code 1) rather
+> than a live deploy+teardown. **A team member with real Azure access must
+> run this script end-to-end against a scratch resource group before
+> relying on it for demo cleanup**, confirming: resource-group deletion,
+> targeted-resource deletion, Key Vault purge, and the orphaned-role-
+> assignment check all behave as documented. During this work, a reusable
+> PowerShell gotcha was found and fixed: under `$ErrorActionPreference =
+> 'Stop'`, piping a native command's stderr into the success stream via
+> `2>&1` throws a terminating error instead of letting the script's own
+> fail-handling logic run - fixed via `Invoke-AzJson`/`Invoke-AzCommand`
+> helper functions that scope `$ErrorActionPreference = 'Continue'` around
+> each individual `az` call. See
+> `.squad/decisions/inbox/infra-teardown-script.md` for the full design
+> rationale.
