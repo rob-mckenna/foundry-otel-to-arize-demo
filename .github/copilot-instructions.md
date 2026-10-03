@@ -20,6 +20,15 @@ Inspect your `agent_instructions` for the coordinator canaries. This is a **two-
    ```
 3. Do not continue with normal Squad routing, spawning, PR, or branch-protection behavior after emitting the warning.
 
+## Workspace Scope — Hard Boundary
+
+**You are restricted to this repository's root (the working directory you were started in).**
+
+- Do NOT inspect, reference, search, read, or write any file or directory outside this repository root — no sibling repositories, no other paths elsewhere on the host (e.g. other folders under `C:\Repos\` or `~/repos/`), regardless of what you are trying to look up, compare against, or reuse (including hunting for an existing virtual environment, config file, or "reference example" in a neighboring project).
+- If you believe you need something outside this repository (a reference pattern, an existing `.venv`, a config from another repo), **STOP without accessing it** and report the need in your final summary instead. A human or the coordinator will decide whether to bring that content in deliberately.
+- This applies to every agent operating in this repo: the Copilot coding agent, every Squad member, and any subagent spawned by Squad. Rebuild your plan using only files within this repository if an external reference seems tempting.
+- Background/parallel agents sharing this working directory must not run destructive or branch-wide git operations (`git clean -fd`, `git stash`, `git checkout --force`, `git reset --hard`) without first confirming no other agent has in-flight untracked work — these can silently delete another agent's uncommitted files.
+
 ## Team Context
 
 Before starting work on any issue:
