@@ -113,7 +113,7 @@ param eventHubNamespaceFqdn string = ''
 @description('Resource ID of the Event Hub namespace (modules/event-hub.bicep output eventHubNamespaceResourceId), used to scope the "Azure Event Hubs Data Receiver" RBAC role assignment. Required only when eventHubNamespaceFqdn is supplied and identity-based access should be granted in this deployment; leave empty to grant the role in a later cross-wiring deployment instead.')
 param eventHubNamespaceResourceId string = ''
 
-@description('App-setting prefix used for the identity-based Event Hub connection, e.g. settings named "<prefix>__fullyQualifiedNamespace"/"<prefix>__credential". Must match the `connection` property the transform function''s trigger binding uses.')
+@description('App-setting prefix used for the identity-based Event Hub connection, e.g. settings named "<prefix>__fullyQualifiedNamespace"/"<prefix>__credential". Must match the `connection` property the transform function\'s trigger binding uses.')
 param eventHubConnectionSettingPrefix string = 'EventHubConnection'
 
 @description('Optional: name of a Key Vault secret holding an Event Hub connection string, for tooling that cannot use the identity-based binding above. Resolved via a Key Vault reference app setting, never inline. Leave empty (default) to rely on identity-based access only.')
