@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@344f746e7e4e913cde22dd3e5bc03a074396f6c3 # v5.3.0
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install prompt-agent (with test extra)
+        working-directory: src/prompt-agent
+        run: pip install -e ".[test]"
+
+      - name: Run pytest
+        working-directory: src/prompt-agent
+        run: pytest tests/
+
+  secret-scan:
+    name: secret-scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Grep for common secret/connection-string patterns
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Lightweight, token-free secret pattern check. This is NOT a
+          # substitute for a full secret-scanning tool — it is a fast,
+          # zero-setup guard against the specific patterns this repo's
+          # docs (.squad charters, copilot-instructions.md) call out as
+          # forbidden: committed Azure connection strings / instrumentation
+          # keys. Documented placeholder/example values (e.g. "<...>",
+          # "YOUR_", "EXAMPLE", "REPLACE_ME", "00000000-0000-0000-0000-000000000000")
+          # are excluded so sample .env/README snippets don't trip this check.
+          PATTERN='(AccountKey=|InstrumentationKey=|SharedAccessKey=|DefaultEndpointsProtocol=)[A-Za-z0-9+/=_-]+'
+          PLACEHOLDER_PATTERN='<[^>]*>|YOUR_|REPLACE_ME|EXAMPLE|00000000-0000-0000-0000-000000000000|xxxxxxxx'
+
+          matches=$(grep -rInE "$PATTERN" \
+            --exclude-dir=.git \
+            --exclude-dir=.worktrees \
+            --exclude-dir=node_modules \
+            . || true)
+
+          if [ -z "$matches" ]; then
+            echo "No secret-like patterns found."
+            exit 0
+          fi
+
+          flagged=$(echo "$matches" | grep -vE "$PLACEHOLDER_PATTERN" || true)
+
+          if [ -z "$flagged" ]; then
+            echo "Only placeholder/example matches found (excluded):"
+            echo "$matches"
+            exit 0
+          fi
+
+          echo "Potential committed secret/connection-string pattern(s) found:"
+          echo "$flagged"
+          echo ""
+          echo "If this is a documented placeholder, update the placeholder pattern to match the convention used (e.g. <...>, YOUR_*, EXAMPLE, REPLACE_ME) rather than suppressing this check."
+          exit 1
