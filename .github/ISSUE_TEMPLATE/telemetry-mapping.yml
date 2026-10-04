@@ -1,0 +1,166 @@
+name: 🔭 Telemetry Mapping
+description: >-
+  Document a single field-level mapping across the telemetry pipeline:
+  Application Insights source record → Azure Monitor field → OpenTelemetry
+  field → OpenInference attribute → Arize destination field. Use this for any
+  new or changed telemetry mapping in the Foundry → App Insights → Event Hub →
+  Azure Function → Arize pipeline. Do not include raw production telemetry —
+  synthetic/sample values only.
+title: "[Telemetry Mapping] <short description of the field or signal being mapped>"
+labels: ["Observability", "OpenTelemetry", "Arize"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to propose or document a telemetry field mapping. Every
+        mapping must be traceable end-to-end and must include a validation
+        query. **Do not paste raw production telemetry** — use synthetic or
+        redacted sample values only.
+
+  - type: input
+    id: app-insights-source-record
+    attributes:
+      label: Application Insights source record
+      description: >-
+        The App Insights/Azure Monitor table and record type this mapping
+        originates from (e.g. `AppDependencies`, `AppTraces`, `AppRequests`,
+        `customEvents`). Include the OTel span kind if known.
+      placeholder: "e.g. AppDependencies (span kind: INTERNAL, source: OpenInference LLM span)"
+    validations:
+      required: true
+
+  - type: input
+    id: azure-monitor-field
+    attributes:
+      label: Azure Monitor field
+      description: >-
+        The exact Log Analytics / Azure Monitor column or `customDimensions`
+        key that carries this value today.
+      placeholder: "e.g. customDimensions[\"llm.token_count.prompt\"]"
+    validations:
+      required: true
+
+  - type: input
+    id: otel-field
+    attributes:
+      label: OpenTelemetry field
+      description: >-
+        The OTel semantic convention field/attribute this value maps to
+        (span attribute, resource attribute, or event field).
+      placeholder: "e.g. gen_ai.usage.prompt_tokens"
+    validations:
+      required: true
+
+  - type: input
+    id: openinference-attribute
+    attributes:
+      label: OpenInference attribute
+      description: >-
+        The OpenInference semantic convention attribute name, if different
+        from the raw OTel field.
+      placeholder: "e.g. llm.token_count.prompt"
+    validations:
+      required: true
+
+  - type: input
+    id: arize-destination-field
+    attributes:
+      label: Arize destination field
+      description: >-
+        The Arize span/trace field or column this value lands in after OTLP
+        ingestion.
+      placeholder: "e.g. attributes.llm.token_count.prompt"
+    validations:
+      required: true
+
+  - type: textarea
+    id: transformation-logic
+    attributes:
+      label: Transformation logic
+      description: >-
+        Describe the exact transformation performed in the Azure Function
+        (or elsewhere in the pipeline) to go from the Azure Monitor field to
+        the Arize destination field. Include type coercion, renaming,
+        flattening, and any defaulting/null-handling behavior. Pseudocode or
+        code snippets welcome.
+      placeholder: |
+        e.g. Parse customDimensions JSON blob -> extract "llm.token_count.prompt"
+        -> cast to int -> set as OTLP span attribute "llm.token_count.prompt"
+        with type INT_VALUE -> no change in key name.
+    validations:
+      required: true
+
+  - type: textarea
+    id: correlation-requirements
+    attributes:
+      label: Correlation requirements
+      description: >-
+        How must trace ID, span ID, parent span ID, and/or correlation ID be
+        preserved for this field to remain joinable across hops? Note any
+        hop where an ID could be dropped, truncated, or re-generated.
+      placeholder: |
+        e.g. trace_id and span_id must pass through unchanged from
+        AppDependencies.operation_Id / id. parent span ID must be derived from
+        AppDependencies.operation_ParentId. Flag if Event Hub batching could
+        reorder or drop a span before the Function processes it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: validation-query
+    attributes:
+      label: Validation query
+      description: >-
+        A KQL query (Log Analytics) and/or Arize query that proves this field
+        is present and correctly mapped end-to-end. Use synthetic data only.
+      render: kql
+      placeholder: |
+        AppDependencies
+        | where Name == "Foundry Prompt Agent Completion"
+        | extend promptTokens = tostring(customDimensions["llm.token_count.prompt"])
+        | project operation_Id, operation_ParentId, promptTokens
+        | take 10
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: >-
+        Bullet list of conditions that must be true for this mapping to be
+        considered complete and correct.
+      placeholder: |
+        - [ ] Field appears in Azure Monitor with the documented name/type
+        - [ ] Azure Function transformation maps it to the documented OTel/OpenInference attribute without data loss
+        - [ ] Field is visible on the corresponding span/trace in Arize
+        - [ ] trace_id, span_id, and parent_span_id remain joinable across all hops for this record
+        - [ ] Validation query above returns non-null synthetic sample rows
+    validations:
+      required: true
+
+  - type: dropdown
+    id: pipeline-stage
+    attributes:
+      label: Pipeline stage this mapping belongs to
+      description: Which stage of the current-state pipeline does this mapping primarily affect?
+      options:
+        - Foundry Prompt Agent instrumentation (source)
+        - Application Insights capture
+        - Log Analytics / KQL
+        - Event Hub streaming
+        - Azure Function transformation
+        - Arize ingestion / OTLP
+        - Dashboarding / queries
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: This issue contains synthetic/sample data only, not raw production telemetry.
+          required: true
+        - label: I have identified every pipeline hop this field passes through.
+          required: true

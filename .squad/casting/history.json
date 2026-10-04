@@ -1,0 +1,12 @@
+{
+  "universe_usage_history": [
+    { "universe": "descriptive", "assignment_id": "init-2026-10-02" }
+  ],
+  "assignment_cast_snapshots": {
+    "init-2026-10-02": {
+      "universe": "descriptive",
+      "members": ["Lead", "Infra", "Agent", "Telemetry", "QA"],
+      "created_at": "2026-10-02T22:31:00-04:00"
+    }
+  }
+}

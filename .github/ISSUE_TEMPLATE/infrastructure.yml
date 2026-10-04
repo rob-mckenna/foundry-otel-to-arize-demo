@@ -1,0 +1,103 @@
+name: Infrastructure Request
+description: Provision, modify, or tear down Azure infrastructure for the Foundry-to-Arize observability demo (Bicep/Terraform, Key Vault, managed identity, networking).
+title: "[Infra]: "
+labels: ["Infrastructure"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to request infrastructure work (Azure resource provisioning, IaC templates, identity/network wiring, deployment validation, or teardown).
+
+        **Do not include** secrets, connection strings, healthcare data, personal data, patient information, or raw production telemetry anywhere in this form. Use synthetic/demo data only and describe resources generically — they must be reusable across customers, not tied to a single tenant.
+  - type: textarea
+    id: azure-resources
+    attributes:
+      label: Azure Resources
+      description: Which Azure resource(s) are being provisioned, modified, or decommissioned? (e.g., Foundry project, Application Insights, Log Analytics workspace, Event Hub, Azure Function, Key Vault)
+      placeholder: |
+        - Resource type:
+        - Purpose in the pipeline:
+        - New resource or change to existing?
+    validations:
+      required: true
+  - type: textarea
+    id: iac-implementation
+    attributes:
+      label: Infrastructure-as-Code Implementation
+      description: Describe the Bicep/Terraform module(s) involved — new template, existing module to extend, parameters to expose, target environment(s).
+      placeholder: |
+        - IaC tool: Bicep | Terraform
+        - Module path(s):
+        - Parameters/variables to expose:
+        - Target environment(s) (dev/demo):
+    validations:
+      required: true
+  - type: textarea
+    id: identity-requirements
+    attributes:
+      label: Identity Requirements
+      description: Managed identity type (system- or user-assigned), RBAC role assignments needed, and which resources authenticate to which. Managed identity is required unless Azure does not support it for this resource — explain any exception.
+      placeholder: |
+        - Identity type:
+        - Role assignments (scope + role):
+        - Resources that must authenticate via this identity:
+    validations:
+      required: true
+  - type: textarea
+    id: network-requirements
+    attributes:
+      label: Network Requirements
+      description: Private endpoints, VNet integration, firewall rules, or public access posture. State "None" explicitly if no network changes are needed.
+      placeholder: |
+        - Private endpoint needed? (yes/no)
+        - VNet/subnet:
+        - Firewall/NSG rules:
+        - Public network access posture:
+    validations:
+      required: true
+  - type: textarea
+    id: keyvault-requirements
+    attributes:
+      label: Key Vault Requirements
+      description: Which secrets/certificates/keys are stored, which identities can access them, and access policy vs. RBAC model. Do not paste actual secret values.
+      placeholder: |
+        - Secret/cert/key names (no values):
+        - Access model: RBAC | Access Policy
+        - Identities granted access:
+    validations:
+      required: true
+  - type: textarea
+    id: deployment-validation
+    attributes:
+      label: Deployment Validation
+      description: Steps to confirm a clean, successful deployment (what-if/plan output, post-deploy smoke test, resource health checks).
+      placeholder: |
+        1. Run `az deployment ... what-if` / `terraform plan` and confirm expected diff
+        2. Deploy and confirm resource provisioning state = Succeeded
+        3. Run smoke test/validation script:
+    validations:
+      required: true
+  - type: textarea
+    id: cleanup-requirements
+    attributes:
+      label: Cleanup Requirements
+      description: How this resource is torn down after the demo (script, resource group deletion, manual steps) and anything that must be preserved (e.g., shared Log Analytics workspace).
+      placeholder: |
+        - Teardown method:
+        - Resources/data to preserve:
+        - Verification that teardown left no orphaned resources:
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Checklist of conditions that must be true for this issue to be considered done.
+      placeholder: |
+        - [ ] IaC template deploys cleanly via what-if/plan with no errors
+        - [ ] Managed identity used in place of keys/connection strings (or exception documented)
+        - [ ] Required tags applied (environment, owner, project)
+        - [ ] Deployment validation steps pass
+        - [ ] Cleanup/teardown script verified
+    validations:
+      required: true

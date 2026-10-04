@@ -1,0 +1,143 @@
+name: 🐛 Bug Report
+description: Report a defect in the Foundry → OTel → Arize observability demo.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Before you file this
+
+        **Do not include secrets, connection strings, API keys, healthcare data, personal
+        data (PHI/PII), complete prompts that contain sensitive information, or raw
+        production telemetry anywhere in this form.** This repository uses synthetic
+        prompts and synthetic data only. If you need to share a trace, redact it and
+        include only the fields required to reproduce the issue (e.g., trace ID,
+        span name, attribute key).
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of the demo does this bug affect?
+      options:
+        - Prompt Agent (Foundry)
+        - OpenTelemetry/OpenInference instrumentation
+        - Application Insights capture
+        - Export pipeline (Event Hub / Azure Function)
+        - Telemetry transformation
+        - Arize ingestion
+        - Arize trace visualization
+        - Infrastructure (Bicep/Terraform)
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      description: Where did you observe this? Use a demo/dev environment name, not a production or customer environment.
+      options:
+        - Local / dev container
+        - Demo environment (synthetic data)
+        - CI (GitHub Actions)
+        - Other (describe in reproduction steps)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: architecture-track
+    attributes:
+      label: Architecture track
+      description: Which architecture track does this bug relate to?
+      options:
+        - Prompt Agent
+        - Telemetry Capture
+        - Export Pipeline
+        - Arize Ingestion
+        - Infrastructure
+        - Documentation
+        - Cross-cutting / multiple tracks
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen? Describe using synthetic prompt/data examples only — no real customer or healthcare data.
+      placeholder: e.g., "The synthetic prompt 'What are common cold symptoms?' should produce a span with a token-count attribute."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual behavior
+      description: What actually happened? Include synthetic examples only — no secrets, no raw production telemetry.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro-steps
+    attributes:
+      label: Reproduction steps
+      description: Numbered steps to reproduce the issue using synthetic prompts/data.
+      placeholder: |
+        1. Run `...` with synthetic prompt '...'
+        2. Observe span '...' in Application Insights
+        3. ...
+      render: markdown
+    validations:
+      required: true
+
+  - type: input
+    id: trace-id
+    attributes:
+      label: Relevant trace or correlation ID
+      description: >
+        A trace ID, span ID, or correlation ID from a synthetic run that reproduces the
+        issue. Do not paste full trace payloads, prompts, or production telemetry — the
+        ID alone is sufficient for QA/Telemetry to look it up.
+      placeholder: e.g., 4bf92f3577b34da6a3ce929d0e0e4736
+    validations:
+      required: false
+
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostic information
+      description: >
+        Logs, error messages, or stack traces that help diagnose the issue. Redact any
+        secrets, connection strings, keys, or sensitive values before pasting. Do not
+        include raw production telemetry or real patient/customer data.
+      render: shell
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: security-confirmation
+    attributes:
+      label: Security and privacy confirmation
+      description: Confirm this report contains no sensitive information before submitting.
+      options:
+        - label: I confirm this report contains no secrets, credentials, or connection strings.
+          required: true
+        - label: I confirm this report contains no healthcare data, personal data (PHI/PII), or real customer data.
+          required: true
+        - label: I confirm any prompts/traces included are synthetic, or have been fully redacted of sensitive content.
+          required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: What must be true for this bug to be considered fixed?
+      placeholder: |
+        - [ ] Synthetic prompt '...' no longer produces the incorrect behavior
+        - [ ] A test or demo-validation run proves the fix
+        - [ ] Documentation updated if behavior changed
+    validations:
+      required: true

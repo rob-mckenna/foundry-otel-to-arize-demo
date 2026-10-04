@@ -1,0 +1,135 @@
+name: ✅ Demo Validation
+description: Record an end-to-end validation run of the Foundry → OTel → Arize observability demo (synthetic data only).
+title: "[Demo Validation]: "
+labels: ["Demo"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Before you file this
+
+        This record must use **synthetic prompts and synthetic data only**. Do not
+        include secrets, connection strings, API keys, healthcare data, personal data
+        (PHI/PII), or raw production telemetry anywhere in this form. Capture concrete
+        evidence (trace IDs, query results, screenshots) — "looked fine" is not an
+        acceptable validation record.
+
+  - type: textarea
+    id: demo-scenario
+    attributes:
+      label: Demo scenario
+      description: Describe the end-to-end scenario being validated, including the synthetic prompt(s) used.
+      placeholder: e.g., "Synthetic prompt 'Summarize common flu symptoms' sent to the Prompt Agent; validating full trace from Foundry through Arize."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      description: Where was this validation run performed?
+      options:
+        - Local / dev container
+        - Demo environment (synthetic data)
+        - CI (GitHub Actions)
+        - Other (describe in demo scenario)
+    validations:
+      required: true
+
+  - type: textarea
+    id: prompt-agent-invocation
+    attributes:
+      label: Prompt Agent invocation
+      description: How was the Foundry Prompt Agent invoked? Include the synthetic prompt text, invocation method, and any relevant configuration.
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: app-insights-validation
+    attributes:
+      label: Application Insights validation
+      description: >
+        Evidence that telemetry (spans, dependencies, custom events) was captured
+        correctly in Application Insights. Include query used and summarized result
+        (no raw production telemetry).
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: token-telemetry-validation
+    attributes:
+      label: Token telemetry validation
+      description: Evidence that prompt/completion token counts were captured and attributed correctly on the relevant span(s).
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: export-pipeline-validation
+    attributes:
+      label: Export-pipeline validation
+      description: Evidence that telemetry was exported (e.g., via Event Hub/Azure Function) without loss, duplication, or corruption.
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: arize-ingestion-validation
+    attributes:
+      label: Arize ingestion validation
+      description: Evidence that the exported/transformed telemetry was successfully ingested into Arize.
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: trace-correlation-validation
+    attributes:
+      label: Trace-correlation validation
+      description: >
+        Evidence that the trace/correlation ID was preserved end-to-end from the
+        Prompt Agent through Application Insights, the export pipeline, and into Arize.
+      placeholder: e.g., "Trace ID 4bf92f3577b34da6a3ce929d0e0e4736 matched across App Insights query and Arize trace view."
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence-captured
+    attributes:
+      label: Evidence captured
+      description: >
+        List the concrete evidence captured for this run (trace IDs, query results,
+        screenshot filenames/links, log excerpts). Redact anything sensitive; synthetic
+        data only.
+      placeholder: |
+        - Trace ID: ...
+        - App Insights query result: ...
+        - Arize screenshot: ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: result
+    attributes:
+      label: Result
+      description: Overall outcome of this validation run.
+      options:
+        - Pass
+        - Pass with caveats
+        - Fail
+        - Blocked
+    validations:
+      required: true
+
+  - type: textarea
+    id: follow-up-actions
+    attributes:
+      label: Follow-up actions
+      description: Any bugs to file, docs to update, or re-tests needed as a result of this run.
+      placeholder: |
+        - [ ] File bug for ...
+        - [ ] Update docs/runbook for ...
+    validations:
+      required: false

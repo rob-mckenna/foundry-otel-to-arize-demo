@@ -1,0 +1,39 @@
+{
+  "agents": {
+    "Lead": {
+      "persistent_name": "Lead",
+      "universe": "descriptive",
+      "created_at": "2026-10-02T22:31:00-04:00",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "Infra": {
+      "persistent_name": "Infra",
+      "universe": "descriptive",
+      "created_at": "2026-10-02T22:31:00-04:00",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "Agent": {
+      "persistent_name": "Agent",
+      "universe": "descriptive",
+      "created_at": "2026-10-02T22:31:00-04:00",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "Telemetry": {
+      "persistent_name": "Telemetry",
+      "universe": "descriptive",
+      "created_at": "2026-10-02T22:31:00-04:00",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "QA": {
+      "persistent_name": "QA",
+      "universe": "descriptive",
+      "created_at": "2026-10-02T22:31:00-04:00",
+      "legacy_named": false,
+      "status": "active"
+    }
+  }
+}

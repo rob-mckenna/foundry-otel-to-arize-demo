@@ -1,0 +1,81 @@
+name: Feature Request
+description: Propose a new feature or enhancement for the Foundry-to-Arize observability demo.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for new features or enhancements to the demo, pipeline, infrastructure, or documentation.
+
+        **Synthetic data only.** Do not include secrets, connection strings, or any real healthcare/personal data in this form.
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Feature Description
+      description: What is the feature? Describe the desired behavior/capability.
+    validations:
+      required: true
+  - type: textarea
+    id: customer-value
+    attributes:
+      label: Customer Value
+      description: Why does this matter to an enterprise healthcare customer evaluating observability for Foundry Prompt Agents? What does it let them see/prove/validate?
+    validations:
+      required: true
+  - type: dropdown
+    id: architecture-track
+    attributes:
+      label: Architecture Track
+      description: Which part of the system does this feature primarily touch?
+      options:
+        - Architecture
+        - Infrastructure
+        - PromptAgent
+        - ApplicationInsights
+        - TelemetryPipeline
+        - Arize
+        - Documentation
+        - Demo
+        - FutureState
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Other issues, infrastructure, or decisions this feature depends on. State "None" explicitly if there are none.
+    validations:
+      required: true
+  - type: textarea
+    id: telemetry-requirements
+    attributes:
+      label: Telemetry Requirements
+      description: What spans/attributes/trace or correlation IDs/token-usage fields must this feature preserve or emit? State "None" explicitly if not applicable.
+    validations:
+      required: true
+  - type: textarea
+    id: security-requirements
+    attributes:
+      label: Security Requirements
+      description: Key Vault usage, managed identity usage, data classification, PII/PHI exposure risk. State "None" explicitly if not applicable.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Checklist of conditions that must be true for this feature to be considered done.
+    validations:
+      required: true
+  - type: textarea
+    id: demo-validation-steps
+    attributes:
+      label: Demo Validation Steps
+      description: Steps to confirm this feature works end-to-end in the live demo, using synthetic data only.
+      placeholder: |
+        1. Run demo scenario X with synthetic prompt(s)
+        2. Confirm trace/span appears correctly in Application Insights
+        3. Confirm trace/span appears correctly in Arize with correlation ID preserved
+    validations:
+      required: true

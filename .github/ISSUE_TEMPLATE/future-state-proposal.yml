@@ -1,0 +1,83 @@
+name: Future-State Proposal
+description: Propose a conceptual, not-yet-implemented capability for the future-state (direct OTLP) architecture.
+title: "[FutureState]: "
+labels: ["FutureState"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ⚠️ **CONCEPTUAL — NOT IMPLEMENTED.** Everything proposed here is a design idea, not working code. Design assets for accepted proposals belong only under `/docs/future-state` — never under `/src` or `/infra`.
+
+        **Synthetic data only.** Do not include secrets, connection strings, or any real healthcare/personal data in this form.
+  - type: textarea
+    id: proposed-capability
+    attributes:
+      label: Proposed Capability
+      description: What future-state capability is being proposed? (e.g., direct OTLP export from the Prompt Agent to Arize, bypassing the transform pipeline)
+    validations:
+      required: true
+  - type: textarea
+    id: current-limitation
+    attributes:
+      label: Current Limitation
+      description: What limitation in the current-state (validated) architecture motivates this proposal?
+    validations:
+      required: true
+  - type: textarea
+    id: target-architecture
+    attributes:
+      label: Target Architecture
+      description: Describe the proposed future-state architecture. Include or reference a dashed-line Mermaid diagram labeled "CONCEPTUAL — NOT IMPLEMENTED".
+    validations:
+      required: true
+  - type: textarea
+    id: expected-benefit
+    attributes:
+      label: Expected Benefit
+      description: What does this unlock for the customer or the pipeline (e.g., lower latency, fewer hops, reduced cost)?
+    validations:
+      required: true
+  - type: textarea
+    id: product-dependency
+    attributes:
+      label: Product Dependency
+      description: What Foundry/Azure/Arize product capability must exist (and may not exist today) for this to be implementable? State "None" explicitly if there is no external dependency.
+    validations:
+      required: true
+  - type: textarea
+    id: assumptions
+    attributes:
+      label: Assumptions
+      description: List every assumption this proposal relies on, explicitly. Unvalidated assumptions must be called out here, not left implicit.
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks
+      description: What could go wrong, break, or fail to materialize (platform support, trace/correlation-ID loss, security posture changes)?
+    validations:
+      required: true
+  - type: dropdown
+    id: validation-status
+    attributes:
+      label: Validation Status
+      description: Has any part of this proposal been technically validated (e.g., spike, POC, vendor confirmation)?
+      options:
+        - Not validated — concept only
+        - Partially validated — see notes
+        - Validated via spike/POC (link evidence)
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Checklist of conditions that must be true for this proposal to be considered accepted for further design work (not implementation).
+      placeholder: |
+        - [ ] Design doc added under /docs/future-state with "CONCEPTUAL — NOT IMPLEMENTED" label
+        - [ ] Dashed-line Mermaid diagram included
+        - [ ] Assumptions and risks reviewed by Lead
+        - [ ] No implementation code added under /src or /infra as part of this issue
+    validations:
+      required: true
