@@ -11,3 +11,8 @@
 
 # Squad: per-agent isolated git worktrees (local scratch space, never committed)
 .worktrees/
+
+# Azure CLI config relocated into the repo (AZURE_CONFIG_DIR) so the sandboxed
+# coding agent's workspace-scoped filesystem boundary can reach it. Contains
+# cached auth tokens - never commit.
+.azure-config/

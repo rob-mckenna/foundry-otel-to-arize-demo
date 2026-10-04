@@ -271,6 +271,24 @@ module's `functionAppPrincipalId` output into both
 a single deployment now provisions the whole chain with RBAC fully
 cross-wired, no manual follow-up deployment required.
 
+## Azure CLI auth in a sandboxed coding-agent session
+
+A sandboxed coding agent (e.g. this repo's Squad/Copilot CLI session) is
+filesystem-scoped to the repo working directory and cannot read/write
+`~/.azure` (the default Azure CLI config/token cache location, outside the
+repo tree). Relocate the cache into the repo with the `AZURE_CONFIG_DIR`
+env var so it lands inside the sandbox's allowed path:
+
+```powershell
+$env:AZURE_CONFIG_DIR = "<repo-root>\.azure-config"
+az login --use-device-code
+```
+
+Run this once from a real (non-sandboxed) terminal. `.azure-config/` is
+git-ignored (it holds cached auth tokens - never commit it). Any process
+(sandboxed or not) that sets the same `AZURE_CONFIG_DIR` env var before
+running `az` will reuse that logged-in session.
+
 ## Validating a deployment
 
 ```
