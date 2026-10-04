@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "telemetry-pipeline"
+version = "0.1.0"
+description = "Azure Function transform (Event Hub -> OTLP) for the foundry-otel-to-arize-demo repo (issue #37/#36)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Squad: Telemetry (Telemetry/Observability Specialist)" },
+]
+# NOTE: This is current-state demo code. The live OTLP-to-Arize export path
+# (exporter.build_arize_otlp_exporter) is behind the optional `otlp` extra
+# and an opt-in env var (ARIZE_OTLP_ENDPOINT) so the base install/test run
+# has no live-network/credential dependency - see exporter.py and
+# src/telemetry-pipeline/README.md for the current-state/future-state
+# split this package follows.
+dependencies = [
+    "opentelemetry-api>=1.24.0",
+    "opentelemetry-sdk>=1.24.0",
+    # Required at deploy time for the Event Hub trigger decorator
+    # (function_app.py). Not imported by mapping.py/batch.py/exporter.py,
+    # so the transform logic itself remains unit-testable even in
+    # sandboxes (like this one) where azure-functions cannot be installed.
+    "azure-functions>=1.21.0",
+]
+
+[project.optional-dependencies]
+# Live OTLP export to Arize is optional so the scaffold still builds/runs/
+# tests without network access or Arize credentials (see exporter.py).
+otlp = [
+    "opentelemetry-exporter-otlp-proto-http>=1.24.0",
+]
+test = [
+    "pytest>=8.0.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["telemetry_pipeline*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

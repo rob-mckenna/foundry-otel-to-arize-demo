@@ -3,11 +3,14 @@
 **Status: PARTIALLY VALIDATED.** Source-side (Prompt Agent → OTel SDK) identifier generation and
 propagation is validated today with synthetic multi-span traces (§2). Preservation across Event
 Hub partitioning/batching and the Azure Function transform (§3–§4) **cannot be validated
-end-to-end yet** — no Event Hub (#17) or Azure Function (#19) exists in this repo. This doc
-documents the exact conversion logic those components must implement, and explicitly flags every
-hop where identifiers could be lost, per this issue's own acceptance criteria. Per Telemetry's
-charter, any hop that *could* drop a correlation ID is flagged here as a risk requiring Lead
-sign-off before being accepted as a known limitation — it is not silently waved through.
+end-to-end yet** — the Azure Function transform code now exists and is unit-tested with synthetic
+data (`src/telemetry-pipeline/telemetry_pipeline/`, see §5's update), but no live Event Hub (#17)
+has been deployed and no live Arize space exists, so the actual cross-system round trip this issue's
+third acceptance criterion requires still cannot be run. This doc documents the exact conversion
+logic those components must implement, and explicitly flags every hop where identifiers could be
+lost, per this issue's own acceptance criteria. Per Telemetry's charter, any hop that *could* drop a
+correlation ID is flagged here as a risk requiring Lead sign-off before being accepted as a known
+limitation — it is not silently waved through.
 
 ## 1. Format compatibility: App Insights `operation_Id`/`operation_ParentId` ↔ OTel `trace_id`/`span_id`
 
@@ -84,7 +87,19 @@ risk — a per-event-checkpoint-with-silent-drop configuration would be a blocki
 correlation, not an acceptable known limitation, per Telemetry's charter policy on correlation-ID
 loss.
 
-## 5. Validation plan (to run once #17 and #19 are merged and deployed)
+## 5. Validation plan
+
+**Update (this pass):** the Azure Function transform code this plan depends on now exists —
+`src/telemetry-pipeline/telemetry_pipeline/` (`mapping.py`, `batch.py`, `exporter.py`,
+`function_app.py`). Its synthetic 3-span batch test
+(`src/telemetry-pipeline/tests/test_batch_trace_preservation.py`) already proves, in-memory/mocked
+(no live Event Hub or Function host), that a `prompt_agent.invoke` → `tool.lookup_plan_details` +
+`llm.chat_completion` batch delivered as one Event Hub message (the Log Analytics
+`{"records": [...]}` envelope) is transformed into 3 `ReadableSpan`s sharing one `trace_id` with
+correct parent linkage, exported together in a single `exporter.export()` call. **This closes the
+"no code exists" blocker** that previously stood in front of every step below — it does not, by
+itself, satisfy steps 3–4, which require a live Event Hub (#17) and a live Arize space (#38) that
+still do not exist in this repo. The plan below is otherwise unchanged:
 
 1. Generate a synthetic 3-span trace via the Prompt Agent (`prompt_agent.invoke` → `llm.chat_completion`
    → `tool.lookup_plan_details`, using `synthetic/scenarios.py` fixtures only).
@@ -109,8 +124,8 @@ loss.
 | Risk | Status |
 |---|---|
 | Event Hub partition-key choice not yet implemented (no #17 code exists yet to set it) | **Open — flagged for #17 implementation, see §3.1** |
-| Function batch-checkpointing strategy not yet chosen (no #19 code exists yet) | **Open — flagged for #19 implementation, see §4** |
-| No live end-to-end round-trip has been run (blocked on #17/#19) | **Open — §5 is the plan to close this once infra lands** |
+| Function batch-checkpointing strategy | **Addressed in code (this pass):** `telemetry_pipeline.batch.transform_batch()` exports every span from one Event Hub message batch in a single `exporter.export()` call, never per-record — matching §4's whole-batch-checkpointing recommendation. Still **unvalidated against the Functions host's real checkpointing behavior**, since no live Function App deployment exists to observe it against. |
+| No live end-to-end round trip has been run (blocked on #17 deployment + live Arize) | **Open — §5 is the plan to close this once a live Event Hub and Arize space exist. The Function code itself (the other half of this blocker) now exists and is unit-tested — see `src/telemetry-pipeline/`.** |
 
 None of the above are accepted as current-state limitations — they are open implementation
 requirements this doc puts in front of whoever implements #17/#19, consistent with charter policy
