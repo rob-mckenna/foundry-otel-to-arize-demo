@@ -6,6 +6,27 @@ architecture, security, telemetry, testing, and documentation conventions that a
 contribution — this file adds one specific, lightweight process on top of those: keeping docs in
 sync with implementation.
 
+## Running tests locally
+
+CI (`.github/workflows/ci.yml`) is the source of truth for the exact commands that validate this
+repo — run the same commands locally before opening a PR so you catch failures before CI does.
+
+The `prompt-agent` package requires Python `>=3.10` (see `src/prompt-agent/pyproject.toml`). CI
+runs against Python 3.10, 3.11, and 3.12 via a matrix.
+
+```powershell
+cd src/prompt-agent
+pip install -e ".[test]"
+pytest tests/
+```
+
+(On a POSIX shell, these commands are identical — only the `cd` path separator differs.)
+
+There is no local Python interpreter assumed or required to be pre-installed in this repo's own
+sandbox/dev-container docs; CI provisions its own via `actions/setup-python`. If your local
+environment lacks a usable Python interpreter, rely on the CI run on your PR as the authoritative
+test signal.
+
 ## Doc-drift checklist (every PR)
 
 **The single most common reason reusable demo repos rot is docs that silently stop matching the
