@@ -23,6 +23,14 @@ param connectionAuthType string
 @allowed(['private', 'projectShared'])
 param connectionSharing string
 
+@description('Explicit reviewed writable connection setting; no parent or private-endpoint resource is changed.')
+@allowed(['Required', 'NotRequired', 'NotApplicable'])
+param connectionPeRequirement string
+
+@description('Explicit reviewed peStatus request value. The pinned API does not mark this field read-only.')
+@allowed(['Inactive', 'Active', 'NotApplicable'])
+param connectionPeStatus string
+
 @description('Positive acknowledgement of reviewed writable properties and equivalent secure material. Zero fails validation.')
 @minValue(1)
 param reviewedProperties int
@@ -47,6 +55,8 @@ var apiKeyProperties = {
   authType: 'ApiKey'
   isSharedToAll: connectionSharing == 'projectShared'
   useWorkspaceManagedIdentity: false
+  peRequirement: connectionPeRequirement
+  peStatus: connectionPeStatus
   credentials: {
     key: appInsightsConnectionString
   }
@@ -61,6 +71,8 @@ var managedIdentityProperties = {
   target: appInsightsResourceId
   authType: 'ProjectManagedIdentity'
   isSharedToAll: connectionSharing == 'projectShared'
+  peRequirement: connectionPeRequirement
+  peStatus: connectionPeStatus
   metadata: {
     ApiType: 'Azure'
     ResourceId: appInsightsResourceId

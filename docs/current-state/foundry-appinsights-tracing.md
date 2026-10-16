@@ -19,8 +19,9 @@ Use `infra\modern-foundry-tracing.bicep` independently against **existing**
 modern account/project resources in the deployment resource group. It creates
 a clean connection on an already provisioned approved project, or adopts an
 existing connection. It does not provision an entire Foundry environment.
-Parameterize account, project, exact connection name, component ARM ID and
-sharing. Region/environment are embodied in those existing resource identities,
+Parameterize account, project, exact connection name, component ARM ID, sharing
+and reviewed connection private-endpoint settings. Region/environment are
+embodied in those existing resource identities,
 not hardcoded in the module. Child connections have no tags/location API fields;
 parent tags and all existing posture remain unchanged.
 
@@ -42,6 +43,14 @@ Verified against official sources on 2026-10-16:
 - [ARM 2025-09-01 child connection reference](https://learn.microsoft.com/en-us/azure/templates/microsoft.cognitiveservices/2025-09-01/accounts/projects/connections):
   `Microsoft.CognitiveServices/accounts/projects/connections`, `ApiKey`,
   secure `credentials.key`, target, metadata and explicit sharing.
+- [Pinned 2025-09-01 OpenAPI contract](https://github.com/Azure/azure-rest-api-specs/blob/e9369ed0ffbd1acfd34db5e669e66b6ba6798f5c/specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/CognitiveServices/stable/2025-09-01/cognitiveservices.json):
+  `ProjectConnections_Create` consumes `ConnectionPropertiesV2BasicResource`;
+  its ApiKey properties inherit `ConnectionPropertiesV2`. Both `peRequirement`
+  and `peStatus` are in that request schema, with **no** `readOnly` or
+  read-only `x-ms-mutability` annotation on either property or referenced enum.
+  Despite its name, `peStatus` is not documented as read-only in this pinned API.
+  In contrast, `group` and `createdByWorkspaceArmId` explicitly have
+  `readOnly=true`; `isDefault` is not a declared request property.
 - [Pinned Microsoft ApiKey sample](https://github.com/microsoft-foundry/foundry-samples/blob/82724a4056091791628e7919396777ba55b29dca/infrastructure/infrastructure-setup-bicep/01-connections/connection-application-insights.bicep):
   category `AppInsights`, target/metadata `ResourceId` = component ARM ID,
   `ApiType=Azure`, and the component connection string as `credentials.key`.
@@ -125,11 +134,28 @@ name; never generate a second association. Sharing is explicit:
 `private` = `isSharedToAll=false`, `projectShared` = true.
 Review all other nonsecret writable properties before the PUT, not just the
 validator's identity subset. Reconcile nonempty `sharedUserList`, expiry,
-`peRequirement`, extra metadata or other omitted fields in the exact reviewed
+private-endpoint settings, extra metadata or other omitted fields in the exact reviewed
 delta; do not assume omitted fields or credentials survive PUT.
 The module's ApiKey branch explicitly sets `useWorkspaceManagedIdentity=false`.
 Provider default/omission behavior still needs provider validation and what-if.
 Secret equivalence cannot be proven from metadata and must not use a credential GET.
+
+Explicitly set `appInsightsConnectionPeRequirement` and
+`appInsightsConnectionPeStatus` to the reviewed request values. Both pass through
+the module into **both** auth branches; the defaults and example profiles use
+`NotRequired` / `NotApplicable`, matching the observed demo connection, not a
+universal preservation guarantee. The allowed requirement values are `Required`,
+`NotRequired`, `NotApplicable`; allowed status values are `Inactive`, `Active`,
+`NotApplicable`. Do not infer actual endpoint health from a supplied status.
+The provider's observed status and acceptance of these request values must still
+be checked independently after approved validation/deployment.
+
+Do not replay read-only `group`/`createdByWorkspaceArmId`, undeclared response
+extensions such as `isDefault`, or raw GET objects into PUT. Observing those
+fields is not itself an omission blocker; verify their classification against
+the pinned write schema. The common Resource base does not declare connection
+`tags`/`location` request fields either. Any additional **writable** nonempty
+field remains a blocker until its exact preservation is reconciled.
 
 For a clean connection, first verify an approved existing modern project and an
 empty AppInsights category inventory with a projected read-only GET. The strict
@@ -156,9 +182,10 @@ git --no-pager diff --check
 
 Tests discover Bicep via `BICEP_CLI`, PATH, then Azure CLI (`az bicep build`).
 They compile **current sources in memory**, not old recovery artifacts. The
-11 focused tests include 14 mutations of actual compiled auth/target/secure
+12 focused tests include 24 mutations of actual compiled auth/target/secure
 boundaries, opt-in/review/sharing gates, resource inventory, stable connection
-name, safe outputs, and Incremental mode, plus synthetic CLI/readback failures.
+name, endpoint-configuration forwarding/defaults/allowed values, safe outputs,
+and Incremental mode, plus synthetic CLI/readback failures.
 This does not validate live provider enforcement or secret equivalence.
 
 For the existing repository-local compiler, this session used
@@ -218,6 +245,7 @@ Minimal next commands for that future approved phase (not run here):
 ```powershell
 # $approvedProfile is the reviewed repo-local nonsecret reference-only profile.
 # It explicitly selects ApiKey, private, review=true and an approved pinned vault reference.
+# It also preserves reviewed connection peRequirement/peStatus; neither proves endpoint health.
 az deployment group validate --subscription c81fda52-936e-4f14-8af4-951c0dbb92d2 --resource-group fotoa-demo-rg --template-file .\infra\modern-foundry-tracing.bicep --parameters "@$approvedProfile" --validation-level Provider --query "{state:properties.provisioningState}" --output json --only-show-errors 2>$null
 if ($LASTEXITCODE -ne 0) { throw 'Provider validation failed; retain sanitized status only.' }
 az deployment group what-if --subscription c81fda52-936e-4f14-8af4-951c0dbb92d2 --resource-group fotoa-demo-rg --template-file .\infra\modern-foundry-tracing.bicep --parameters "@$approvedProfile" --validation-level Provider --result-format ResourceIdOnly --query "{status:status,changes:changes[].{resourceId:resourceId,changeType:changeType}}" --output json --only-show-errors 2>$null

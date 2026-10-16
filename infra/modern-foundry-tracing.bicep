@@ -25,6 +25,14 @@ param tracingAssociationMode string = 'preserveExisting'
 @allowed(['private', 'projectShared'])
 param appInsightsConnectionSharing string = 'private'
 
+@description('Reviewed connection private-endpoint requirement; must match the existing writable property when adopting.')
+@allowed(['Required', 'NotRequired', 'NotApplicable'])
+param appInsightsConnectionPeRequirement string = 'NotRequired'
+
+@description('Reviewed peStatus request value accepted by API 2025-09-01. Does not prove actual private-endpoint health.')
+@allowed(['Inactive', 'Active', 'NotApplicable'])
+param appInsightsConnectionPeStatus string = 'NotApplicable'
+
 @description('Leave false until exact writable properties and equivalent pinned Key Vault material have been reviewed. False fails active module validation.')
 param appInsightsConnectionPropertiesReviewed bool = false
 
@@ -42,6 +50,8 @@ module tracing 'modules/modern-foundry-app-insights.bicep' = if (tracingAssociat
     appInsightsConnectionString: appInsightsConnectionString
     connectionAuthType: tracingAssociationMode == 'ApiKey' ? 'ApiKey' : 'ProjectManagedIdentity'
     connectionSharing: appInsightsConnectionSharing
+    connectionPeRequirement: appInsightsConnectionPeRequirement
+    connectionPeStatus: appInsightsConnectionPeStatus
     // Deliberately fail nested parameter validation for an unreviewed active PUT.
     #disable-next-line BCP329
     reviewedProperties: appInsightsConnectionPropertiesReviewed ? 1 : 0

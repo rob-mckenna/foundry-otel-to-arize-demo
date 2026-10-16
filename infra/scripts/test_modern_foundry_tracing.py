@@ -164,6 +164,14 @@ def assert_connection_contract(test, template):
     test.assertEqual(template["parameters"]["appInsightsConnectionString"]["type"].lower(), "securestring")
     test.assertEqual(template["parameters"]["tracingAssociationMode"]["defaultValue"], "preserveExisting")
     test.assertFalse(template["parameters"]["appInsightsConnectionPropertiesReviewed"]["defaultValue"])
+    endpoint_parameters = [
+        ("PeRequirement", "peRequirement", ["Required", "NotRequired", "NotApplicable"], "NotRequired"),
+        ("PeStatus", "peStatus", ["Inactive", "Active", "NotApplicable"], "NotApplicable"),
+    ]
+    for suffix, _field, allowed, default in endpoint_parameters:
+        parameter = template["parameters"][f"appInsightsConnection{suffix}"]
+        test.assertEqual(parameter["allowedValues"], allowed)
+        test.assertEqual(parameter["defaultValue"], default)
     test.assertEqual(
         template["parameters"]["tracingAssociationMode"]["allowedValues"],
         ["preserveExisting", "ApiKey", "ProjectManagedIdentity"],
@@ -190,6 +198,12 @@ def assert_connection_contract(test, template):
         "[parameters('appInsightsConnectionString')]",
     )
     child = module["properties"]["template"]
+    for suffix, _field, allowed, _default in endpoint_parameters:
+        test.assertEqual(
+            module["properties"]["parameters"][f"connection{suffix}"]["value"],
+            f"[parameters('appInsightsConnection{suffix}')]",
+        )
+        test.assertEqual(child["parameters"][f"connection{suffix}"]["allowedValues"], allowed)
     test.assertEqual(child["parameters"]["appInsightsConnectionString"]["type"].lower(), "securestring")
     test.assertEqual(child["parameters"]["appInsightsConnectionString"]["minLength"], 1)
     test.assertEqual(child["parameters"]["reviewedProperties"]["minValue"], 1)
@@ -209,6 +223,11 @@ def assert_connection_contract(test, template):
     api_key = child["variables"]["apiKeyProperties"]
     managed_identity = child["variables"]["managedIdentityProperties"]
     for properties, auth_type in [(api_key, "ApiKey"), (managed_identity, "ProjectManagedIdentity")]:
+        for suffix, field, _allowed, _default in endpoint_parameters:
+            test.assertEqual(properties.get(field), f"[parameters('connection{suffix}')]")
+        for read_only_field in ["group", "createdByWorkspaceArmId"]:
+            test.assertNotIn(read_only_field, properties)
+        test.assertNotIn("isDefault", properties)
         test.assertEqual(properties["category"], "AppInsights")
         test.assertEqual(properties["authType"], auth_type)
         test.assertEqual(properties["target"], "[parameters('appInsightsResourceId')]")
@@ -293,6 +312,26 @@ class CompiledContractTests(unittest.TestCase):
                 with self.assertRaises(AssertionError):
                     assert_connection_contract(self, changed)
 
+    def test_writable_endpoint_configuration_cannot_be_dropped_or_silently_defaulted(self):
+        for suffix, field in [("PeRequirement", "peRequirement"), ("PeStatus", "peStatus")]:
+            for mutation in ["apiKeyProperties", "managedIdentityProperties", "forwarding", "default", "allowed"]:
+                with self.subTest(field=field, mutation=mutation):
+                    changed = copy.deepcopy(self.template)
+                    module = resources(changed)[0]
+                    child = module["properties"]["template"]
+                    parameter = f"appInsightsConnection{suffix}"
+                    if mutation in {"apiKeyProperties", "managedIdentityProperties"}:
+                        # Both auth paths must preserve the same reviewed connection settings.
+                        del child["variables"][mutation][field]
+                    elif mutation == "forwarding":
+                        module["properties"]["parameters"][f"connection{suffix}"]["value"] = "unreviewed-default"
+                    elif mutation == "default":
+                        changed["parameters"][parameter]["defaultValue"] = "unreviewed-default"
+                    else:
+                        child["parameters"][f"connection{suffix}"]["allowedValues"].append("unreviewed-default")
+                    with self.assertRaises(AssertionError):
+                        assert_connection_contract(self, changed)
+
     def test_profiles_preserve_and_secure_example_uses_only_pinned_vault_reference(self):
         for filename in [
             "modern-foundry-tracing.parameters.json",
@@ -302,12 +341,16 @@ class CompiledContractTests(unittest.TestCase):
                 parameters = json.loads((ROOT / "infra" / filename).read_text())["parameters"]
                 self.assertEqual(parameters["tracingAssociationMode"]["value"], "preserveExisting")
                 self.assertFalse(parameters["appInsightsConnectionPropertiesReviewed"]["value"])
+                self.assertEqual(parameters["appInsightsConnectionPeRequirement"]["value"], "NotRequired")
+                self.assertEqual(parameters["appInsightsConnectionPeStatus"]["value"], "NotApplicable")
                 self.assertNotIn("appInsightsConnectionString", parameters)
         example = json.loads(
             (ROOT / "infra" / "modern-foundry-tracing.secure-reference.parameters.json").read_text()
         )["parameters"]
         self.assertEqual(example["tracingAssociationMode"]["value"], "preserveExisting")
         self.assertFalse(example["appInsightsConnectionPropertiesReviewed"]["value"])
+        self.assertEqual(example["appInsightsConnectionPeRequirement"]["value"], "NotRequired")
+        self.assertEqual(example["appInsightsConnectionPeStatus"]["value"], "NotApplicable")
         secret = example["appInsightsConnectionString"]
         self.assertNotIn("value", secret)
         self.assertTrue(secret["reference"]["secretVersion"])

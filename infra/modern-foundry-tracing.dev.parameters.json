@@ -8,6 +8,8 @@
     "appInsightsResourceId": { "value": "/subscriptions/<subscription-id>/resourceGroups/<dev-resource-group>/providers/Microsoft.Insights/components/fotoa-dev-appi-eastus2" },
     "tracingAssociationMode": { "value": "preserveExisting" },
     "appInsightsConnectionPropertiesReviewed": { "value": false },
-    "appInsightsConnectionSharing": { "value": "private" }
+    "appInsightsConnectionSharing": { "value": "private" },
+    "appInsightsConnectionPeRequirement": { "value": "NotRequired" },
+    "appInsightsConnectionPeStatus": { "value": "NotApplicable" }
   }
 }

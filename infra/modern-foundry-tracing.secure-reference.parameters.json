@@ -8,6 +8,8 @@
     "appInsightsResourceId": { "value": "/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Insights/components/<component-name>" },
     "tracingAssociationMode": { "value": "preserveExisting" },
     "appInsightsConnectionSharing": { "value": "private" },
+    "appInsightsConnectionPeRequirement": { "value": "NotRequired" },
+    "appInsightsConnectionPeStatus": { "value": "NotApplicable" },
     "appInsightsConnectionPropertiesReviewed": { "value": false },
     "appInsightsConnectionString": {
       "reference": {
