@@ -14,6 +14,8 @@ plain Python dicts standing in for Event Hub message bodies.
 from __future__ import annotations
 
 import json
+import math
+import re
 from typing import Any, Mapping
 
 from opentelemetry.sdk.resources import Resource
@@ -41,8 +43,9 @@ class MalformedRecordError(ValueError):
 # ---------------------------------------------------------------------------
 # Identity/correlation fields (#89) - trace_id / span_id / parent_span_id /
 # correlation.id. See trace-correlation-preservation.md §1: App Insights'
-# operation_Id/id/operation_ParentId are already the exact byte-width OTel
-# expects, so these are opaque-hex-string copies, never re-encoded.
+# operation_Id/id and real parent IDs retain their exact OTel byte widths.
+# Native dependency root markers are handled during row normalization.
+# Strict |trace.span. wrappers are unwrapped without regenerating IDs.
 # ---------------------------------------------------------------------------
 
 _TRACE_ID_HEX_LEN = 32  # 16 bytes
@@ -58,7 +61,13 @@ def _is_hex(value: str) -> bool:
 
 
 def _validate_hex_id(value: Any, expected_len: int, field_name: str) -> str:
-    if not isinstance(value, str) or len(value) != expected_len or not _is_hex(value):
+    if (
+        not isinstance(value, str)
+        or len(value) != expected_len
+        or any(char not in "0123456789abcdefABCDEF" for char in value)
+        or not _is_hex(value)
+        or int(value, 16) == 0
+    ):
         raise MalformedRecordError(
             f"{field_name!r} must be a {expected_len}-char lowercase hex string, "
             f"got {value!r}"
@@ -72,13 +81,25 @@ def parse_trace_id(operation_id: Any) -> int:
     return int(hex_value, 16)
 
 
-def parse_span_id(span_id_field: Any) -> int:
+def _span_hex(value: Any, field_name: str, trace_id: int | None = None) -> str:
+    if isinstance(value, str) and value.startswith("|"):
+        match = re.fullmatch(r"\|([0-9a-fA-F]{32})\.([0-9a-fA-F]{16})\.", value)
+        if match is None:
+            raise MalformedRecordError(f"{field_name!r} has an unsupported hierarchical ID")
+        embedded_trace = parse_trace_id(match.group(1))
+        if trace_id is not None and embedded_trace != trace_id:
+            raise MalformedRecordError(f"{field_name!r} hierarchical trace differs from operation_Id")
+        value = match.group(2)
+    return _validate_hex_id(value, _SPAN_ID_HEX_LEN, field_name)
+
+
+def parse_span_id(span_id_field: Any, trace_id: int | None = None) -> int:
     """`id` -> OTel `span_id` (int). No re-encoding - verbatim hex."""
-    hex_value = _validate_hex_id(span_id_field, _SPAN_ID_HEX_LEN, "id")
+    hex_value = _span_hex(span_id_field, "id", trace_id)
     return int(hex_value, 16)
 
 
-def parse_parent_span_id(operation_parent_id: Any) -> int | None:
+def parse_parent_span_id(operation_parent_id: Any, trace_id: int | None = None) -> int | None:
     """`operation_ParentId` -> OTel parent `span_id` (int), or `None`.
 
     Root spans (e.g. `prompt_agent.invoke`) have an empty/absent
@@ -89,7 +110,7 @@ def parse_parent_span_id(operation_parent_id: Any) -> int | None:
     """
     if operation_parent_id in (None, ""):
         return None
-    hex_value = _validate_hex_id(operation_parent_id, _SPAN_ID_HEX_LEN, "operation_ParentId")
+    hex_value = _span_hex(operation_parent_id, "operation_ParentId", trace_id)
     return int(hex_value, 16)
 
 
@@ -127,9 +148,8 @@ def build_parent_context(trace_id: int, parent_span_id: int | None) -> SpanConte
 def parse_custom_dimensions(record: Mapping[str, Any]) -> dict[str, Any]:
     """Return `customDimensions` as a dict, decoding it if it is a JSON string.
 
-    Azure Monitor/Log Analytics export rows sometimes carry `customDimensions`
-    as an already-parsed dict (e.g. in tests) and sometimes as a raw JSON
-    string (the literal Log Analytics Data Export wire format) - handle both.
+    Accept a parsed object or a JSON-encoded object. Native LAW `Properties`
+    uses the same parser during normalization; no captured wire shape is assumed.
     """
     raw = record.get("customDimensions", {})
     if raw is None:
@@ -137,7 +157,10 @@ def parse_custom_dimensions(record: Mapping[str, Any]) -> dict[str, Any]:
     if isinstance(raw, str):
         if not raw.strip():
             return {}
-        return json.loads(raw)
+        try:
+            raw = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise MalformedRecordError("customDimensions must contain a JSON object") from exc
     if isinstance(raw, Mapping):
         return dict(raw)
     raise MalformedRecordError(f"customDimensions must be a dict or JSON string, got {type(raw)!r}")
@@ -211,8 +234,9 @@ def map_token_fields(custom_dimensions: Mapping[str, Any]) -> dict[str, int]:
     for field in _TOKEN_FIELDS:
         if field in custom_dimensions:
             coerced = coerce_int(custom_dimensions[field])
-            if coerced is not None:
-                attributes[field] = coerced
+            if coerced is None or not 0 <= coerced <= 2**63 - 1:
+                raise MalformedRecordError(f"{field!r} must be a nonnegative int64")
+            attributes[field] = coerced
     return attributes
 
 
@@ -222,6 +246,49 @@ def map_token_fields(custom_dimensions: Mapping[str, Any]) -> dict[str, int]:
 
 _LLM_IO_FIELDS = ("input.value", "output.value", "llm.model_name")
 
+_GEN_AI_STRING_FIELDS = (
+    "gen_ai.operation.name",
+    "gen_ai.request.model",
+    "gen_ai.response.model",
+    "gen_ai.response.id",
+    "gen_ai.conversation.id",
+    "gen_ai.provider.name",
+)
+_GEN_AI_TOKEN_ALIASES = {
+    "gen_ai.usage.input_tokens": "llm.token_count.prompt",
+    "gen_ai.usage.output_tokens": "llm.token_count.completion",
+}
+_GEN_AI_OPERATION_KINDS = {"chat": "LLM", "invoke_agent": "AGENT"}
+
+
+def map_gen_ai_fields(custom_dimensions: Mapping[str, Any]) -> dict[str, Any]:
+    """Bridge observed Foundry span metadata, without inventing missing usage/content.
+
+    Keep the original model/usage/join attributes alongside OpenInference aliases.
+    A response model is more specific than a request model (which may be an alias).
+    Existing explicit OpenInference model/kind values remain authoritative.
+    """
+    attributes: dict[str, Any] = _string_attributes(custom_dimensions, _GEN_AI_STRING_FIELDS)
+    for source, destination in _GEN_AI_TOKEN_ALIASES.items():
+        if source not in custom_dimensions:
+            continue
+        count = coerce_int(custom_dimensions[source])
+        if count is None or not 0 <= count <= 2**63 - 1:
+            raise MalformedRecordError(f"{source!r} must be a nonnegative int64")
+        if destination in custom_dimensions and coerce_int(custom_dimensions[destination]) != count:
+            raise MalformedRecordError(f"conflicting {source!r} and {destination!r} values")
+        attributes[source] = count
+        attributes[destination] = count
+    if "llm.model_name" not in custom_dimensions:
+        model = attributes.get("gen_ai.response.model") or attributes.get("gen_ai.request.model")
+        if model:
+            attributes["llm.model_name"] = model
+    if "openinference.span.kind" not in custom_dimensions:
+        kind = _GEN_AI_OPERATION_KINDS.get(attributes.get("gen_ai.operation.name"))
+        if kind:
+            attributes["openinference.span.kind"] = kind
+    return attributes
+
 
 def map_llm_io_fields(custom_dimensions: Mapping[str, Any]) -> dict[str, str]:
     """String passthrough, unchanged key names, no type coercion needed.
@@ -230,7 +297,17 @@ def map_llm_io_fields(custom_dimensions: Mapping[str, Any]) -> dict[str, str]:
     truncation is introduced here beyond whatever the App Insights 8KB
     customDimensions limit already did upstream.
     """
-    return {field: custom_dimensions[field] for field in _LLM_IO_FIELDS if field in custom_dimensions}
+    return _string_attributes(custom_dimensions, _LLM_IO_FIELDS)
+
+
+def _string_attributes(values: Mapping[str, Any], fields: tuple[str, ...]) -> dict[str, str]:
+    attributes = {}
+    for field in fields:
+        if field in values:
+            if not isinstance(values[field], str):
+                raise MalformedRecordError(f"{field!r} must be a string")
+            attributes[field] = values[field]
+    return attributes
 
 
 # ---------------------------------------------------------------------------
@@ -242,8 +319,8 @@ _RETRY_BOOL_FIELD = "retry.will_retry"
 _SPAN_KIND_FIELD = "openinference.span.kind"
 
 # Azure Monitor's `AppDependencies` schema does not carry an explicit OTel
-# `SpanKind` column; the only kind-ish signal is the OpenInference
-# `openinference.span.kind` custom dimension (CHAIN/TOOL/LLM), which is an
+# `SpanKind` column; the available signal is the OpenInference
+# `openinference.span.kind` dimension (explicit or bridged from GenAI operation), which is an
 # *attribute*, not OTel core `SpanKind`. This best-effort INTERNAL/CLIENT
 # inference is not itself part of the field-mapping.md spec (nothing there
 # requires it) - it is included only so the produced `ReadableSpan.kind`
@@ -271,7 +348,7 @@ def map_span_kind_status_fields(
       - `retry.will_retry` -> string -> bool. Present only on failed
         attempts.
     """
-    if "Name" not in record:
+    if not isinstance(record.get("Name"), str) or not record["Name"]:
         raise MalformedRecordError("record is missing required 'Name' field")
     name = record["Name"]
 
@@ -281,7 +358,8 @@ def map_span_kind_status_fields(
         raise MalformedRecordError("record is missing required 'Success' field")
     status = Status(StatusCode.OK if coerced_success else StatusCode.ERROR)
 
-    kind_value = custom_dimensions.get(_SPAN_KIND_FIELD)
+    kind_attrs = _string_attributes(custom_dimensions, (_SPAN_KIND_FIELD,))
+    kind_value = kind_attrs.get(_SPAN_KIND_FIELD)
     kind = infer_span_kind(kind_value)
 
     attributes: dict[str, Any] = {}
@@ -314,9 +392,7 @@ def map_correlation_id(custom_dimensions: Mapping[str, Any]) -> dict[str, str]:
     String passthrough, unchanged key name - no OTel-core equivalent (it is
     an app-level join key, see `identity-correlation-fields.md` §1).
     """
-    if _CORRELATION_ID_FIELD in custom_dimensions:
-        return {_CORRELATION_ID_FIELD: custom_dimensions[_CORRELATION_ID_FIELD]}
-    return {}
+    return _string_attributes(custom_dimensions, (_CORRELATION_ID_FIELD,))
 
 
 # ---------------------------------------------------------------------------
@@ -328,6 +404,11 @@ _DEFAULT_SERVICE_NAME = "telemetry-pipeline-function"
 
 
 def build_resource(record: Mapping[str, Any]) -> Resource:
+    _string_attributes(
+        {key: record[key] for key in ("cloud_RoleName", "cloud_RoleInstance")
+         if record.get(key) is not None},
+        ("cloud_RoleName", "cloud_RoleInstance"),
+    )
     service_name = record.get("cloud_RoleName") or _DEFAULT_SERVICE_NAME
     attrs: dict[str, Any] = {"service.name": service_name}
     role_instance = record.get("cloud_RoleInstance")
@@ -337,6 +418,66 @@ def build_resource(record: Mapping[str, Any]) -> Resource:
 
 
 _INSTRUMENTATION_SCOPE = InstrumentationScope(name="telemetry_pipeline.transform")
+
+
+_SPAN_COLUMN_ALIASES = {
+    "OperationId": "operation_Id",
+    "Id": "id",
+    "ParentId": "operation_ParentId",
+    "Properties": "customDimensions",
+    "TimeGenerated": "timestamp",
+    "DurationMs": "duration",
+    "AppRoleName": "cloud_RoleName",
+    "AppRoleInstance": "cloud_RoleInstance",
+}
+
+
+def normalize_dependency_record(record: Mapping[str, Any]) -> dict[str, Any]:
+    """Accept native LAW AppDependencies/AppRequests alongside legacy fixtures.
+
+    Aliases must agree when both are present; neither value wins silently.
+    This is a span-row contract, not a log/exception-to-span mapping.
+    """
+    if not isinstance(record, Mapping):
+        raise MalformedRecordError("span record must be a JSON object")
+    if "Type" in record and record["Type"] not in ("AppDependencies", "AppRequests"):
+        raise MalformedRecordError("only AppDependencies and AppRequests records are supported")
+    normalized = dict(record)
+    for native, legacy in _SPAN_COLUMN_ALIASES.items():
+        if native not in record:
+            continue
+        value = record[native]
+        if native == "Properties":
+            value = parse_custom_dimensions({"customDimensions": value})
+        if legacy in record:
+            legacy_value = record[legacy]
+            if native == "Properties":
+                legacy_value = parse_custom_dimensions(record)
+            if legacy_value != value or (
+                isinstance(legacy_value, bool) != isinstance(value, bool)
+            ):
+                raise MalformedRecordError(f"conflicting {native!r} and {legacy!r} values")
+        normalized[legacy] = value
+    # Actual synthetic b58 source root: native LAW ParentId == OperationId.
+    # This is a root marker, not a 128-bit parent span; legacy rows stay strict.
+    if (
+        record.get("Type") == "AppDependencies"
+        and "OperationId" in record
+        and isinstance(record.get("ParentId"), str)
+        and len(record["ParentId"]) == _TRACE_ID_HEX_LEN
+    ):
+        parent_trace = parse_trace_id(record["ParentId"])
+        operation_trace = parse_trace_id(normalized["operation_Id"])
+        if parent_trace != operation_trace:
+            raise MalformedRecordError("native ParentId root marker differs from OperationId")
+        normalized["operation_ParentId"] = None
+    if "TimeGenerated" in record:
+        timestamp = record["TimeGenerated"]
+        if not isinstance(timestamp, str) or _parse_time_ns(timestamp) is None:
+            raise MalformedRecordError("TimeGenerated must be a valid ISO-8601 timestamp")
+    if "DurationMs" in record and record["DurationMs"] is None:
+        raise MalformedRecordError("DurationMs must be a finite nonnegative millisecond value")
+    return normalized
 
 
 # ---------------------------------------------------------------------------
@@ -352,29 +493,52 @@ def record_to_span(record: Mapping[str, Any]) -> ReadableSpan:
     silently swallowed) for identity fields that fail validation, a missing
     `Name`, or a missing/non-boolean `Success`.
     """
+    record = normalize_dependency_record(record)
     custom_dimensions = parse_custom_dimensions(record)
+    gen_ai_attrs = map_gen_ai_fields(custom_dimensions)
+    custom_dimensions = {**custom_dimensions, **gen_ai_attrs}
 
     trace_id = parse_trace_id(record.get("operation_Id"))
-    span_id = parse_span_id(record.get("id"))
-    parent_span_id = parse_parent_span_id(record.get("operation_ParentId"))
+    span_id = parse_span_id(record.get("id"), trace_id)
+    parent_span_id = parse_parent_span_id(record.get("operation_ParentId"), trace_id)
 
     context = build_span_context(trace_id, span_id)
     parent = build_parent_context(trace_id, parent_span_id)
 
     name, status, kind, span_kind_attrs = map_span_kind_status_fields(record, custom_dimensions)
+    if record.get("Type") == "AppRequests":
+        kind = SpanKind.SERVER
 
     attributes: dict[str, Any] = {}
+    attributes.update(gen_ai_attrs)
     attributes.update(map_correlation_id(custom_dimensions))
     attributes.update(map_token_fields(custom_dimensions))
     attributes.update(map_llm_io_fields(custom_dimensions))
     attributes.update(span_kind_attrs)
 
     timestamp = record.get("timestamp")
-    start_time = _parse_time_ns(timestamp) if timestamp else None
+    start_time = _parse_time_ns(timestamp) if timestamp is not None else None
+    if timestamp is not None and (
+        start_time is None or not 0 <= start_time <= 2**64 - 1
+    ):
+        raise MalformedRecordError("timestamp must be a valid nonnegative OTLP timestamp")
     duration_ms = record.get("duration")
     end_time = None
-    if start_time is not None and duration_ms is not None:
-        end_time = start_time + int(float(duration_ms) * 1_000_000)
+    if duration_ms is not None:
+        try:
+            duration = float(duration_ms)
+        except (TypeError, ValueError, OverflowError) as exc:
+            raise MalformedRecordError("duration must be a finite nonnegative millisecond value") from exc
+        if (
+            isinstance(duration_ms, bool)
+            or not math.isfinite(duration * 1_000_000)
+            or duration < 0
+        ):
+            raise MalformedRecordError("duration must be a finite nonnegative millisecond value")
+        if start_time is not None:
+            end_time = start_time + int(duration * 1_000_000)
+            if end_time > 2**64 - 1:
+                raise MalformedRecordError("span end time exceeds OTLP timestamp range")
 
     return ReadableSpan(
         name=name,
@@ -393,24 +557,42 @@ def record_to_span(record: Mapping[str, Any]) -> ReadableSpan:
 
 
 def _parse_time_ns(timestamp: Any) -> int | None:
-    """Best-effort ISO-8601 timestamp -> epoch nanoseconds.
+    """ISO-8601 or legacy epoch nanoseconds -> nanoseconds; invalid -> None.
 
-    Not part of the field-mapping.md spec (no acceptance criterion
-    references start/end time), but populated on a best-effort basis so
-    exported spans carry a plausible timestamp rather than `None` for every
-    span. Returns `None` (rather than raising) on an unparsable value - a
-    missing/odd timestamp is not grounds to reject an otherwise-valid
-    identity/correlation record.
+    Callers reject invalid supplied timestamps. Missing legacy times remain
+    unset rather than being fabricated as the Function's invocation time.
     """
     import datetime
 
-    if isinstance(timestamp, (int, float)):
+    if isinstance(timestamp, int) and not isinstance(timestamp, bool):
+        return timestamp
+    if isinstance(timestamp, float):
+        if not math.isfinite(timestamp):
+            return None
         return int(timestamp)
     if isinstance(timestamp, str):
+        fraction = re.search(r"T\d{2}:\d{2}:\d{2}[.,](\d+)", timestamp)
+        extra_ns = 0
+        normalized = timestamp.replace("Z", "+00:00")
+        if fraction:
+            digits = fraction.group(1)
+            if len(digits) > 9:
+                return None
+            extra_ns = int(digits.ljust(9, "0")) % 1000
+            # Python 3.10 accepts microseconds; preserve the remaining nanos separately.
+            start, end = fraction.span(1)
+            normalized = normalized[:start] + digits[:6].ljust(6, "0") + normalized[end:]
+            normalized = normalized.replace(",", ".")
         try:
-            normalized = timestamp.replace("Z", "+00:00")
             dt = datetime.datetime.fromisoformat(normalized)
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=datetime.timezone.utc)
         except ValueError:
             return None
-        return int(dt.timestamp() * 1_000_000_000)
+        delta = dt - datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
+        return (
+            (delta.days * 86400 + delta.seconds) * 1_000_000_000
+            + delta.microseconds * 1000
+            + extra_ns
+        )
     return None

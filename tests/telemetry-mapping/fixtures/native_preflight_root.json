@@ -1,0 +1,13 @@
+{
+  "Type": "AppDependencies",
+  "TimeGenerated": "2026-10-14T13:15:03.15676Z",
+  "OperationId": "809e5265f6a232ec4df0b2248b636350",
+  "Id": "5f9beea0f8b7ac74",
+  "ParentId": "809e5265f6a232ec4df0b2248b636350",
+  "Name": "e2e.transport_preflight",
+  "Success": true,
+  "DurationMs": 0,
+  "ItemCount": 1,
+  "AppRoleName": "foundry-prompt-agent",
+  "Properties": "{\"correlation.id\":\"fotoa-e2e-preflight-f95789f9-badd-4af8-83e1-3203debc76f2\",\"synthetic\":\"True\",\"preflightOnly\":\"True\"}"
+}

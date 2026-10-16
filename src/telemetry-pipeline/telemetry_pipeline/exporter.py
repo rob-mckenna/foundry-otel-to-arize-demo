@@ -10,14 +10,15 @@ network access in this sandbox.
 **Out of scope here (deliberately):** actually exercising a live OTLP
 network call to Arize. `build_arize_otlp_exporter()` below constructs a
 real exporter object when asked, but nothing in this repo's test suite
-calls it - see `docs/telemetry/trace-correlation-preservation.md` §5/§6 for
-why that end-to-end round trip remains unvalidated.
+calls a live endpoint. See `docs/current-state/arize-ingestion-validation.md`
+for the limited runtime evidence and outstanding full-pipeline checks.
 """
 from __future__ import annotations
 
 import logging
 import os
 from typing import Sequence
+from urllib.parse import urlsplit
 
 from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.sdk.trace.export import (
@@ -97,11 +98,11 @@ def build_arize_otlp_exporter(
     a core dependency, so the base package install stays credential- and
     network-dependency-free.
 
-    **Not exercised by this repo's test suite or by `function_app.py`'s
-    default wiring** - constructing this exporter requires real Arize
-    credentials this sandbox does not have. It exists so a future live
-    deployment has a ready-made factory function to call, per this
-    package's dependency-injection design.
+    The Function selects this factory when an endpoint is configured;
+    otherwise it uses the console fallback. Tests do not export to Arize.
+    The endpoint must be the full HTTPS trace URL including `/v1/traces`,
+    and space_id must be the actual Space ID rather than its display name.
+    Project routing is supplied by the SDK's OTEL_RESOURCE_ATTRIBUTES detector.
     """
     endpoint = endpoint or os.environ.get(ARIZE_OTLP_ENDPOINT_ENV_VAR)
     space_id = space_id or os.environ.get(ARIZE_SPACE_ID_ENV_VAR)
@@ -110,6 +111,15 @@ def build_arize_otlp_exporter(
         raise RuntimeError(
             f"{ARIZE_OTLP_ENDPOINT_ENV_VAR} is not set and no endpoint was supplied; "
             "cannot build a live Arize OTLP exporter."
+        )
+    parsed_endpoint = urlsplit(endpoint)
+    if (
+        parsed_endpoint.scheme != "https"
+        or not parsed_endpoint.hostname
+        or not parsed_endpoint.path.rstrip("/").endswith("/v1/traces")
+    ):
+        raise RuntimeError(
+            "ARIZE_OTLP_ENDPOINT must be an HTTPS OTLP trace URL ending in /v1/traces."
         )
     try:
         from opentelemetry.exporter.otlp.proto.http.trace_exporter import (
