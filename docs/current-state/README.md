@@ -11,6 +11,15 @@ parity are separate claims; destination parity remains **UNKNOWN**.
 [`architecture.md`](architecture.md) retains the implemented-path diagrams with scoped
 limitations. Solid edges describe the implementation, not proof of live delivery.
 
+## Modern Foundry tracing association
+
+The [#139 tracing runbook](foundry-appinsights-tracing.md) describes the recovered
+connection-only Bicep entrypoint, explicit same-auth adoption and separate optional
+MI path. Source/build checks and exact manual-association readback do **not**
+establish a deployment or UI-origin telemetry delivery. Clean connection creation,
+unchanged redeployment and independent synthetic UI/table/export evidence remain
+acceptance gates.
+
 ## Historical reference — not the active setup path
 
 The validation reports, milestone audits, capability matrix and runbooks linked below are

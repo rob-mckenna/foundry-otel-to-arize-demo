@@ -16,12 +16,14 @@ the synthetic demo and not authorized by this README.
 | Telemetry transform | Native/legacy span mapping, ID preservation, typed metadata/usage, bounded failure handling and OTLP serialization | Offline fixtures and protobuf tests do not prove actual Event Hub delivery or Arize acceptance |
 | Function publication | Source reconciled to the package published on 2026-10-16 | Explicit **package-only approval exception**, not completed generic official validation or a new deployment allowance |
 | Destination parity | Requires independent same-invocation graph, field and token evidence | **Arize parity UNKNOWN**; publication or an export success count is not destination proof |
-| Infrastructure | Existing baseline Bicep retained | Operator review/configuration required; not a turnkey reconciled deployment |
+| Infrastructure | Baseline Bicep plus focused modern project tracing connection entrypoint | Operator review/configuration required; not a turnkey reconciled deployment |
 | Future work | Direct OTLP bypass and content conversion | **PROPOSAL ONLY / NOT IMPLEMENTED**; excluded from this asset's implementation |
 
 The [mapping/export contract](docs/current-state/telemetry-mapping-export-contract.md) is the
-canonical technical status, including source-package provenance and limitations. Issue #139
-is QA-approved locally, **not deployed**. Historical private runtime allowances are **CLOSED
+canonical technical status, including source-package provenance and limitations. Issue #139's
+[focused connection implementation](docs/current-state/foundry-appinsights-tracing.md) is
+recovered and locally tested, **not deployed**; previous QA approval does not cover new hashes.
+Historical private runtime allowances are **CLOSED
 3/3**; evaluation remains **PARTIAL_OR_UNKNOWN_DO_NOT_RETRY**. Offline checks do not reopen
 model, replay, registration, evaluation or deployment budgets.
 

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "accountName": { "value": "fotoa-demo-foundry-eastus2" },
+    "projectName": { "value": "fotoa-demo-fproj-eastus2" },
+    "appInsightsConnectionName": { "value": "fotoa-demo-appi-eastus2-2199" },
+    "appInsightsResourceId": { "value": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Insights/components/fotoa-demo-appi-eastus2" },
+    "tracingAssociationMode": { "value": "preserveExisting" },
+    "appInsightsConnectionPropertiesReviewed": { "value": false },
+    "appInsightsConnectionSharing": { "value": "private" }
+  }
+}
