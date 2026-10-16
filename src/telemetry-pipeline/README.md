@@ -1,9 +1,10 @@
 # src/telemetry-pipeline
 
 **Status: CURRENT-STATE implementation with synthetic offline tests; NOT E2E VALIDATED.**
-This source reconciles the eight-file package published on 2026-10-16 under an explicit
+The baseline source reconciles the eight-file package published on 2026-10-16 under an explicit
 user-approved package-only exception, not completed generic official validation. Independent
-Arize graph/field/token parity remains **UNKNOWN**. See the scoped
+Arize graph/field/token parity remains **UNKNOWN**. The inline GenAI message-content
+enhancement is local-only, not published or live-validated. See the scoped
 [native mapping and export contract](../../docs/current-state/telemetry-mapping-export-contract.md)
 for provenance, source-field mappings, failure handling, binding prerequisites, and held work.
 
@@ -25,6 +26,13 @@ four detail docs (`/docs/telemetry/mapping/*.md`, issues #89–#92):
   `Success`), and the root-span-has-no-parent handling documented in
   [`trace-correlation-preservation.md`](../../docs/telemetry/trace-correlation-preservation.md) §1
   (an empty/absent `operation_ParentId` becomes `None`, never a zero-filled span ID).
+  Inline `gen_ai.input.messages` / `gen_ai.output.messages` role/parts arrays (native or
+  JSON-encoded) fill missing OpenInference `input.value` / `output.value` as JSON strings
+  with `application/json` MIME. Explicit values and their MIME win independently; stale
+  MIME without a value is replaced on conversion or omitted. Invalid message content
+  emits a key/reason-only warning and omits that side's generated I/O, retaining the
+  span. Nested parts are preserved; no new truncation, AppGenAIContent join, or copying
+  content to parents is introduced.
 - `batch.py` — decodes an Event Hub message batch (single record, JSON array, or the Log Analytics
   Data Export `{"records": [...]}` envelope) into OTel SDK `ReadableSpan` objects and exports the
   whole batch in one `exporter.export()` call (per §4's whole-batch-checkpointing recommendation),

@@ -4,19 +4,25 @@
 
 ## Provenance and evidence limits
 
-This focused changeset starts at remote main
+**Inline GenAI message enhancement (2026-10-16): local implementation only, not
+published or live-validated.** The provenance below describes the baseline package,
+not parity of the enhanced mapper with any active Function package. Offline tests
+prove the enhanced mapping and protobuf encoding, not Arize UI rendering/acceptance.
+
+The baseline changeset starts at remote main
 `beb3944afd9aba93d1eed7c06fcc4ec1e8d41c69`, not the unpublished local-main stack.
 It extracts the Function trigger repair from `34d844c` and exporter/Function
 failure handling plus regression tests from `f65384f`, excluding their surrounding
 infrastructure and operational instructions.
 
-The native mapper and batch decoder reconcile to the immutable approved source ZIP
+The baseline native mapper and batch decoder reconciled to the immutable approved source ZIP
 SHA-256 `023127d9edc7ad3751a17576d1d8b6d849826d74bbd6ddb4f36fb6df8b882e5d`.
-All eight original source members match the package and retained publication
+All eight original source members matched the package and retained publication
 reconciliation proof. Four members have no semantic change from remote main
 (root entrypoint, host configuration, requirements, and package initializer).
-The implementation changes are confined to mapping, batch decoding, exporter,
-and Function entrypoint modules. No later unpublished mapper hunk is included.
+The baseline implementation changes were confined to mapping, batch decoding,
+exporter, and Function entrypoint modules. The inline message bridge is a later,
+local-only mapper change, excluded from that publication receipt.
 
 Deployment `c06afa7a-3065-4659-afa9-67137f64b6d5` was reconciled active with
 eight-source parity using an **explicit user-approved package-only exception**.
@@ -45,6 +51,8 @@ Inputs are copied, not mutated.
 | `AppRoleName`, `AppRoleInstance` / legacy role fields | Resource `service.name`, `service.instance.id`; SDK resource detection retains configured `OTEL_RESOURCE_ATTRIBUTES` |
 | `Name`, `Success` | Span name and best-effort OK/ERROR status; not recovery of original OTel status |
 | `correlation.id`, `input.value`, `output.value`, `llm.model_name` | String passthrough only where present; invalid types reject |
+| `input.mime_type`, `output.mime_type` | String passthrough alongside the corresponding explicit value; orphan MIME omitted |
+| Inline `gen_ai.input.messages`, `gen_ai.output.messages` in `Properties` / `customDimensions` | JSON string or native array of role/parts messages → corresponding missing `input.value` / `output.value` JSON string and `application/json` MIME |
 | `llm.token_count.prompt`, `.completion`, `.total` | Nonnegative int64, including zero; no derived total or copied non-LLM usage |
 | `gen_ai.usage.input_tokens`, `.output_tokens` | Typed original attributes plus prompt/completion OpenInference aliases; disagreement with explicit usage rejects |
 | `gen_ai.response.model`, `gen_ai.request.model` | Preserve both; response then request fallback for missing `llm.model_name` |
@@ -54,8 +62,38 @@ Inputs are copied, not mutated.
 Explicit OpenInference model/kind values remain authoritative. Core span kind
 is best effort (native requests are SERVER); missing original status/kind,
 exception events, links, upstream parents, correlation, content, and total usage
-cannot be recreated. No source-content join, GenAI message conversion, developer
-message export, tool-definition export, or new content admission behavior is included.
+cannot be recreated unless the corresponding supported source fields are present.
+
+### Inline GenAI message content
+
+Each message must be an object with a nonempty string `role` and a `parts` array.
+Each part must be an object with a nonempty string `type`; nested content and
+additional JSON fields are preserved unchanged, not flattened or converted to
+another message schema. For example, synthetic
+`[{"role":"user","parts":[{"type":"text","content":"Synthetic coverage question"}]}]`
+becomes the JSON-string `input.value` with `input.mime_type=application/json`.
+Empty message arrays (and empty parts arrays) are valid JSON content.
+
+Precedence is independent for input and output. An explicit OpenInference value,
+including an empty string, wins and retains its matching explicit MIME when supplied;
+the overridden GenAI source is not parsed. If no explicit value exists, a stale
+MIME is replaced with `application/json` on successful conversion, or omitted if
+there is no valid content. No MIME is invented for explicit values lacking MIME.
+
+Missing message attributes produce no I/O. Malformed JSON, non-message shapes,
+or non-JSON nested content omit only that side's generated value/MIME, not the span
+or neighboring records. Warnings contain only the source attribute key and a
+fixed reason, never raw message bodies or parser exception text. Operators should
+investigate these warnings upstream. Existing raw GenAI message attributes remain
+unexported; this bridge adds only OpenInference value/MIME attributes.
+
+No new mapper size cap or truncation is introduced: upstream truncation may make
+JSON invalid, in which case conversion is omitted rather than emitting broken JSON.
+Only inline content on the original span is mapped. There are no AppGenAIContent
+exports/joins, indexed `llm.input_messages` attributes, separate developer-message
+or tool-definition exports, child-to-parent copies, or restored absent roots.
+No source content-recording settings, model calls, deployment, or UI customization
+are part of this enhancement.
 
 ## Batch, trigger, export, and recovery
 
@@ -116,7 +154,7 @@ No separate linter/type checker is configured for this package.
 ## Work explicitly held
 
 Infrastructure/settings/routing, casting/framework migration, Prompt Agent,
-evaluation, release tooling, content-conversion proposals, and unrelated dirty
+evaluation, release tooling, content joins beyond the inline bridge, and unrelated dirty
 documentation are excluded. Issue #139 is QA-approved locally **not deployed**.
 Runtime submissions remain **CLOSED 3/3**; both historical creation intents are
 consumed, only v1 accepted. Evaluation pending-upload HTTP 403 remains
