@@ -1,5 +1,11 @@
 # Demo Runbook: Setup → Run → Teardown
 
+> **HISTORICAL / SUPERSEDED (2026-10-16):** Do not execute the retained recipes below as
+> current instructions. Use the [root README](../README.md) for the supported offline path
+> and the [current contract](../docs/current-state/telemetry-mapping-export-contract.md)
+> for implementation/evidence status. Old readiness labels do not establish E2E validation
+> or authorize deployment, teardown, model calls, replay or evaluation.
+
 **Status: MIXED.** Steps marked ✅ use commands/scripts that exist in this repo today and have been
 reviewed against the merged infrastructure/code. Steps marked ⚠️ reference work tracked in open
 issues that has **not yet merged** — follow the linked issue for current status rather than

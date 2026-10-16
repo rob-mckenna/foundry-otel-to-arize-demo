@@ -1,8 +1,11 @@
 # src/telemetry-pipeline
 
-**Status: CURRENT-STATE, implemented + unit-tested with synthetic data. Live round-trip through a
-real deployed Event Hub + Function + Arize is NOT validated (no live Azure/Arize access in this
-sandbox).**
+**Status: CURRENT-STATE implementation with synthetic offline tests; NOT E2E VALIDATED.**
+This source reconciles the eight-file package published on 2026-10-16 under an explicit
+user-approved package-only exception, not completed generic official validation. Independent
+Arize graph/field/token parity remains **UNKNOWN**. See the scoped
+[native mapping and export contract](../../docs/current-state/telemetry-mapping-export-contract.md)
+for provenance, source-field mappings, failure handling, binding prerequisites, and held work.
 
 This directory holds the Azure Function transform/mapping code and Event Hub consumer logic for the
 telemetry pipeline:
@@ -42,11 +45,11 @@ Event Hub message batch — entirely via mocked message objects, no live Azure r
 
 ## What remains open
 
-A live end-to-end round trip through a real deployed Event Hub (#17) + this Function + a live Arize
-space has **not** been run — no live Azure/Arize credentials exist in this sandbox. See
-[`trace-correlation-preservation.md`](../../docs/telemetry/trace-correlation-preservation.md) §5–§6
-for exactly what that validation plan still requires. Issue #37 stays open until that live
-round-trip (its third acceptance criterion) is actually executed.
+Publication/source parity, retained native preflight delivery, source capture, and destination
+parity are separate evidence gates. Publication did not establish a fresh Event Hub delivery or
+OTLP acknowledgment. Full same-invocation graph/field/token parity in Arize is still unproven.
+This preparation is offline only: it authorizes no replay, model, registration, evaluation,
+settings, infrastructure, or deployment operation.
 
 The future-state idea of bypassing this pipeline with a direct OTLP exporter is conceptual only and
 lives under `/docs/future-state` — it must never be partially implemented here ahead of an accepted

@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import logging
+import sys
+from types import SimpleNamespace
 
 import pytest
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter, SpanExportResult
@@ -50,3 +52,34 @@ def test_build_arize_otlp_exporter_requires_endpoint(monkeypatch):
     monkeypatch.delenv(exporter_module.ARIZE_OTLP_ENDPOINT_ENV_VAR, raising=False)
     with pytest.raises(RuntimeError, match="ARIZE_OTLP_ENDPOINT"):
         exporter_module.build_arize_otlp_exporter()
+
+
+@pytest.mark.parametrize("endpoint", ["https://synthetic.invalid", "http://synthetic.invalid/v1/traces"])
+def test_arize_http_exporter_rejects_incomplete_trace_endpoint(endpoint):
+    with pytest.raises(RuntimeError, match="HTTPS OTLP trace URL ending in /v1/traces"):
+        exporter_module.build_arize_otlp_exporter(endpoint=endpoint)
+
+
+def test_full_trace_endpoint_reaches_sdk_constructor_without_network(monkeypatch):
+    configured = {}
+    sentinel = object()
+
+    def constructor(**kwargs):
+        configured.update(kwargs)
+        return sentinel
+
+    monkeypatch.setitem(
+        sys.modules,
+        "opentelemetry.exporter.otlp.proto.http.trace_exporter",
+        SimpleNamespace(OTLPSpanExporter=constructor),
+    )
+    exporter = exporter_module.build_arize_otlp_exporter(
+        endpoint="https://synthetic.invalid/v1/traces",
+        space_id="synthetic-space-id",
+        api_key="synthetic-test-key",
+    )
+    assert exporter._wrapped is sentinel
+    assert configured == {
+        "endpoint": "https://synthetic.invalid/v1/traces",
+        "headers": {"space_id": "synthetic-space-id", "api_key": "synthetic-test-key"},
+    }

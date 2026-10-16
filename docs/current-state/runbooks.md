@@ -1,5 +1,11 @@
 # Demo Environment Runbooks: Setup, Teardown, and Troubleshooting
 
+> **HISTORICAL / SUPERSEDED (2026-10-16):** Retained recipes and milestone readiness claims
+> below are not the active setup path or authorization to execute. Use the
+> [root README](../../README.md) for the supported offline demo and the
+> [current contract](telemetry-mapping-export-contract.md) for implementation/evidence limits.
+> Deployment, teardown, model, replay and evaluation require separate explicit approval.
+
 **Status: MIXED.** The setup and teardown runbooks below (§1, §2) cover infrastructure and
 Prompt Agent steps that are merged and validated today. The troubleshooting section (§3) covers
 the 4 most likely failure points named in issue #61; two of them (Event Hub throughput, Arize

@@ -73,13 +73,16 @@ def _extract_records(body_text: str) -> list[dict]:
     Handles the shapes this pipeline's upstream hops can produce:
       - a single JSON object (one record);
       - a JSON array of record objects;
-      - the Log Analytics Data Export envelope `{"records": [...]}`.
+      - a `{"records": [...]}` wrapper (synthetic compatibility contract;
+        not evidence of the deployed workspace's actual Event Hub wire shape).
     """
     parsed = json.loads(body_text)
     if isinstance(parsed, list):
         return parsed
     if isinstance(parsed, Mapping):
-        if "records" in parsed and isinstance(parsed["records"], list):
+        if "records" in parsed:
+            if not isinstance(parsed["records"], list):
+                raise MalformedRecordError("records wrapper must contain an array")
             return parsed["records"]
         return [dict(parsed)]
     raise MalformedRecordError(f"unsupported parsed message body shape: {type(parsed)!r}")
@@ -104,7 +107,7 @@ def transform_batch(
         try:
             body_text = _message_body_to_text(message)
             raw_records = _extract_records(body_text)
-        except (MalformedRecordError, json.JSONDecodeError) as exc:
+        except (MalformedRecordError, json.JSONDecodeError, UnicodeDecodeError) as exc:
             result.skipped.append(SkippedRecord(reason=str(exc), raw_record=message))
             logger.warning("telemetry_pipeline.batch: skipping unreadable message: %s", exc)
             continue

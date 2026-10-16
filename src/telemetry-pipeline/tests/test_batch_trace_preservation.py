@@ -97,7 +97,7 @@ def test_synthetic_3_span_batch_shares_one_trace_id_directly():
     assert correlation_ids == {"synthetic-correlation-abc"}
 
 
-def test_synthetic_3_span_batch_preserved_through_event_hub_message_batch(stub_exporter):
+def test_synthetic_3_span_batch_preserved_through_event_hub_message_batch(stub_exporter, monkeypatch):
     """End-to-end (within this package): 3 records delivered as one Event
     Hub message batch (the Log Analytics `{"records": [...]}` envelope),
     transformed and exported together, with trace/parent linkage intact."""
@@ -109,6 +109,10 @@ def test_synthetic_3_span_batch_preserved_through_event_hub_message_batch(stub_e
         def get_body(self) -> bytes:
             return self._body
 
+    monkeypatch.setenv(
+        "OTEL_RESOURCE_ATTRIBUTES",
+        "openinference.project.name=fotoa-vm-diagnostic,deployment.environment.name=synthetic-test",
+    )
     payload = {"records": _synthetic_batch()}
     message = _FakeEventHubEvent(json.dumps(payload).encode("utf-8"))
 
@@ -119,6 +123,12 @@ def test_synthetic_3_span_batch_preserved_through_event_hub_message_batch(stub_e
     # Whole-batch export: one export() call carries all 3 spans together.
     assert len(stub_exporter.export_calls) == 1
     assert len(stub_exporter.export_calls[0]) == 3
+    for span, record in zip(stub_exporter.export_calls[0], payload["records"]):
+        assert span.resource.attributes["openinference.project.name"] == "fotoa-vm-diagnostic"
+        assert span.resource.attributes["deployment.environment.name"] == "synthetic-test"
+        assert span.resource.attributes["service.name"]
+        assert span.context.trace_id == int(record["operation_Id"], 16)
+        assert span.context.span_id == int(record["id"], 16)
 
     spans_by_name = {span.name: span for span in result.spans}
     invoke_span = spans_by_name["prompt_agent.invoke"]
@@ -133,4 +143,6 @@ def test_synthetic_3_span_batch_preserved_through_event_hub_message_batch(stub_e
     assert llm_span.parent.span_id == invoke_span.context.span_id
 
     assert llm_span.attributes["llm.token_count.total"] == 12
+    assert llm_span.attributes["llm.token_count.prompt"] == 5
+    assert llm_span.attributes["llm.token_count.completion"] == 7
     assert isinstance(llm_span.attributes["llm.token_count.total"], int)
