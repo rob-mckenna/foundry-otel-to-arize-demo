@@ -1,13 +1,31 @@
 # Native telemetry mapping and export contract
 
-**CURRENT-STATE implementation; offline preparation, NOT E2E VALIDATED (2026-10-16).**
+**CURRENT-STATE implementation; package deployed, NOT E2E VALIDATED (2026-10-16).**
 
 ## Provenance and evidence limits
 
-**Inline GenAI message enhancement (2026-10-16): local implementation only, not
-published or live-validated.** The provenance below describes the baseline package,
-not parity of the enhanced mapper with any active Function package. Offline tests
-prove the enhanced mapping and protobuf encoding, not Arize UI rendering/acceptance.
+**Inline GenAI message enhancement (2026-10-16): code pushed and package deployed;
+active source parity verified, Arize UI not independently validated.** Source commit
+`e2c557fa58b27f68ef4706722544df76e7b17e5b` was pushed on
+`squad/genai-message-content`. Its deterministic eight-file source ZIP SHA-256 is
+`55448a28fd31f28c38c5227603982d86ba57bb09a384fc8c0af1f34aa19b2b4a`.
+Only `telemetry_pipeline/mapping.py` differs from the prior deployed package.
+The archive retains the existing Windows checkout's CRLF bytes; all eight members
+match that commit after CRLF normalization, with git-blob and archive hashes retained.
+
+Deployment `3f880a64-208b-498a-8f84-d6bbcd329ecb` completed successfully and active
+at `2026-10-16T23:04:08.7902273Z`, under the explicit user-approved package-only
+exception. Read-only reconciliation through `23:06:18Z` verified all eight active
+source hashes, resolved dependency metadata, host **Running**, enabled/indexed
+`TelemetryTransform` with its Event Hub trigger, three **Resolved** Key Vault
+references, and unchanged safe build/runtime/network/identity/auth projections.
+The retained operator receipt is
+`.azure-sandbox\genai-e2c557f-20261016-reconciled-proof.json` (ignored, local evidence).
+Exactly one source ZIP upload was accepted; the ambiguous Location guard was
+reconciled read-only against the exact deployment ID, without resubmission.
+Generic official validation was **not completed**. No new Event Hub/model invocation
+or independent Arize UI verification was performed; destination graph, content,
+identifier, and token parity remain **UNKNOWN**.
 
 The baseline changeset starts at remote main
 `beb3944afd9aba93d1eed7c06fcc4ec1e8d41c69`, not the unpublished local-main stack.
@@ -21,8 +39,9 @@ All eight original source members matched the package and retained publication
 reconciliation proof. Four members have no semantic change from remote main
 (root entrypoint, host configuration, requirements, and package initializer).
 The baseline implementation changes were confined to mapping, batch decoding,
-exporter, and Function entrypoint modules. The inline message bridge is a later,
-local-only mapper change, excluded from that publication receipt.
+exporter, and Function entrypoint modules. The inline message bridge is a later
+mapper change, excluded from that historical baseline receipt and deployed under
+the separate enhancement receipt above.
 
 Deployment `c06afa7a-3065-4659-afa9-67137f64b6d5` was reconciled active with
 eight-source parity using an **explicit user-approved package-only exception**.
@@ -92,8 +111,8 @@ JSON invalid, in which case conversion is omitted rather than emitting broken JS
 Only inline content on the original span is mapped. There are no AppGenAIContent
 exports/joins, indexed `llm.input_messages` attributes, separate developer-message
 or tool-definition exports, child-to-parent copies, or restored absent roots.
-No source content-recording settings, model calls, deployment, or UI customization
-are part of this enhancement.
+No source content-recording settings, model calls, or UI customization are part of
+this enhancement. Its separate package-only deployment is recorded above.
 
 ## Batch, trigger, export, and recovery
 

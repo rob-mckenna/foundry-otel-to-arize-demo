@@ -4,7 +4,14 @@
 The baseline source reconciles the eight-file package published on 2026-10-16 under an explicit
 user-approved package-only exception, not completed generic official validation. Independent
 Arize graph/field/token parity remains **UNKNOWN**. The inline GenAI message-content
-enhancement is local-only, not published or live-validated. See the scoped
+enhancement source `e2c557fa58b27f68ef4706722544df76e7b17e5b` is pushed and deployed:
+deployment `3f880a64-208b-498a-8f84-d6bbcd329ecb` completed successfully/active at
+`2026-10-16T23:04:08.7902273Z`. All eight active source hashes match the immutable
+source ZIP `55448a28fd31f28c38c5227603982d86ba57bb09a384fc8c0af1f34aa19b2b4a`;
+host Running, Event Hub trigger enabled/indexed, three references Resolved, and safe
+control projections unchanged. **Arize UI not independently validated.** The ignored
+operator receipt is `.azure-sandbox\genai-e2c557f-20261016-reconciled-proof.json`.
+See the scoped
 [native mapping and export contract](../../docs/current-state/telemetry-mapping-export-contract.md)
 for provenance, source-field mappings, failure handling, binding prerequisites, and held work.
 
@@ -56,8 +63,9 @@ Event Hub message batch — entirely via mocked message objects, no live Azure r
 Publication/source parity, retained native preflight delivery, source capture, and destination
 parity are separate evidence gates. Publication did not establish a fresh Event Hub delivery or
 OTLP acknowledgment. Full same-invocation graph/field/token parity in Arize is still unproven.
-This preparation is offline only: it authorizes no replay, model, registration, evaluation,
-settings, infrastructure, or deployment operation.
+The separately authorized package-only deployment is recorded above; this document
+authorizes no replay, model, registration, evaluation, settings, infrastructure, or
+further deployment operation.
 
 The future-state idea of bypassing this pipeline with a direct OTLP exporter is conceptual only and
 lives under `/docs/future-state` — it must never be partially implemented here ahead of an accepted
