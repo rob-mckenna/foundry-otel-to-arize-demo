@@ -24,8 +24,41 @@ The retained operator receipt is
 Exactly one source ZIP upload was accepted; the ambiguous Location guard was
 reconciled read-only against the exact deployment ID, without resubmission.
 Generic official validation was **not completed**. No new Event Hub/model invocation
-or independent Arize UI verification was performed; destination graph, content,
-identifier, and token parity remain **UNKNOWN**.
+or independent Arize UI verification was performed; complete destination graph,
+content, identifier, and token parity remain **UNKNOWN**.
+
+### Fresh playground observation and independent source reconciliation
+
+On 2026-10-16 the requester reported that synthetic Foundry playground trace
+`a1322599fe5c4c5488bf2ed17f38cb54` reached Arize **with Input**. This is
+**USER-OBSERVED**, not an independently authenticated Arize UI/API inspection.
+UI origin and synthetic classification rely on the operator's attestation.
+
+Independent QA's content-free reconciliation at `2026-10-16T23:37:00Z`
+found two `AppDependencies` rows for that exact trace, UTC
+`23:28:14.3953233Z`–`23:28:14.9962786Z`. Both have inline GenAI input/output
+lengths **832/276**. The observed parent/child pair is
+`d4e79f0bee6dcc88` → `66e051be9a06a846`; the child's native input/output
+token counts are **131/49**. No explicit correlation-ID attribute or source
+total-token attribute was observed; 180 is only their arithmetic sum, not a
+source total. Upstream parent `a07a3da112f940d3` was absent from the source
+query; this is **not** demonstrated export loss.
+
+The actual enabled LAW export `fotoa-demo-e2e-app-spans` selects
+`AppDependencies` and `AppRequests`, covering these observed source rows.
+Configuration metadata alone does not prove individual event delivery or
+health. The user's same-trace observation supplies bounded downstream arrival
+evidence, not independent full Arize Output/content/graph/token parity.
+`AppGenAIContent` and `AppEvents` remain unforwarded/unjoined; no rows from those
+other searched tables returned for this trace/window. Do not generalize this
+inline-message success to every Foundry invocation.
+
+QA receipt: `.azure-sandbox\qa-139-acceptance-20261016T2335.json` (ignored).
+[Telemetry signoff](https://github.com/rob-mckenna/foundry-otel-to-arize-demo/issues/139#issuecomment-6227001478)
+accepts only #139's Telemetry dependency and criteria 8/9 for this bounded case.
+The existing handoff records **157 passing relevant tests** using the exact
+command in **Offline checks** below; this evidence-only update changes no source
+and does not rerun or expand that claim.
 
 The baseline changeset starts at remote main
 `beb3944afd9aba93d1eed7c06fcc4ec1e8d41c69`, not the unpublished local-main stack.
@@ -174,7 +207,11 @@ No separate linter/type checker is configured for this package.
 
 Infrastructure/settings/routing, casting/framework migration, Prompt Agent,
 evaluation, release tooling, content joins beyond the inline bridge, and unrelated dirty
-documentation are excluded. Issue #139 is QA-approved locally **not deployed**.
+documentation are excluded. Issue #139's separate connection-only source
+`2fb796d` has native adoption/redeployment proof and separately approved
+isolated clean-create/redeployment proof; see PR141 and its current-state
+tracing runbook. This mapper change does not deploy that infrastructure or
+implement a content-table join.
 Runtime submissions remain **CLOSED 3/3**; both historical creation intents are
 consumed, only v1 accepted. Evaluation pending-upload HTTP 403 remains
 **PARTIAL_OR_UNKNOWN_DO_NOT_RETRY**; a dataset GET 404 does not clear that state.
