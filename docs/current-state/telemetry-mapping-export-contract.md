@@ -1,22 +1,80 @@
 # Native telemetry mapping and export contract
 
-**CURRENT-STATE implementation; offline preparation, NOT E2E VALIDATED (2026-10-16).**
+**CURRENT-STATE implementation; package deployed, NOT E2E VALIDATED (2026-10-16).**
 
 ## Provenance and evidence limits
 
-This focused changeset starts at remote main
+**Inline GenAI message enhancement (2026-10-16): code pushed and package deployed;
+active source parity verified, Arize UI not independently validated.** Source commit
+`e2c557fa58b27f68ef4706722544df76e7b17e5b` was pushed on
+`squad/genai-message-content`. Its deterministic eight-file source ZIP SHA-256 is
+`55448a28fd31f28c38c5227603982d86ba57bb09a384fc8c0af1f34aa19b2b4a`.
+Only `telemetry_pipeline/mapping.py` differs from the prior deployed package.
+The archive retains the existing Windows checkout's CRLF bytes; all eight members
+match that commit after CRLF normalization, with git-blob and archive hashes retained.
+
+Deployment `3f880a64-208b-498a-8f84-d6bbcd329ecb` completed successfully and active
+at `2026-10-16T23:04:08.7902273Z`, under the explicit user-approved package-only
+exception. Read-only reconciliation through `23:06:18Z` verified all eight active
+source hashes, resolved dependency metadata, host **Running**, enabled/indexed
+`TelemetryTransform` with its Event Hub trigger, three **Resolved** Key Vault
+references, and unchanged safe build/runtime/network/identity/auth projections.
+The retained operator receipt is
+`.azure-sandbox\genai-e2c557f-20261016-reconciled-proof.json` (ignored, local evidence).
+Exactly one source ZIP upload was accepted; the ambiguous Location guard was
+reconciled read-only against the exact deployment ID, without resubmission.
+Generic official validation was **not completed**. No new Event Hub/model invocation
+or independent Arize UI verification was performed; complete destination graph,
+content, identifier, and token parity remain **UNKNOWN**.
+
+### Fresh playground observation and independent source reconciliation
+
+On 2026-10-16 the requester reported that synthetic Foundry playground trace
+`a1322599fe5c4c5488bf2ed17f38cb54` reached Arize **with Input**. This is
+**USER-OBSERVED**, not an independently authenticated Arize UI/API inspection.
+UI origin and synthetic classification rely on the operator's attestation.
+
+Independent QA's content-free reconciliation at `2026-10-16T23:37:00Z`
+found two `AppDependencies` rows for that exact trace, UTC
+`23:28:14.3953233Z`–`23:28:14.9962786Z`. Both have inline GenAI input/output
+lengths **832/276**. The observed parent/child pair is
+`d4e79f0bee6dcc88` → `66e051be9a06a846`; the child's native input/output
+token counts are **131/49**. No explicit correlation-ID attribute or source
+total-token attribute was observed; 180 is only their arithmetic sum, not a
+source total. Upstream parent `a07a3da112f940d3` was absent from the source
+query; this is **not** demonstrated export loss.
+
+The actual enabled LAW export `fotoa-demo-e2e-app-spans` selects
+`AppDependencies` and `AppRequests`, covering these observed source rows.
+Configuration metadata alone does not prove individual event delivery or
+health. The user's same-trace observation supplies bounded downstream arrival
+evidence, not independent full Arize Output/content/graph/token parity.
+`AppGenAIContent` and `AppEvents` remain unforwarded/unjoined; no rows from those
+other searched tables returned for this trace/window. Do not generalize this
+inline-message success to every Foundry invocation.
+
+QA receipt: `.azure-sandbox\qa-139-acceptance-20261016T2335.json` (ignored).
+[Telemetry signoff](https://github.com/rob-mckenna/foundry-otel-to-arize-demo/issues/139#issuecomment-6227001478)
+accepts only #139's Telemetry dependency and criteria 8/9 for this bounded case.
+The existing handoff records **157 passing relevant tests** using the exact
+command in **Offline checks** below; this evidence-only update changes no source
+and does not rerun or expand that claim.
+
+The baseline changeset starts at remote main
 `beb3944afd9aba93d1eed7c06fcc4ec1e8d41c69`, not the unpublished local-main stack.
 It extracts the Function trigger repair from `34d844c` and exporter/Function
 failure handling plus regression tests from `f65384f`, excluding their surrounding
 infrastructure and operational instructions.
 
-The native mapper and batch decoder reconcile to the immutable approved source ZIP
+The baseline native mapper and batch decoder reconciled to the immutable approved source ZIP
 SHA-256 `023127d9edc7ad3751a17576d1d8b6d849826d74bbd6ddb4f36fb6df8b882e5d`.
-All eight original source members match the package and retained publication
+All eight original source members matched the package and retained publication
 reconciliation proof. Four members have no semantic change from remote main
 (root entrypoint, host configuration, requirements, and package initializer).
-The implementation changes are confined to mapping, batch decoding, exporter,
-and Function entrypoint modules. No later unpublished mapper hunk is included.
+The baseline implementation changes were confined to mapping, batch decoding,
+exporter, and Function entrypoint modules. The inline message bridge is a later
+mapper change, excluded from that historical baseline receipt and deployed under
+the separate enhancement receipt above.
 
 Deployment `c06afa7a-3065-4659-afa9-67137f64b6d5` was reconciled active with
 eight-source parity using an **explicit user-approved package-only exception**.
@@ -45,6 +103,8 @@ Inputs are copied, not mutated.
 | `AppRoleName`, `AppRoleInstance` / legacy role fields | Resource `service.name`, `service.instance.id`; SDK resource detection retains configured `OTEL_RESOURCE_ATTRIBUTES` |
 | `Name`, `Success` | Span name and best-effort OK/ERROR status; not recovery of original OTel status |
 | `correlation.id`, `input.value`, `output.value`, `llm.model_name` | String passthrough only where present; invalid types reject |
+| `input.mime_type`, `output.mime_type` | String passthrough alongside the corresponding explicit value; orphan MIME omitted |
+| Inline `gen_ai.input.messages`, `gen_ai.output.messages` in `Properties` / `customDimensions` | JSON string or native array of role/parts messages → corresponding missing `input.value` / `output.value` JSON string and `application/json` MIME |
 | `llm.token_count.prompt`, `.completion`, `.total` | Nonnegative int64, including zero; no derived total or copied non-LLM usage |
 | `gen_ai.usage.input_tokens`, `.output_tokens` | Typed original attributes plus prompt/completion OpenInference aliases; disagreement with explicit usage rejects |
 | `gen_ai.response.model`, `gen_ai.request.model` | Preserve both; response then request fallback for missing `llm.model_name` |
@@ -54,8 +114,38 @@ Inputs are copied, not mutated.
 Explicit OpenInference model/kind values remain authoritative. Core span kind
 is best effort (native requests are SERVER); missing original status/kind,
 exception events, links, upstream parents, correlation, content, and total usage
-cannot be recreated. No source-content join, GenAI message conversion, developer
-message export, tool-definition export, or new content admission behavior is included.
+cannot be recreated unless the corresponding supported source fields are present.
+
+### Inline GenAI message content
+
+Each message must be an object with a nonempty string `role` and a `parts` array.
+Each part must be an object with a nonempty string `type`; nested content and
+additional JSON fields are preserved unchanged, not flattened or converted to
+another message schema. For example, synthetic
+`[{"role":"user","parts":[{"type":"text","content":"Synthetic coverage question"}]}]`
+becomes the JSON-string `input.value` with `input.mime_type=application/json`.
+Empty message arrays (and empty parts arrays) are valid JSON content.
+
+Precedence is independent for input and output. An explicit OpenInference value,
+including an empty string, wins and retains its matching explicit MIME when supplied;
+the overridden GenAI source is not parsed. If no explicit value exists, a stale
+MIME is replaced with `application/json` on successful conversion, or omitted if
+there is no valid content. No MIME is invented for explicit values lacking MIME.
+
+Missing message attributes produce no I/O. Malformed JSON, non-message shapes,
+or non-JSON nested content omit only that side's generated value/MIME, not the span
+or neighboring records. Warnings contain only the source attribute key and a
+fixed reason, never raw message bodies or parser exception text. Operators should
+investigate these warnings upstream. Existing raw GenAI message attributes remain
+unexported; this bridge adds only OpenInference value/MIME attributes.
+
+No new mapper size cap or truncation is introduced: upstream truncation may make
+JSON invalid, in which case conversion is omitted rather than emitting broken JSON.
+Only inline content on the original span is mapped. There are no AppGenAIContent
+exports/joins, indexed `llm.input_messages` attributes, separate developer-message
+or tool-definition exports, child-to-parent copies, or restored absent roots.
+No source content-recording settings, model calls, or UI customization are part of
+this enhancement. Its separate package-only deployment is recorded above.
 
 ## Batch, trigger, export, and recovery
 
@@ -116,8 +206,12 @@ No separate linter/type checker is configured for this package.
 ## Work explicitly held
 
 Infrastructure/settings/routing, casting/framework migration, Prompt Agent,
-evaluation, release tooling, content-conversion proposals, and unrelated dirty
-documentation are excluded. Issue #139 is QA-approved locally **not deployed**.
+evaluation, release tooling, content joins beyond the inline bridge, and unrelated dirty
+documentation are excluded. Issue #139's separate connection-only source
+`2fb796d` has native adoption/redeployment proof and separately approved
+isolated clean-create/redeployment proof; see PR141 and its current-state
+tracing runbook. This mapper change does not deploy that infrastructure or
+implement a content-table join.
 Runtime submissions remain **CLOSED 3/3**; both historical creation intents are
 consumed, only v1 accepted. Evaluation pending-upload HTTP 403 remains
 **PARTIAL_OR_UNKNOWN_DO_NOT_RETRY**; a dataset GET 404 does not clear that state.

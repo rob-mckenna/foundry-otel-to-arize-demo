@@ -233,6 +233,9 @@ def test_repo_openinference_graph_content_and_usage_roundtrip_without_deduplicat
     model = rows[2]
     model["customDimensions"].update({
         "input.value": "Synthetic request", "output.value": "Synthetic response",
+        "input.mime_type": "text/plain", "output.mime_type": "text/plain",
+        "gen_ai.input.messages": [{"role": "user", "parts": []}],
+        "gen_ai.output.messages": [{"role": "assistant", "parts": []}],
     })
     rows[-1]["customDimensions"]["gen_ai.response.id"] = "resp_synthetic_attempt"
 
@@ -259,6 +262,8 @@ def test_repo_openinference_graph_content_and_usage_roundtrip_without_deduplicat
     attrs = {attr.key: attr.value for attr in llm.attributes}
     for key, expected in (("input.value", "Synthetic request"),
                           ("output.value", "Synthetic response"),
+                          ("input.mime_type", "text/plain"),
+                          ("output.mime_type", "text/plain"),
                           ("llm.model_name", "synthetic-model-v1")):
         assert attrs[key].WhichOneof("value") == "string_value"
         assert attrs[key].string_value == expected
@@ -272,7 +277,10 @@ def test_repo_openinference_graph_content_and_usage_roundtrip_without_deduplicat
     assert all(s.end_time_unix_nano - s.start_time_unix_nano == 1_250_000 for s in spans)
 
 
-def test_observed_foundry_service_shapes_roundtrip_real_otlp_without_inventing_root_or_total():
+@pytest.mark.parametrize("encoded_messages", [False, True])
+def test_observed_foundry_service_shapes_roundtrip_real_otlp_without_inventing_root_or_total(
+    encoded_messages,
+):
     import json
     from pathlib import Path
 
@@ -283,11 +291,20 @@ def test_observed_foundry_service_shapes_roundtrip_real_otlp_without_inventing_r
 
     fixture = Path(__file__).parents[1] / "telemetry-mapping" / "fixtures" / "foundry_service_spans.json"
     rows = json.loads(fixture.read_text())
-    # Synthetic content probes are not claimed to reproduce the uninspected live message schema.
+    messages = {
+        "input": [{"role": "user", "parts": [
+            {"type": "text", "content": "Synthetic coverage question"},
+            {"type": "tool_call", "id": "synthetic-call", "arguments": {"plan": ["SYN-1"]}},
+        ]}],
+        "output": [{"role": "assistant", "parts": [
+            {"type": "text", "content": "Synthetic coverage response"},
+        ]}],
+    }
     rows[1]["Properties"].update({
-        "gen_ai.input.messages": '[{"role":"user","content":"Synthetic request"}]',
-        "gen_ai.output.messages": '[{"role":"assistant","content":"Synthetic response"}]',
+        f"gen_ai.{side}.messages": json.dumps(value) if encoded_messages else value
+        for side, value in messages.items()
     })
+    rows[1]["Properties"]["correlation.id"] = "synthetic-message-request"
     bad = {**rows[1], "Properties": {**rows[1]["Properties"], "gen_ai.usage.input_tokens": -1}}
 
     class RoundtripExporter:
@@ -327,7 +344,13 @@ def test_observed_foundry_service_shapes_roundtrip_real_otlp_without_inventing_r
         for key in (source, alias):
             assert attrs[key].WhichOneof("value") == "int_value"
             assert attrs[key].int_value == expected
-    for absent in ("llm.token_count.total", "correlation.id", "input.value", "output.value",
+    assert attrs["correlation.id"].string_value == "synthetic-message-request"
+    for side, expected in messages.items():
+        assert attrs[f"{side}.value"].WhichOneof("value") == "string_value"
+        assert json.loads(attrs[f"{side}.value"].string_value) == expected
+        assert attrs[f"{side}.mime_type"].string_value == "application/json"
+        assert f"{side}.value" not in agent_attrs  # Never copy child content to its parent.
+    for absent in ("llm.token_count.total",
                    "gen_ai.input.messages", "gen_ai.output.messages", "span_type"):
         assert absent not in attrs
     assert "llm.token_count.prompt" not in agent_attrs

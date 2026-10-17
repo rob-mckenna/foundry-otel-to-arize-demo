@@ -14,6 +14,7 @@ plain Python dicts standing in for Event Hub message bodies.
 from __future__ import annotations
 
 import json
+import logging
 import math
 import re
 from typing import Any, Mapping
@@ -23,6 +24,8 @@ from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.trace import SpanContext, SpanKind, TraceFlags
 from opentelemetry.trace.status import Status, StatusCode
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Errors
@@ -291,13 +294,57 @@ def map_gen_ai_fields(custom_dimensions: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def map_llm_io_fields(custom_dimensions: Mapping[str, Any]) -> dict[str, str]:
-    """String passthrough, unchanged key names, no type coercion needed.
+    """Preserve explicit I/O; bridge inline GenAI role/parts messages as JSON.
 
     Per `docs/telemetry/mapping/llm-io-fields.md` §2: no *additional*
     truncation is introduced here beyond whatever the App Insights 8KB
     customDimensions limit already did upstream.
     """
-    return _string_attributes(custom_dimensions, _LLM_IO_FIELDS)
+    attributes = _string_attributes(custom_dimensions, _LLM_IO_FIELDS)
+    for side in ("input", "output"):
+        value_field, mime_field = f"{side}.value", f"{side}.mime_type"
+        if value_field in attributes:
+            attributes.update(_string_attributes(custom_dimensions, (mime_field,)))
+            continue
+        source = f"gen_ai.{side}.messages"
+        if source not in custom_dimensions:
+            continue
+        value = _message_json(custom_dimensions[source], source)
+        if value is not None:
+            attributes[value_field] = value
+            # A MIME without its explicit value cannot describe the generated JSON.
+            attributes[mime_field] = "application/json"
+    return attributes
+
+
+def _message_json(value: Any, source: str) -> str | None:
+    """Validate only the message envelope; preserve nested part content unchanged."""
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except json.JSONDecodeError:
+            logger.warning("telemetry_pipeline.mapping: omitting %s: invalid JSON", source)
+            return None
+    if not isinstance(value, list) or any(
+        not isinstance(message, dict)
+        or not isinstance(message.get("role"), str)
+        or not message["role"]
+        or not isinstance(message.get("parts"), list)
+        or any(
+            not isinstance(part, dict)
+            or not isinstance(part.get("type"), str)
+            or not part["type"]
+            for part in message["parts"]
+        )
+        for message in value
+    ):
+        logger.warning("telemetry_pipeline.mapping: omitting %s: expected role/parts messages", source)
+        return None
+    try:
+        return json.dumps(value, allow_nan=False)
+    except (TypeError, ValueError):
+        logger.warning("telemetry_pipeline.mapping: omitting %s: non-JSON content", source)
+        return None
 
 
 def _string_attributes(values: Mapping[str, Any], fields: tuple[str, ...]) -> dict[str, str]:
