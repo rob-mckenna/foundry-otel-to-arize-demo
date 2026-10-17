@@ -12,6 +12,23 @@ Bicep is the preferred Infrastructure-as-Code tool for this repo (see
 current-state infrastructure for `foundry-otel-to-arize-demo` - the resources
 needed to run the demo pipeline described in the repo root README.
 
+## Modern Foundry tracing association (#139)
+
+`modern-foundry-tracing.bicep` is a **connection-only** entrypoint for an existing
+modern `Microsoft.CognitiveServices/accounts/projects` project. Its safe default,
+`preserveExisting`, emits no connection PUT. Explicit `ApiKey` creation/adoption
+and separately approved `ProjectManagedIdentity` ingestion are supported by the
+module; neither changes parent resources, identities, roles, networking, or
+Application Insights authentication controls.
+
+Start with the [current-state tracing runbook](../docs/current-state/foundry-appinsights-tracing.md)
+for contracts, secure version-pinned Key Vault parameters, clean creation versus
+same-name adoption, focused tests, exact metadata verification, actual native
+adoption/clean-create/redeployment receipts and retained isolated test resources.
+The fresh UI-origin case has bounded Telemetry signoff; Arize Input remains
+user-observed, not full graph/output/token parity proof. The broader archived modern Foundry
+foundation/model/private-network scaffold is not restored by #139.
+
 ## Layout
 
 ```
@@ -20,12 +37,19 @@ infra/
 ├── main.bicep                 # Deployment entry point, wires modules together
 ├── main.parameters.json       # Example/default parameter values - public-access baseline (no secrets)
 ├── main.parameters.private-endpoint.json  # Example parameters with the private-endpoint variant enabled (no secrets)
+├── modern-foundry-tracing.bicep  # Modern project connection only; preservation is the default
+├── modern-foundry-tracing.parameters.json  # Exact demo preservation profile (nonsecret)
+├── modern-foundry-tracing.dev.parameters.json  # Dev preservation profile; target placeholders
+├── modern-foundry-tracing.secure-reference.parameters.json  # NON-EXECUTABLE pinned-vault example
 ├── scripts/
+│   ├── validate-modern-foundry-tracing.py  # One projected GET; exact project/name/category/target/auth check
+│   ├── test_modern_foundry_tracing.py  # Synthetic readback and fresh compiled-contract regressions
 │   ├── validate-naming.ps1     # CI/pre-merge lint: fails if a module skips the shared naming/tagging helpers (issue #20)
 │   ├── validate-deployment.ps1 # End-to-end what-if/deploy/verify validation against a scratch resource group (issue #22)
 │   └── teardown-deployment.ps1 # Safely tears down demo resources with confirmation safeguards (issue #23)
 └── modules/
     ├── naming.bicep           # Shared naming/tagging helpers (issue #20) ✅ - import this from every new module
+    ├── modern-foundry-app-insights.bicep  # Modern child connection; no parent/network/RBAC writes
     ├── foundry-project.bicep  # Azure AI Foundry hub + project (issue #15) ✅
     ├── app-insights.bicep     # Log Analytics + Application Insights (issue #16) ✅
     ├── key-vault.bicep        # Key Vault (RBAC) + managed identity wiring pattern (issue #18) ✅
@@ -37,6 +61,10 @@ infra/
 Each module is independently parameterized (no hardcoded names, regions, or
 environment-specific values) and idempotent - re-running a deployment with
 the same parameters must not fail or duplicate resources.
+The connection-only module is exempt from the shared naming/tagging lint:
+the child API has no tags/location field, and adopting a manual connection must
+retain its exact name. Compiled-contract tests prohibit parent/resource expansion;
+existing account/project/component tags and location are untouched.
 
 ## Naming convention
 

@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
   Validates that every Bicep module in infra/modules (excluding the shared
-  naming.bicep helper itself) uses the shared naming/tagging helpers instead
+  naming.bicep helper and the connection-only adoption module) uses the shared naming/tagging helpers instead
   of re-declaring ad hoc resource names or tag objects.
 
 .DESCRIPTION
@@ -34,7 +34,11 @@ $ModulesPath = (Resolve-Path $ModulesPath).Path
 $violations = New-Object System.Collections.Generic.List[string]
 
 $moduleFiles = Get-ChildItem -Path $ModulesPath -Filter '*.bicep' -File |
-  Where-Object { $_.Name -ne 'naming.bicep' }
+  Where-Object {
+    # Connections do not support tags and adoption must retain the exact manual name.
+    # test_modern_foundry_tracing.py verifies its compiled resource inventory stays connection-only.
+    $_.Name -notin @('naming.bicep', 'modern-foundry-app-insights.bicep')
+  }
 
 if ($moduleFiles.Count -eq 0) {
   Write-Warning "No .bicep modules found under $ModulesPath (excluding naming.bicep) - nothing to validate."

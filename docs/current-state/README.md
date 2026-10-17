@@ -11,6 +11,17 @@ parity are separate claims; destination parity remains **UNKNOWN**.
 [`architecture.md`](architecture.md) retains the implemented-path diagrams with scoped
 limitations. Solid edges describe the implementation, not proof of live delivery.
 
+## Modern Foundry tracing association
+
+The [#139 tracing runbook](foundry-appinsights-tracing.md) describes the recovered
+connection-only Bicep entrypoint, explicit same-auth adoption and separate optional
+MI path. Reviewed source `2fb796d` passed native same-name adoption and identical
+redeployment, then isolated clean creation/redeployment on 2026-10-17 UTC.
+The runbook records exact retained test IDs, immutable receipts and Telemetry's
+bounded fresh playground/source-table/export signoff. Arize Input is
+**user-observed**, not independent full destination graph/output/token parity.
+Source/build or association readback alone never proves telemetry delivery.
+
 ## Historical reference — not the active setup path
 
 The validation reports, milestone audits, capability matrix and runbooks linked below are
