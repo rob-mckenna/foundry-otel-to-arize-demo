@@ -1,10 +1,11 @@
 # Modern Foundry project → Application Insights association (#139)
 
-**CURRENT-STATE source implementation; NOT DEPLOYED by this change (2026-10-16).**
-Local builds/tests, live association metadata, deployment, and observed trace
-delivery are separate evidence gates. Keep #139 open until the deployment and
-independent synthetic UI-origin acceptance checks pass. No deployment, invocation,
-RBAC grant, authentication change, or network change is authorized by this runbook.
+**CURRENT-STATE implementation; native adoption, clean creation and identical
+redeployments verified (2026-10-16/17 UTC).**
+Local builds/tests, association metadata, deployment, source capture and observed
+trace delivery remain separate evidence gates. The executed evidence below
+supersedes earlier local-only/not-deployed status. This runbook does not itself
+authorize another deployment, invocation, RBAC, authentication or network change.
 
 ## Scope and recovery
 
@@ -190,7 +191,8 @@ This does not validate live provider enforcement or secret equivalence.
 
 For the existing repository-local compiler, this session used
 `$env:BICEP_CLI=(Resolve-Path .\.azure-config\bin\bicep.exe).Path` (0.47.16).
-Both builds and all 11 tests passed. The naming linter excludes only this
+Both builds and all 12 tests passed (24 mutation cases), independently reviewed
+on source `2fb796d`. The naming linter excludes only this
 connection-only module because its API has no tags and adoption needs the exact
 name; compiled tests guard that exception. Its script execution was blocked by
 the host's signing policy; do not bypass the policy.
@@ -212,8 +214,9 @@ python -B .\infra\scripts\validate-modern-foundry-tracing.py --project-resource-
 
 The readback passed on 2026-10-16: exactly one intended AppInsights/ApiKey/private
 association; `associationVerified=true`, `sharingVerified=true`,
-**`traceDeliveryVerified=false`**. This is metadata evidence for the manually
-linked connection, not evidence this IaC was ever deployed.
+**`traceDeliveryVerified=false`**. This validator reports metadata only.
+Subsequent actual IaC deployments are evidenced separately below; its false
+delivery field is not a denial of the separately observed fresh trace.
 
 The tool performs one projected ARM list GET, explicit subscription, 90-second
 timeout, no retries/pagination or credential endpoints. Missing/multiple
@@ -224,7 +227,7 @@ private service egress, UI-origin traffic or trace/span/token fidelity.
 After a separately approved MI migration require
 `--expected-auth-type ProjectManagedIdentity`; an ApiKey pass cannot satisfy it.
 
-## Remaining approval and closure gates
+## Deployment procedure and historical prerequisites
 
 Historical cycle3 receipts reported vault metadata-version listing blocked by
 `Forbidden/ForbiddenByConnection`, no affirmed component Entra-only property,
@@ -233,14 +236,16 @@ These are dated prerequisite observations, not fresh effective-authorization
 claims. No credential value was retrieved. Same-auth adoption does not require
 MI migration, but still requires approved equivalent secure resolution.
 
-Next proposed target is **only** the exact demo child connection printed above,
+The originally approved adoption target was **only** the exact demo child connection printed above,
 in resource group `fotoa-demo-rg`, leaving its name/target/ApiKey/private settings
 unchanged. Before any writing operation the coordinator must approve the exact
 source/profile, pinned vault ID/name/version, property delta and target, establish
 serialized ownership, and complete **azure-validate → azure-deploy** gating.
 Do not run the baseline scratch-deployment/teardown helper for this shared target.
 
-Minimal next commands for that future approved phase (not run here):
+Reusable validation commands for a separately approved profile follow. Actual
+native commands/results for the executed phases are retained in the receipts
+below; the unsigned PowerShell helper workflow was not executed or bypassed.
 
 ```powershell
 # $approvedProfile is the reviewed repo-local nonsecret reference-only profile.
@@ -248,7 +253,7 @@ Minimal next commands for that future approved phase (not run here):
 # It also preserves reviewed connection peRequirement/peStatus; neither proves endpoint health.
 az deployment group validate --subscription c81fda52-936e-4f14-8af4-951c0dbb92d2 --resource-group fotoa-demo-rg --template-file .\infra\modern-foundry-tracing.bicep --parameters "@$approvedProfile" --validation-level Provider --query "{state:properties.provisioningState}" --output json --only-show-errors 2>$null
 if ($LASTEXITCODE -ne 0) { throw 'Provider validation failed; retain sanitized status only.' }
-az deployment group what-if --subscription c81fda52-936e-4f14-8af4-951c0dbb92d2 --resource-group fotoa-demo-rg --template-file .\infra\modern-foundry-tracing.bicep --parameters "@$approvedProfile" --validation-level Provider --result-format ResourceIdOnly --query "{status:status,changes:changes[].{resourceId:resourceId,changeType:changeType}}" --output json --only-show-errors 2>$null
+az deployment group what-if --subscription c81fda52-936e-4f14-8af4-951c0dbb92d2 --resource-group fotoa-demo-rg --template-file .\infra\modern-foundry-tracing.bicep --parameters "@$approvedProfile" --validation-level Provider --result-format ResourceIdOnly --no-pretty-print --query "{status:status,changes:changes[].{resourceId:resourceId,changeType:changeType}}" --output json --only-show-errors 2>$null
 if ($LASTEXITCODE -ne 0) { throw 'Scoped what-if failed; retain sanitized status only.' }
 ```
 
@@ -259,7 +264,7 @@ deployment approval, perform clean connection deployment and identical
 redeployment, repeat exact readback, and verify no duplication/removal/drift or
 credential exposure. No create command here grants deployment approval.
 
-Finally, Telemetry/operator must perform **one separately approved synthetic
+For a future new delivery validation, Telemetry/operator must perform **one separately approved synthetic
 Foundry UI-origin invocation**, record bounded UTC window and available
 request/trace/correlation identifiers, then verify actual AppInsights/LAW rows.
 Client exporter preflight, old model receipts and OTLP acknowledgments are not
@@ -274,3 +279,110 @@ The previously prepared native LAW export selected AppRequests/AppDependencies;
 that broader export IaC remains held, not restored here. Baseline AppInsights
 diagnostic settings are not a replacement for that route. Independently reconcile
 the actual export configuration before claiming either table reaches Arize.
+
+## Executed acceptance evidence (2026-10-16/17 UTC)
+
+Reviewed implementation source is `2fb796d66f75384cdd4858bbee985eee2081d539`.
+This follow-up changes documentation only; deployed infrastructure source and
+the independently reviewed 12-test/24-mutation contract remain unchanged.
+
+### Existing-demo adoption and idempotence
+
+The user-approved **native CLI** method completed Provider validation,
+ResourceIdOnly what-if, one Incremental same-name adoption and one identical
+redeployment. Deployments `issue139-2fb796d-20261016t2045z-7c81a2` and its
+`-r2` both reached **Succeeded**. Each readback found the same single intended
+ApiKey/private connection, `peRequirement=NotRequired`,
+`peStatus=NotApplicable`. Safe account/project/component/vault controls matched.
+Receipt: `.azure-sandbox\issue139-native-approved-2fb796d-20261016T2045.json`.
+This was adoption, not clean creation. The generic unsigned-helper workflow
+remains incomplete; no signing-policy bypass or generic Validated claim is made.
+
+### Isolated clean creation and identical redeployment
+
+The requester then explicitly approved one isolated project inside the existing
+account, same component and pinned vault reference, with
+**temporaryCleanup=false**. Exact retained IDs:
+
+```text
+Project:
+/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.CognitiveServices/accounts/fotoa-demo-foundry-eastus2/projects/fotoa-demo-fproj-139test-eastus2
+Connection:
+/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.CognitiveServices/accounts/fotoa-demo-foundry-eastus2/projects/fotoa-demo-fproj-139test-eastus2/connections/fotoa-demo-appi-139test-eastus2
+```
+
+Collision-free preflight confirmed the project absent. Official project API
+`2025-09-01` documents 2–64-character names and project tags. The initial
+identity-omitted minimal shape passed Provider validation/what-if but reached
+terminal **Failed/BadRequest**: this live provider requires project managed
+identity. No project existed after that failure. A second distinct, revalidated
+creation added **only the new project's required SystemAssigned identity**;
+`issue139-clean-project-20261017-r1` succeeded. No role assignment, existing
+identity/authentication-mode change, network change or model deployment occurred.
+The operational project fixture is ignored, not shipped product infrastructure.
+Required tags were applied to the project; the child API is untaggable.
+
+The new project then had **zero AppInsights connections**. The strict validator
+correctly exited 1 for the missing association; this expected pre-create result
+was not misrepresented as post-deployment success. Reviewed Bicep built, Provider
+validation passed, and ResourceIdOnly what-if reported **only the intended new
+connection Create** (other existing resources Ignore). This format proves scope,
+not a property-level diff. The profile used ApiKey/private, review=true,
+NotRequired/NotApplicable, and the same approved ARM-only vault reference:
+secret `appinsights-connection-string`, immutable version
+`1ec98e6a56c34d569ccbee29e770e1c9`. No value was retrieved.
+
+| Deployment | ARM timestamp UTC | Exact readback |
+|---|---|---|
+| `issue139-clean-2fb796d-20261017` | `2026-10-17T00:10:30.193876Z` | Succeeded |
+| `issue139-clean-2fb796d-20261017-r2` | `2026-10-17T00:11:51.561700Z` | Succeeded |
+
+Both used identical compiled source/profile and stable connection name; only
+the outer deployment name differed. After **each**, the reviewed validator
+passed, the inventory contained exactly one intended AppInsights connection,
+and category/target/metadata/ApiKey/private/PE values matched with no duplicates.
+Fresh safe controls for the working demo connection/project, parent,
+component and vault equaled their preflight snapshots after project creation,
+clean connection creation and redeployment. No model/UI call or teardown ran.
+
+Immutable sanitized receipt (local/ignored):
+`.azure-sandbox\issue139-clean-20261017.final.json`.
+It retains exact native commands, IDs, timestamps, source/profile hashes and
+project-only failure/recovery evidence. Profile SHA-256:
+`1cfb5e3cf6af596387d96122c5a4d4452ac2e7cdcc7c0f422527d70e5d189315`.
+Connection entrypoint/module SHA-256:
+`e0f6362a1c30e91c74e655e93b88394363b299055bbbcfa9c4f4327cefa43e61` /
+`af391c2647e0f5a8909a82c7e88208b73dfc7c37687f684c1367d437712a4272`.
+
+**Ownership/retention:** Infra owns validation tracking for this isolated
+project/connection; the requester explicitly chose retention. Leave both in
+place. Any later removal needs separate explicit authorization and exact owned
+resource reconciliation; never delete/repoint the working demo association or
+shared component, LAW, vault, account or networking.
+
+### Bounded UI-origin/source/export acceptance
+
+[Telemetry signoff](https://github.com/rob-mckenna/foundry-otel-to-arize-demo/issues/139#issuecomment-6227001478)
+accepts the Telemetry dependency and criteria 8/9 for the operator-attested
+synthetic playground trace `a1322599fe5c4c5488bf2ed17f38cb54` only.
+The requester reports Arize **Input**, explicitly **USER-OBSERVED**, not an
+independent authenticated Arize UI/API inspection.
+
+Independent QA content-free reconciliation found two `AppDependencies` rows,
+UTC `2026-10-16T23:28:14.3953233Z`–`23:28:14.9962786Z`, inline input/output
+lengths 832/276, parent/child `d4e79f0bee6dcc88` → `66e051be9a06a846`,
+and child native input/output counts 131/49. No explicit correlation-ID
+attribute or source total-token attribute was observed. The enabled LAW export
+actually selects AppDependencies/AppRequests, covering these rows; configuration
+alone does not prove per-event health. QA receipt:
+`.azure-sandbox\qa-139-acceptance-20261016T2335.json`.
+
+Upstream parent `a07a3da112f940d3` was absent at source, **not** proven lost by
+export. Full Arize graph, Output/content fidelity and token parity remain
+unverified. AppGenAIContent/AppEvents remain unforwarded/unjoined; no rows from
+those other searched tables returned for this trace/window. That general
+coverage gap remains Telemetry-owned follow-up before broader claims, not a
+blocker for this observed inline-AppDependencies case. No new issue or invocation
+was needed. The deployed mapper remains source `e2c557f`, deployment
+`3f880a64-208b-498a-8f84-d6bbcd329ecb`, with eight-source parity and 157 recorded
+passing relevant tests; this documentation does not alter that package.

@@ -15,10 +15,12 @@ limitations. Solid edges describe the implementation, not proof of live delivery
 
 The [#139 tracing runbook](foundry-appinsights-tracing.md) describes the recovered
 connection-only Bicep entrypoint, explicit same-auth adoption and separate optional
-MI path. Source/build checks and exact manual-association readback do **not**
-establish a deployment or UI-origin telemetry delivery. Clean connection creation,
-unchanged redeployment and independent synthetic UI/table/export evidence remain
-acceptance gates.
+MI path. Reviewed source `2fb796d` passed native same-name adoption and identical
+redeployment, then isolated clean creation/redeployment on 2026-10-17 UTC.
+The runbook records exact retained test IDs, immutable receipts and Telemetry's
+bounded fresh playground/source-table/export signoff. Arize Input is
+**user-observed**, not independent full destination graph/output/token parity.
+Source/build or association readback alone never proves telemetry delivery.
 
 ## Historical reference — not the active setup path
 

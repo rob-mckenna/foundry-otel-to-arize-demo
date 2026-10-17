@@ -22,7 +22,11 @@ the synthetic demo and not authorized by this README.
 The [mapping/export contract](docs/current-state/telemetry-mapping-export-contract.md) is the
 canonical technical status, including source-package provenance and limitations. Issue #139's
 [focused connection implementation](docs/current-state/foundry-appinsights-tracing.md) is
-recovered and locally tested, **not deployed**; previous QA approval does not cover new hashes.
+deployed from reviewed source `2fb796d`: native same-name adoption and identical
+redeployment passed, followed by isolated clean creation/redeployment on
+2026-10-17 UTC. The runbook records retained test resources and bounded
+user-observed Arize Input versus independently reconciled source/export evidence;
+complete destination graph/content/token parity remains unknown.
 Historical private runtime allowances are **CLOSED
 3/3**; evaluation remains **PARTIAL_OR_UNKNOWN_DO_NOT_RETRY**. Offline checks do not reopen
 model, replay, registration, evaluation or deployment budgets.

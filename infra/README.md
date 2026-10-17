@@ -23,9 +23,10 @@ Application Insights authentication controls.
 
 Start with the [current-state tracing runbook](../docs/current-state/foundry-appinsights-tracing.md)
 for contracts, secure version-pinned Key Vault parameters, clean creation versus
-same-name adoption, focused tests, exact metadata verification, and remaining
-deployment/UI-origin evidence gates. This is implemented source, **not a claim
-of deployment or telemetry delivery**. The broader archived modern Foundry
+same-name adoption, focused tests, exact metadata verification, actual native
+adoption/clean-create/redeployment receipts and retained isolated test resources.
+The fresh UI-origin case has bounded Telemetry signoff; Arize Input remains
+user-observed, not full graph/output/token parity proof. The broader archived modern Foundry
 foundation/model/private-network scaffold is not restored by #139.
 
 ## Layout
