@@ -1,7 +1,8 @@
 # Infrastructure (`/infra`)
 
 > **Baseline reference, not a turnkey deployment (2026-10-16).** Existing Bicep is retained
-> unchanged. Commands and historical validation claims below are not the active onboarding
+> as the baseline. The #143 delta only adds a disabled-by-default private application-container
+> preparation flag; it is NOT DEPLOYED. Commands and historical validation claims below are not the active onboarding
 > path or permission to execute. Start with the [root README](../README.md) and review the
 > [current binding/export contract](../docs/current-state/telemetry-mapping-export-contract.md):
 > held binding/settings/network/RBAC work is not included. Live preparation, validation,
@@ -11,6 +12,18 @@ Bicep is the preferred Infrastructure-as-Code tool for this repo (see
 `/.github/copilot-instructions.md` sections 5-7). This directory contains the
 current-state infrastructure for `foundry-otel-to-arize-demo` - the resources
 needed to run the demo pipeline described in the repo root README.
+
+## Durable GenAI preparation (#143; NOT DEPLOYED)
+
+`prepareDurableGenAIContainer=false` is a new safe-default parameter on `main.bicep`
+and the Function module. True prepares only `genai-correlation` in the existing
+Function account, with no public access, runtime enablement, new role assignment
+or native table-export rule. The retained baseline has no LAW export-rule resource;
+source/container preparation must not be mistaken for content transport enablement.
+Do not deploy the broad baseline to prepare this child against a live environment.
+Exact scoped what-if, identity/network, retention/deletion, replay horizon and native
+content delivery reviews are separate release gates in the
+[durable runbook](../docs/current-state/durable-genai-correlation.md).
 
 ## Modern Foundry tracing association (#139)
 

@@ -117,6 +117,9 @@ param functionHostingPlanTier string = 'Consumption'
 ])
 param functionPythonVersion string = '3.11'
 
+@description('Prepare only a private durable GenAI application container in Function storage. Disabled by default; does not enable runtime processing or native content export.')
+param prepareDurableGenAIContainer bool = false
+
 module foundryProject 'modules/foundry-project.bicep' = {
   name: 'foundry-project-deployment'
   params: {
@@ -211,6 +214,7 @@ module functionApp 'modules/function-app.bicep' = {
     costCenterTag: costCenterTag
     hostingPlanTier: functionHostingPlanTier
     pythonVersion: functionPythonVersion
+    prepareDurableGenAIContainer: prepareDurableGenAIContainer
     keyVaultName: keyVault.outputs.keyVaultName
     eventHubNamespaceFqdn: eventHub.outputs.eventHubNamespaceFqdn
     eventHubNamespaceResourceId: eventHub.outputs.eventHubNamespaceResourceId

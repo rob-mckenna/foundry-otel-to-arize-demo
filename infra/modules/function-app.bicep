@@ -122,6 +122,9 @@ param eventHubConnectionSecretName string = ''
 @description('Additional Key Vault reference app settings as an array of { settingName, secretName } objects, e.g. a future Arize API key. Each resolves to @Microsoft.KeyVault(SecretUri=.../<secretName>/) against keyVaultName. Ignored when keyVaultName is empty.')
 param extraKeyVaultReferenceAppSettings array = []
 
+@description('Prepare the private genai-correlation application container in existing Function storage. Does not enable durable processing, content-table export, or new RBAC grants. Rollout requires separate approval.')
+param prepareDurableGenAIContainer bool = false
+
 var storageAccountName = toLower(replace(buildResourceName(projectToken, environment, resourceTypeTokens.storageAccount, regionToken), '-', ''))
 var hostingPlanName = buildResourceName(projectToken, environment, 'plan', regionToken)
 var functionAppName = buildResourceName(projectToken, environment, resourceTypeTokens.functionApp, regionToken)
@@ -156,6 +159,19 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
     minimumTlsVersion: 'TLS1_2'
     allowBlobPublicAccess: false
     supportsHttpsTrafficOnly: true
+  }
+}
+
+resource applicationBlobService 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01' existing = {
+  parent: storageAccount
+  name: 'default'
+}
+
+resource genAICorrelationContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = if (prepareDurableGenAIContainer) {
+  parent: applicationBlobService
+  name: 'genai-correlation'
+  properties: {
+    publicAccess: 'None'
   }
 }
 

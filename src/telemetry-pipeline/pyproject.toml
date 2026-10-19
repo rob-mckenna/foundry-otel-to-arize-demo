@@ -34,8 +34,16 @@ dependencies = [
 otlp = [
     "opentelemetry-exporter-otlp-proto-http>=1.24.0",
 ]
+durable = [
+    "azure-storage-blob>=12.19.0,<13",
+    "azure-identity>=1.17.0,<2",
+    "opentelemetry-exporter-otlp-proto-http>=1.24.0",
+]
 test = [
     "pytest>=8.0.0",
+    "azure-storage-blob>=12.19.0,<13",
+    "azure-identity>=1.17.0,<2",
+    "opentelemetry-exporter-otlp-proto-http>=1.24.0",
 ]
 
 [tool.setuptools.packages.find]

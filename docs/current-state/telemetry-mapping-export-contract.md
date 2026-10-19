@@ -2,6 +2,14 @@
 
 **CURRENT-STATE implementation; package deployed, NOT E2E VALIDATED (2026-10-16).**
 
+**Scope update (2026-10-19):** deployed/inline claims below remain scoped to the
+baseline with `DURABLE_GENAI_ENABLED` absent/false. The separately prepared
+[#143 durable correlation implementation](durable-genai-correlation.md) is
+**NOT DEPLOYED**, disabled by default, and uses different admission/acknowledgment
+semantics only when explicitly enabled. Native table export is not enabled by
+these source changes; live release gates and [ADR-0003](../adr/0003-opt-in-durable-genai-content-correlation.md)
+apply. The future-state direct-export architecture is unchanged.
+
 ## Provenance and evidence limits
 
 **Inline GenAI message enhancement (2026-10-16): code pushed and package deployed;
@@ -141,7 +149,7 @@ unexported; this bridge adds only OpenInference value/MIME attributes.
 
 No new mapper size cap or truncation is introduced: upstream truncation may make
 JSON invalid, in which case conversion is omitted rather than emitting broken JSON.
-Only inline content on the original span is mapped. There are no AppGenAIContent
+In the default inline path, only content on the original span is mapped. There are no AppGenAIContent
 exports/joins, indexed `llm.input_messages` attributes, separate developer-message
 or tool-definition exports, child-to-parent copies, or restored absent roots.
 No source content-recording settings, model calls, or UI customization are part of
@@ -205,9 +213,10 @@ No separate linter/type checker is configured for this package.
 
 ## Work explicitly held
 
-Infrastructure/settings/routing, casting/framework migration, Prompt Agent,
-evaluation, release tooling, content joins beyond the inline bridge, and unrelated dirty
-documentation are excluded. Issue #139's separate connection-only source
+For the deployed inline baseline, infrastructure/settings/routing,
+casting/framework migration, Prompt Agent, evaluation, release tooling and unrelated dirty
+documentation remain excluded. Content joins beyond that baseline now exist only
+in the disabled, undeployed #143 path linked above. Issue #139's separate connection-only source
 `2fb796d` has native adoption/redeployment proof and separately approved
 isolated clean-create/redeployment proof; see PR141 and its current-state
 tracing runbook. This mapper change does not deploy that infrastructure or
