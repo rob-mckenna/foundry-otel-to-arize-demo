@@ -6,12 +6,28 @@
 > reconfigured or granted access for this assignment. No model/agent was invoked.
 > Lead architecture review and fresh, resource-specific user approval are required.
 
+## Current execution status — issue #145
+
+Requester approved the cleanup direction, including repository modernization.
+The modern-only private infrastructure source is implemented in `3358374` and
+independently Lead-approved with external execution gates. Offline compilation,
+naming and 31 focused infrastructure/tracing checks passed. The classic
+`foundry-project.bicep` and broad `teardown-deployment.ps1` are removed from
+supported source; historical references below describe the inventory baseline.
+
+The deployment plan is **Ready for Validation, not Validated**. No fresh
+deployment, provider/private-runtime/idempotence success or live resource
+retirement is claimed. A fresh metadata-only clearance pass is checking the four
+classic candidates; unresolved consumer, governance and recovery dependencies
+remain protected. Removing definitions does not delete live resources.
+
 ## Accepted direction addendum — issue #145
 
 **2026-10-19T12:38:00.312-04:00 — Lead; requester/approver Rob McKenna.**
 [ADR-0004](../adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md)
 records the now-accepted **modern-only repository direction** and exact Infra
-file/symbol contract. Implementation and live verification are pending.
+file/symbol contract. Source implementation is now recorded above; live
+verification remains pending.
 This supersedes the planning-only architecture status above **only for that
 direction**, not the inventory's as-of evidence, unknowns or deletion gates.
 The 83 primary rows R01–R83 and their evidence scope are unchanged.
@@ -29,7 +45,7 @@ The 83 primary rows R01–R83 and their evidence scope are unchanged.
   retirement are separate operations/approvals. Connection-only #139 IaC stays
   connection-only. Modern model availability/quota/cost, private runtime/state
   prerequisites and secure-material custody remain execution gates.
-- **Release handoff reconciled:** requester reports #143 hold released,
+- **Release handoff reconciled:** coordinator records #143 hold released,
   merged #144 (`c055795`) and QA acceptance. Released durable-runbook receipts
   record controlled fallback verification and validation VM deallocation at
   `2026-10-19T15:23:04Z`; no grant was created/removed for that fixture and the
