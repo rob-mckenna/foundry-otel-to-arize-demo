@@ -1,8 +1,9 @@
 # Infrastructure (`/infra`)
 
 > **Baseline reference, not a turnkey deployment (2026-10-16).** Existing Bicep is retained
-> as the baseline. The #143 delta only adds a disabled-by-default private application-container
-> preparation flag; it is NOT DEPLOYED. Commands and historical validation claims below are not the active onboarding
+> as the baseline. The #143 delta adds a disabled-by-default private application-container
+> preparation flag and a separate narrowly scoped rollout entrypoint; both are NOT DEPLOYED.
+> Commands and historical validation claims below are not the active onboarding
 > path or permission to execute. Start with the [root README](../README.md) and review the
 > [current binding/export contract](../docs/current-state/telemetry-mapping-export-contract.md):
 > held binding/settings/network/RBAC work is not included. Live preparation, validation,
@@ -24,6 +25,64 @@ Do not deploy the broad baseline to prepare this child against a live environmen
 Exact scoped what-if, identity/network, retention/deletion, replay horizon and native
 content delivery reviews are separate release gates in the
 [durable runbook](../docs/current-state/durable-genai-correlation.md).
+
+### Narrow existing-resource rollout (prepared, NOT DEPLOYED)
+
+`durable-genai-rollout.bicep` is a separate resource-group entrypoint. It writes
+only four resources:
+
+1. Private `genai-correlation` container in an **existing** Function storage account.
+2. Deterministic custom role definition at the deployment resource group, with
+   `assignableScopes` restricted to that group, no management-plane actions and
+   exactly `blobs/tags/write` plus `blobs/filter/action` DataActions.
+3. One deterministic assignment to the supplied Function system MI object ID,
+   scoped **only to the container**. Existing host Blob/Queue/Table grants remain.
+4. The **existing** named LAW export rule: preserve its current enabled state,
+   namespace ID, explicit Event Hub name and complete table list, adding
+   `AppGenAIContent` and retaining `AppDependencies`/`AppRequests`.
+
+There are no account, workspace, Function, identity, secret, Event Hub, network,
+retention-policy or runtime-setting writes. The child resources do not support
+the parent account's tags/location model; parent tags and names are unchanged.
+All target/destination parameters are required. Container name is fixed to the
+runtime contract, not the host checkpoint containers.
+
+`durable-genai-rollout.parameters.json` is the **nonsecret 2026-10-19 demo
+snapshot**, not automatic discovery. Before validation/deployment, compare its
+principal and full rule configuration against fresh projected GETs. Abort on
+drift; preserve every current table and destination property. ARM export PUTs are
+not partial updates, and a mistyped rule name could create a parallel exporter.
+Use Incremental mode only; never Complete mode against this existing group.
+
+Offline checks (no cloud mutation):
+
+```powershell
+$env:AZURE_CONFIG_DIR = "$PWD\.azure-config"
+az bicep build --file infra\durable-genai-rollout.bicep --stdout --only-show-errors | Out-Null
+$env:PYTHONDONTWRITEBYTECODE = '1'
+$env:PYTEST_DISABLE_PLUGIN_AUTOLOAD = '1'
+python -m pytest -q -p no:cacheprovider src\telemetry-pipeline\tests\test_durable_infra.py
+```
+
+Coordinator/operator recipe **after** fresh configuration review and applicable
+official validation, not executed by preparation:
+
+```powershell
+az deployment group validate --resource-group fotoa-demo-rg --template-file infra\durable-genai-rollout.bicep --parameters '@infra\durable-genai-rollout.parameters.json' --subscription c81fda52-936e-4f14-8af4-951c0dbb92d2 --only-show-errors
+az deployment group what-if --resource-group fotoa-demo-rg --template-file infra\durable-genai-rollout.bicep --parameters '@infra\durable-genai-rollout.parameters.json' --subscription c81fda52-936e-4f14-8af4-951c0dbb92d2 --no-pretty-print --only-show-errors
+```
+
+Review only container creation, the two-action role definition, container-scoped
+assignment and the existing export-rule table addition. Stop on other resource
+writes, removals, grant widening or destination changes. The
+[ARM role-definition reference](https://learn.microsoft.com/azure/templates/microsoft.authorization/roledefinitions)
+supports resource-group deployment; compilation is not proof of live provider,
+policy or caller authorization. `roleDefinitions/write` is needed on the RG
+assignable scope and `roleAssignments/write` on the container; do not substitute
+subscription-level authority. Native delivery, private DNS/MI access, index
+visibility, physical/logical retention, cutover and destination acceptance remain
+separate gates. This template neither enables runtime processing nor authorizes
+publication, replay or model calls.
 
 ## Modern Foundry tracing association (#139)
 
@@ -50,6 +109,8 @@ infra/
 ├── main.bicep                 # Deployment entry point, wires modules together
 ├── main.parameters.json       # Example/default parameter values - public-access baseline (no secrets)
 ├── main.parameters.private-endpoint.json  # Example parameters with the private-endpoint variant enabled (no secrets)
+├── durable-genai-rollout.bicep  # Existing container/index RBAC/export rule only; no runtime settings
+├── durable-genai-rollout.parameters.json  # Nonsecret reviewed demo snapshot; refresh before use
 ├── modern-foundry-tracing.bicep  # Modern project connection only; preservation is the default
 ├── modern-foundry-tracing.parameters.json  # Exact demo preservation profile (nonsecret)
 ├── modern-foundry-tracing.dev.parameters.json  # Dev preservation profile; target placeholders

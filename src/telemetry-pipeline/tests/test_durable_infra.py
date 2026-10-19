@@ -1,4 +1,4 @@
-"""Offline compiled contracts: preparation must not enable content/export or grants."""
+"""Offline compiled contracts for baseline preparation and the narrow opt-in rollout."""
 from __future__ import annotations
 
 import json
@@ -61,3 +61,92 @@ def test_preparation_retains_existing_role_inventory_only(compiled_function_modu
     variables = compiled_function_module.get("variables", {})
     encoded = json.dumps(variables) + json.dumps(roles)
     assert all(role in encoded for role in existing_roles)
+
+
+@pytest.fixture(scope="module")
+def compiled_durable_rollout():
+    root = Path(__file__).resolve().parents[3]
+    az = shutil.which("az")
+    if az is None:
+        pytest.skip("Azure CLI/Bicep required for compiled infrastructure contract")
+    result = subprocess.run(
+        [az, "bicep", "build", "--file", str(root / "infra" / "durable-genai-rollout.bicep"),
+         "--stdout", "--only-show-errors"],
+        capture_output=True, text=True, timeout=120, check=False,
+    )
+    assert result.returncode == 0, "Offline rollout Bicep compilation failed"
+    return json.loads(result.stdout)
+
+
+def _resources_by_type(template):
+    resources = template["resources"]
+    if isinstance(resources, dict):
+        resources = list(resources.values())
+    return {item["type"]: item for item in resources if not item.get("existing", False)}
+
+
+def test_rollout_writes_only_private_container_index_rbac_and_existing_export(compiled_durable_rollout):
+    template = compiled_durable_rollout
+    resources = _resources_by_type(template)
+    assert len(resources) == 4
+    assert set(resources) == {
+        "Microsoft.Storage/storageAccounts/blobServices/containers",
+        "Microsoft.Authorization/roleDefinitions",
+        "Microsoft.Authorization/roleAssignments",
+        "Microsoft.OperationalInsights/workspaces/dataExports",
+    }
+    container = resources["Microsoft.Storage/storageAccounts/blobServices/containers"]
+    assert container["properties"] == {"publicAccess": "None"}
+    assert container["name"] == (
+        "[format('{0}/{1}/{2}', parameters('storageAccountName'), 'default', 'genai-correlation')]"
+    )
+    assert "DURABLE_GENAI_ENABLED" not in json.dumps(template)
+
+
+def test_rollout_role_is_additive_two_action_rg_definition_container_assignment(compiled_durable_rollout):
+    resources = _resources_by_type(compiled_durable_rollout)
+    role = resources["Microsoft.Authorization/roleDefinitions"]
+    assert role.get("scope") is None
+    assert role["properties"]["type"] == "CustomRole"
+    assert role["properties"]["assignableScopes"] == ["[resourceGroup().id]"]
+    assert role["properties"]["permissions"] == [{
+        "actions": [],
+        "notActions": [],
+        "dataActions": [
+            "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags/write",
+            "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/filter/action",
+        ],
+        "notDataActions": [],
+    }]
+    assignment = resources["Microsoft.Authorization/roleAssignments"]
+    assert assignment["scope"] == (
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', "
+        "parameters('storageAccountName'), 'default', 'genai-correlation')]"
+    )
+    assert assignment["properties"]["principalId"] == "[parameters('functionPrincipalId')]"
+    assert assignment["properties"]["principalType"] == "ServicePrincipal"
+    assert assignment["properties"]["roleDefinitionId"].startswith(
+        "[resourceId('Microsoft.Authorization/roleDefinitions', "
+    )
+    assert "guid(" in role["name"] and "guid(" in assignment["name"]
+
+
+def test_rollout_preserves_complete_export_snapshot_and_requires_explicit_targets(compiled_durable_rollout):
+    template = compiled_durable_rollout
+    parameters = template["parameters"]
+    assert all("defaultValue" not in value for value in parameters.values())
+    export = _resources_by_type(template)["Microsoft.OperationalInsights/workspaces/dataExports"]
+    assert export["name"] == (
+        "[format('{0}/{1}', parameters('workspaceName'), parameters('exportRuleName'))]"
+    )
+    assert export["properties"] == {
+        "destination": {
+            "resourceId": "[parameters('eventHubNamespaceResourceId')]",
+            "metaData": {"eventHubName": "[parameters('eventHubName')]"},
+        },
+        "tableNames": (
+            "[union(parameters('existingExportTableNames'), "
+            "createArray('AppDependencies', 'AppRequests', 'AppGenAIContent'))]"
+        ),
+        "enable": "[parameters('existingExportEnabled')]",
+    }

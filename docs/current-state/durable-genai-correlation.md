@@ -165,8 +165,9 @@ query results or tags alone, determine whether a send is permitted; stale index
 results cannot authorize a second send. Index propagation adds scheduling latency.
 Before rollout, verify index-tag support, query latency/cost and managed-identity
 permissions for `blobs/tags/write` and `blobs/filter/action`. Existing ordinary
-Blob read/write roles are **not** proof of those permissions. No grant is added
-by this implementation. See [Microsoft's Blob index guidance](https://learn.microsoft.com/azure/storage/blobs/storage-manage-find-blobs).
+Blob read/write roles are **not** proof of those permissions. The runtime and
+baseline preparation add no grant; the separate opt-in rollout template below
+defines only the two additive index permissions. See [Microsoft's Blob index guidance](https://learn.microsoft.com/azure/storage/blobs/storage-manage-find-blobs).
 
 Never apply unconditional storage lifecycle TTL to this container. **Unsent,
 ambiguous and rejected entries are retained indefinitely**, so storage can grow.
@@ -202,10 +203,22 @@ Runtime requires all of:
 only that private child container in the existing Function account. It changes
 neither runtime settings nor table export nor role assignments. Container children
 do not support the account's tag model; the existing required account tags remain.
-The retained baseline `infra/main.bicep` contains no native LAW data-export rule;
-this patch deliberately adds none. **Source publication/container preparation alone
+The retained baseline `infra/main.bicep` contains no native LAW data-export rule.
+**Source publication/container preparation alone
 does not enable live AppGenAIContent export.** Any actual rule change remains an
 explicit, separately reviewed opt-in; do not deploy the broad baseline as a shortcut.
+
+For an approved existing-pipeline rollout, the standalone
+[`infra/durable-genai-rollout.bicep`](../../infra/durable-genai-rollout.bicep)
+prepares only the private container, an RG-assignable custom role containing
+`blobs/tags/write` and `blobs/filter/action`, its container-scoped Function MI
+assignment, and the existing export-rule update. Required snapshot parameters
+preserve its full table list, enabled state, namespace and explicit Event Hub name.
+There are no Function settings or parent-resource writes, and no retention changes.
+The [infra recipe](../../infra/README.md#narrow-existing-resource-rollout-prepared-not-deployed)
+documents offline tests, drift review and coordinator validation/what-if commands.
+**Prepared, not deployed:** successful compilation cannot establish effective MI
+access, native content transport, strict-mode enablement or destination fidelity.
 
 Before any enablement, authorize and verify:
 
