@@ -1,6 +1,7 @@
 # Current-State Architecture
 
-**Status: CURRENT-STATE implementation; NOT independently E2E validated (2026-10-16).**
+**Status (2026-10-19): implemented telemetry bridge with bounded #139/#143
+evidence; fresh modern private foundation validation PENDING.**
 Diagrams show the implemented path, not proof of same-invocation delivery or destination
 parity. See the [mapping/export contract](telemetry-mapping-export-contract.md) for the
 canonical behavior, source-package reconciliation and separate evidence gates. For
@@ -10,6 +11,41 @@ the conceptual direct-OTLP proposal, see [`/docs/future-state`](../future-state/
 This diagram set is the current-state picture referenced from the root
 [`README.md`](../../README.md). Earlier blanket validation summaries elsewhere in the
 repository are historical, not independent end-to-end proof.
+
+## Foundation: fresh, adopt and retire are distinct
+
+[ADR-0004](../adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md)
+accepts **one modern-only private fresh path** through `infra/main.bicep`,
+replacing classic ML Hub/project setup and public-default profiles. Infra reports
+source implementation and offline checks complete, **Ready for Validation**, not
+Validated; provider acceptance, private reachability, fresh idempotence and
+end-to-end runtime validation are **PENDING**. The diagrams below describe the
+telemetry bridge, not a newly verified deployable foundation.
+
+The required fresh graph is a private `AIServices` account (S0), distinct modern
+project MI, one account model deployment, account PE/DNS, private KV/keyless host
+storage, Premium Function outbound VNet integration and the telemetry
+infrastructure. Modern account/project/model types use API `2025-09-01`.
+The project endpoint uses
+`https://<customSubDomainName>.services.ai.azure.com/api/projects/<projectName>`
+in Azure public cloud; an ML discovery URL is not this interface.
+Model deployment alias and catalog name/version are separate inputs.
+
+Account + project + model does **not** establish agent-version publication,
+private agent runtime/state readiness or conversation/file recovery. Model
+quota/residency/cost, network ownership, approved ingestion/export/Arize egress,
+secure immutable KV connection resolution and exact agent API/tool requirements
+remain operator gates. No Search, Cosmos DB, ACR, capability host, VM or additional
+permissions are automatically implied. A Foundry PE does not privatize Monitor.
+See [current operations](runbooks.md) for these gates; there is no public fallback.
+
+**Existing-resource adoption** retains the narrow
+[#139 connection-only entrypoint](foundry-appinsights-tracing.md) and
+[#143 durable rollout](durable-genai-correlation.md). Neither is fresh foundation
+creation or permission to run main over the mixed live RG. Preserve exact names,
+identities, model, state and checkpoints. **Retirement** is separately gated by
+the [cleanup plan](resource-cleanup-plan.md); removing classic source neither
+deletes resources nor certifies them unused.
 
 ## End-to-End Pipeline
 
@@ -30,11 +66,15 @@ flowchart LR
    following OpenInference semantic conventions (model name, prompt/completion token counts,
    invocation parameters).
 2. Telemetry is exported to Application Insights (and its backing Log Analytics workspace).
-3. Log Analytics streams relevant telemetry to an Event Hub.
+3. Native LAW data export targets an explicit Event Hub namespace and hub name.
+   The accepted live durable rollout includes AppDependencies, AppRequests and
+   AppGenAIContent; configuration alone is not per-event delivery proof.
 4. An Azure Function consumes the Event Hub stream, transforms/maps the schema, and forwards it to
    Arize via OTLP.
-5. Arize ingestion, correlation and visualization are destination checks, not established by
-   the implementation diagram.
+5. Arize ingestion, correlation and visualization are separate destination checks.
+   [#143 evidence](durable-genai-correlation.md) establishes bounded native
+   transport/inline precedence and generated-fixture missing-inline fallback,
+   not universal parity or a newly validated fresh environment.
 
 Trace ID, span ID, parent span ID and supplied correlation ID must be preserved wherever
 available. Synthetic tests cover mapping/encoding, not every live hop. Missing source fields
@@ -83,15 +123,21 @@ flowchart TB
 
 ## Known Limitations
 
-- Independent same-invocation Arize graph/field/token parity is **UNKNOWN**. The 2026-10-16
-  Function publication used a package-only approval exception, not completed generic validation.
+- Complete graph, custom-correlation, source-total and OTLP resource parity are
+  **UNKNOWN**. The #143 native case has bounded source/destination evidence;
+  native missing-inline fallback was not observed. The generated fixture proves
+  the deployed fallback branch, not exactly-once delivery. Historical
+  2026-10-16 package-only receipts do not validate the new fresh foundation.
 - Only supported span rows are mapped; AppTraces/AppExceptions are not reconstructed as spans
   or exception events. Original status/kind is best effort. Missing parents, content, correlation
   or total usage cannot be recreated; malformed rows can leave graph gaps.
-- Baseline infrastructure is retained, but binding, consumer-group selection, routing and
-  network/identity configuration require operator review. Held infrastructure/settings are not
-  included; the source consumer-group fallback remains `$Default`.
-- Content conversion is proposal only. Publication, tests and this diagram authorize no live
-  deployment, replay, model or evaluation action. See the root README for closed runtime guards.
+- Fresh binding/consumer-group, routing, private network/identity and package
+  configuration require independent review and live evidence. Explicit group
+  selection is required; the source `$Default` fallback is not proof of alignment.
+- Inline conversion and opt-in durable content correlation are implemented;
+  durable admission is enabled in the approved existing demo. Preserve its
+  ledger/index/35 imported ACKs, checkpoints and ambiguous-send quarantine.
+  No blind resend, replay, model, deployment, evaluation or live deletion is
+  authorized by this diagram. See the root README for closed runtime guards.
 - Diagram styling follows the solid-line/solid-box convention for current-state diagrams only (see
   `copilot-instructions.md` §17). It must never be reused for future-state/conceptual diagrams.

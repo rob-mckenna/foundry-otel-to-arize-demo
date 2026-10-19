@@ -1,531 +1,293 @@
-# Infrastructure (`/infra`)
+# Modern private infrastructure
 
-> **Baseline reference, not a turnkey deployment (2026-10-16).** Existing Bicep is retained
-> as the baseline. The #143 delta adds a disabled-by-default private application-container
-> preparation flag and a separate narrowly scoped rollout entrypoint. Only the
-> four-resource scoped rollout was deployed on 2026-10-19, not the broad baseline.
-> Commands and historical validation claims below are not the active onboarding
-> path or permission to execute. Start with the [root README](../README.md) and review the
-> [current binding/export contract](../docs/current-state/telemetry-mapping-export-contract.md):
-> held binding/settings/network/RBAC work is not included. Live preparation, validation,
-> deployment or teardown needs exact user-approved scope; preserve private controls.
+**Source implementation for #145 / ADR-0004. No #145 cloud deployment performed.**
+Supported fresh architecture:
+**Foundry → Application Insights → Log Analytics → Event Hub → Function → Arize**.
+No classic ML Hub/Project deployment, public Foundry fallback, legacy opt-in or
+executable archive is retained. Git history preserves retired source.
 
-Bicep is the preferred Infrastructure-as-Code tool for this repo (see
-`/.github/copilot-instructions.md` sections 5-7). This directory contains the
-current-state infrastructure for `foundry-otel-to-arize-demo` - the resources
-needed to run the demo pipeline described in the repo root README.
+The authoritative boundary is [ADR-0004](../docs/adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md).
+Offline compilation/tests do **not** establish fresh deployment, repeat deployment,
+provider/policy acceptance, quota, DNS reachability, private agent runtime/state,
+agent-version publication or Arize receipt. All remain separately approved gates.
+The local Prompt Agent client is still a synthetic stub, not a live SDK backend.
 
-## Durable GenAI preparation (#143)
+## Three operations — never substitute one for another
 
-`prepareDurableGenAIContainer=false` is a new safe-default parameter on `main.bicep`
-and the Function module. True prepares only `genai-correlation` in the existing
-Function account, with no public access, runtime enablement, new role assignment
-or native table-export rule. The retained baseline has no LAW export-rule resource;
-source/container preparation must not be mistaken for content transport enablement.
-Do not deploy the broad baseline to prepare this child against a live environment.
-Exact scoped what-if, identity/network, retention/deletion, replay horizon and native
-content delivery reviews are separate release gates in the
-[durable runbook](../docs/current-state/durable-genai-correlation.md).
+| Operation | Entrypoint / ownership | Scope |
+|---|---|---|
+| Fresh | `main.bicep` | New, explicitly approved identities in a fresh RG. Owns foundation, private graph and pipeline state/export. Never apply to the mixed live RG. |
+| Live tracing adoption | `modern-foundry-tracing.bicep` | Existing account/project, connection-only; `preserveExisting` emits **no connection PUT**. Retain exact manual names. No parent/model/network/IAM writes. |
+| Existing durable rollout | `durable-genai-rollout.bicep` | Four writes: existing-account container, additive index role/assignment, existing named export. Preserve complete table union, destination and enabled state. No runtime enablement, replay or checkpoint reset. |
+| Retirement | **No executor in this repo** | Separate exact-ID manifest, dependency/governance/recovery review and explicit user approval. Source removal is not Azure deletion. |
 
-### Narrow existing-resource rollout
+`teardown-deployment.ps1` was removed: whole-RG deletion/prefix sweeps are not
+cleanup mechanisms. Never use Complete-mode deployment, unmanaged-stack deletion,
+vault purge, broad IAM removal or “rollback” that discards state.
 
-Deployed on 2026-10-19 under explicit approval. The existing export now delivers
-native `AppGenAIContent`; current source, enablement and acceptance limits are
-recorded in the [durable runbook](../docs/current-state/durable-genai-correlation.md).
-This deployment is not permission to rerun or broaden it.
+Preserve all working modern workload identities, operational agent version/model,
+private/shared dependencies, current pipeline/grants, ledger/index/checkpoints,
+35 imported ACKs, ambiguous quarantine and retained #138/#139 assets. The
+[cleanup register](../docs/current-state/resource-cleanup-plan.md) is as-of evidence,
+not permission or proof any resource is unused. #143 release completion stands;
+this source work neither replays nor modifies its live state.
 
-`durable-genai-rollout.bicep` is a separate resource-group entrypoint. It writes
-only four resources:
+## Fresh graph and single-writer ownership
 
-1. Private `genai-correlation` container in an **existing** Function storage account.
-2. Deterministic custom role definition at the deployment resource group, with
-   `assignableScopes` restricted to that group, no management-plane actions and
-   exactly `blobs/tags/write` plus `blobs/filter/action` DataActions.
-3. One deterministic assignment to the supplied Function system MI object ID,
-   scoped **only to the container**. Existing host Blob/Queue/Table grants remain.
-4. The **existing** named LAW export rule: preserve its current enabled state,
-   namespace ID, explicit Event Hub name and complete table list, adding
-   `AppGenAIContent` and retaining `AppDependencies`/`AppRequests`.
+- `modern-foundry-foundation.bicep`: AIServices S0 account and distinct system-MI
+  project, API **2025-09-01**; allowProjectManagement, explicit custom subdomain,
+  local auth disabled, PNA Disabled, ACL Deny / bypass None.
+- Project MI receives published **Foundry User** (`53ca6127-db72-4b80-b1b0-d745d6d5456d`)
+  **at account scope**, deterministic assignment. No automatic modern project→KV
+  grant, caller grant, Owner/Contributor substitute or permission discovery.
+- `modern-foundry-model.bicep`: one account-scoped deployment with exact format,
+  catalog name/version, alias, SKU/capacity, upgrade policy; optional existing
+  approved RAI policy. No default model, spillover, deprecated scaleSettings,
+  alternate-region fallback or quota increase.
+- `networking.bicep`: fresh VNet with separate PE and delegated
+  `Microsoft.Web/serverFarms` Function integration subnets, seven private DNS
+  zones plus registration-disabled VNet links; OR explicit external ownership.
+- `private-endpoints.bicep`: actual DNS zone groups, no static A records or IPs.
+  Main targets Foundry **account** group `account` with all three Foundry zones,
+  and KV group `vault`. Function module creates host `blob`/`queue`/`table`
+  endpoints and DNS groups **before** creating the integrated Function.
+- KV: RBAC, soft delete, purge protection, PNA Disabled, ACL Deny/None.
+  Host storage: TLS1.2/HTTPS, no public blobs/shared keys, PNA Disabled, ACL Deny/None.
+- Function: Linux Python 3.11 default, **Premium EP1** (one instance), system MI,
+  outbound VNet integration with route-all, PNA Disabled, TLS1.2, FTP/SCM basic
+  publishing disabled. This timer/EH worker has no public HTTP ingress requirement.
+- Function retains Blob/Queue/Table Data Contributor, EH Data Receiver and KV
+  Secrets User; adds **Storage Blob Data Owner** required for identity-based
+  host storage. All grants are resource-scoped; index actions are container-local.
+  This defines new-resource grants, not changes to existing live identities/IAM.
+- LAW/AppInsights retain explicit ingestion/query controls; EH retains existing
+  API pin **2023-01-01-preview**, Standard, RBAC-only. Auto-inflate is off; explicit
+  throughput units bound capacity instead of silently increasing spend.
+- `app-insights.bicep` owns one enabled native export rule to namespace **and
+  explicit hub `telemetry`**, tables AppDependencies/AppRequests/AppGenAIContent.
+  No ML diagnostic coupling or governance diagnostic replacement.
+- Function owns private `genai-correlation` and `function-packages` containers.
+  `durable-genai-state.bicep` owns the RG-defined two-DataAction index role and
+  container-only assignment; GUID derivation matches the narrow rollout.
+  **Do not run both entrypoints as concurrent writers of fresh-owned state.**
 
-There are no account, workspace, Function, identity, secret, Event Hub, network,
-retention-policy or runtime-setting writes. The child resources do not support
-the parent account's tags/location model; parent tags and names are unchanged.
-All target/destination parameters are required. Container name is fixed to the
-runtime contract, not the host checkpoint containers.
+No Search, Cosmos DB, ACR, capability host, new VM/Bastion/NAT, hosted runtime or
+extra evaluation storage is added. A private endpoint only secures account ingress;
+it does not prove an agent's private outbound/tool/state path. If selected Prompt
+Agent APIs require standard BYO services, VNet injection or another API, stop and
+request the exact scoped architecture decision before adding them.
 
-`durable-genai-rollout.parameters.json` is the **nonsecret 2026-10-19 demo
-snapshot**, not automatic discovery. Before validation/deployment, compare its
-principal and full rule configuration against fresh projected GETs. Abort on
-drift; preserve every current table and destination property. ARM export PUTs are
-not partial updates, and a mistyped rule name could create a parallel exporter.
-Use Incremental mode only; never Complete mode against this existing group.
+### Monitoring and egress boundary
 
-Offline checks (no cloud mutation):
+Foundry PE does **not** privatize Azure Monitor. Preserve service ingestion/query,
+LAW→EH export and approved Arize HTTPS `/v1/traces` egress. No AMPLS, EH firewall,
+NSG/UDR/NAT redesign is implied. Fresh VNet uses Azure-provided DNS; an approved
+private validator must have connectivity to it (none is provisioned).
+For existing networks, owners must attest delegation, endpoint network policies,
+NSGs, route-all egress and DNS forwarding/links from both Function and validator.
+If enterprise policy forbids these service paths, deployment is blocked pending
+a separately reviewed design, **not** repaired by enabling public Foundry/KV/storage.
 
-```powershell
-$env:AZURE_CONFIG_DIR = "$PWD\.azure-config"
-az bicep build --file infra\durable-genai-rollout.bicep --stdout --only-show-errors | Out-Null
-$env:PYTHONDONTWRITEBYTECODE = '1'
-$env:PYTEST_DISABLE_PLUGIN_AUTOLOAD = '1'
-python -m pytest -q -p no:cacheprovider src\telemetry-pipeline\tests\test_durable_infra.py
-```
+## Inputs: portable, deliberate, non-executable examples
 
-Coordinator/operator recipe **after** fresh configuration review and applicable
-official validation, not executed by preparation:
+Both `main.parameters*.json` files are **incomplete, non-executable examples**:
+no live identities, model tuple or cost approval. They intentionally contain
+`REPLACE_ME`, capacity zero and approval false. They are not a deployment command.
+The first illustrates a fresh network; `private-endpoint` now illustrates an
+externally owned private network, **not** a private-vs-public feature switch.
+Replace all placeholders in a separately reviewed secret-free profile.
 
-```powershell
-az deployment group validate --resource-group fotoa-demo-rg --template-file infra\durable-genai-rollout.bicep --parameters '@infra\durable-genai-rollout.parameters.json' --subscription c81fda52-936e-4f14-8af4-951c0dbb92d2 --only-show-errors
-az deployment group what-if --resource-group fotoa-demo-rg --template-file infra\durable-genai-rollout.bicep --parameters '@infra\durable-genai-rollout.parameters.json' --subscription c81fda52-936e-4f14-8af4-951c0dbb92d2 --no-pretty-print --only-show-errors
-```
+Required top-level selections:
 
-Review only container creation, the two-action role definition, container-scoped
-assignment and the existing export-rule table addition. Stop on other resource
-writes, removals, grant widening or destination changes. The
-[ARM role-definition reference](https://learn.microsoft.com/azure/templates/microsoft.authorization/roledefinitions)
-supports resource-group deployment; compilation is not proof of live provider,
-policy or caller authorization. `roleDefinitions/write` is needed on the RG
-assignable scope and `roleAssignments/write` on the container; do not substitute
-subscription-level authority. Native delivery, private DNS/MI access, index
-visibility, physical/logical retention, cutover and destination acceptance remain
-separate gates. This template neither enables runtime processing nor authorizes
-publication, replay or model calls.
-
-## Modern Foundry tracing association (#139)
-
-`modern-foundry-tracing.bicep` is a **connection-only** entrypoint for an existing
-modern `Microsoft.CognitiveServices/accounts/projects` project. Its safe default,
-`preserveExisting`, emits no connection PUT. Explicit `ApiKey` creation/adoption
-and separately approved `ProjectManagedIdentity` ingestion are supported by the
-module; neither changes parent resources, identities, roles, networking, or
-Application Insights authentication controls.
-
-Start with the [current-state tracing runbook](../docs/current-state/foundry-appinsights-tracing.md)
-for contracts, secure version-pinned Key Vault parameters, clean creation versus
-same-name adoption, focused tests, exact metadata verification, actual native
-adoption/clean-create/redeployment receipts and retained isolated test resources.
-The fresh UI-origin case has bounded Telemetry signoff; Arize Input remains
-user-observed, not full graph/output/token parity proof. The broader archived modern Foundry
-foundation/model/private-network scaffold is not restored by #139.
-
-## Layout
-
-```
-infra/
-├── bicepconfig.json            # Enables Bicep compile-time imports (needed by naming.bicep)
-├── main.bicep                 # Deployment entry point, wires modules together
-├── main.parameters.json       # Example/default parameter values - public-access baseline (no secrets)
-├── main.parameters.private-endpoint.json  # Example parameters with the private-endpoint variant enabled (no secrets)
-├── durable-genai-rollout.bicep  # Existing container/index RBAC/export rule only; no runtime settings
-├── durable-genai-rollout.parameters.json  # Nonsecret reviewed demo snapshot; refresh before use
-├── modern-foundry-tracing.bicep  # Modern project connection only; preservation is the default
-├── modern-foundry-tracing.parameters.json  # Exact demo preservation profile (nonsecret)
-├── modern-foundry-tracing.dev.parameters.json  # Dev preservation profile; target placeholders
-├── modern-foundry-tracing.secure-reference.parameters.json  # NON-EXECUTABLE pinned-vault example
-├── scripts/
-│   ├── validate-modern-foundry-tracing.py  # One projected GET; exact project/name/category/target/auth check
-│   ├── test_modern_foundry_tracing.py  # Synthetic readback and fresh compiled-contract regressions
-│   ├── validate-naming.ps1     # CI/pre-merge lint: fails if a module skips the shared naming/tagging helpers (issue #20)
-│   ├── validate-deployment.ps1 # End-to-end what-if/deploy/verify validation against a scratch resource group (issue #22)
-│   └── teardown-deployment.ps1 # Safely tears down demo resources with confirmation safeguards (issue #23)
-└── modules/
-    ├── naming.bicep           # Shared naming/tagging helpers (issue #20) ✅ - import this from every new module
-    ├── modern-foundry-app-insights.bicep  # Modern child connection; no parent/network/RBAC writes
-    ├── foundry-project.bicep  # Azure AI Foundry hub + project (issue #15) ✅
-    ├── app-insights.bicep     # Log Analytics + Application Insights (issue #16) ✅
-    ├── key-vault.bicep        # Key Vault (RBAC) + managed identity wiring pattern (issue #18) ✅
-    ├── networking.bicep       # Optional private endpoint module (issue #21) ✅
-    ├── event-hub.bicep        # Event Hub namespace + hub for telemetry streaming (issue #17) ✅
-    └── function-app.bicep     # Azure Function App shell for telemetry transform pipeline (issue #19) ✅
-```
-
-Each module is independently parameterized (no hardcoded names, regions, or
-environment-specific values) and idempotent - re-running a deployment with
-the same parameters must not fail or duplicate resources.
-The connection-only module is exempt from the shared naming/tagging lint:
-the child API has no tags/location field, and adopting a manual connection must
-retain its exact name. Compiled-contract tests prohibit parent/resource expansion;
-existing account/project/component tags and location are untouched.
-
-## Naming convention
-
-Resource names follow: `{project}-{env}-{resourceType}-{region}`
-
-Example: `fotoa-demo-aiproj-eastus2`, `fotoa-dev-kv-eastus2`.
-
-- `{project}`: short project token (`fotoa` for foundry-otel-to-arize-demo)
-- `{env}`: `dev`, `demo`, or `prod`
-- `{resourceType}`: abbreviated resource type (e.g. `aihub`, `aiproj`, `appi`, `law`, `kv`, `func`)
-- `{region}`: short Azure region token (e.g. `eastus2`)
-
-See `modules/naming.bicep` (issue #20) for the shared Bicep implementation of
-this pattern, and `/.github/copilot-instructions.md` section 7 for the
-authoritative definition. Every module **must** `import { buildResourceName,
-buildRequiredTags, resourceTypeTokens } from 'naming.bicep'` and use those
-functions to build its resource name(s) and `tags:` object - do not re-derive
-the pattern or the tag keys locally. `infra/bicepconfig.json` enables Bicep's
-`compileTimeImports` experimental feature flag that some Bicep CLI versions
-still require for cross-file `import { ... } from '...'` statements.
-
-### Enforcing the convention (issue #20)
-
-`infra/scripts/validate-naming.ps1` is a lightweight static check (no Azure
-or Bicep-compiler dependency) that fails if any module under `infra/modules`
-(other than `naming.bicep` itself) does not import and call
-`buildResourceName`/`buildRequiredTags`. Run it locally:
-
-```
-pwsh ./infra/scripts/validate-naming.ps1
-```
-
-**CI wiring status:** a `.github/workflows/infra-validate.yml` workflow
-(running this script plus `az bicep build` on every PR touching `infra/**`)
-was authored and verified locally, but could not be pushed in this pass -
-the `gh`/git credential in this automated environment lacks the `workflow`
-OAuth scope required to create or update workflow files
-(`refusing to allow an OAuth App to create or update workflow ... without
-'workflow' scope`). **Manual pre-merge step until that workflow is added:**
-run `pwsh ./infra/scripts/validate-naming.ps1` and `az bicep build`/
-`az deployment group what-if` locally before merging any `infra/**` PR. A
-team member with `workflow` scope should add the CI workflow as a fast
-follow-up (the script itself is already committed and ready to wire in).
-
-## Required tags
-
-Every provisioned resource must carry:
-
-| Tag | Purpose |
+| Contract | Inputs |
 |---|---|
-| `environment` | dev / demo / prod |
-| `owner` | responsible team/individual |
-| `project` | `foundry-otel-to-arize-demo` |
-| `costCenter` | cost allocation tag |
-| `dataClassification` | must be `synthetic` for every resource in this repo |
+| Naming/tags | `projectToken` (2–10 lowercase alphanumeric), `environment` (dev/demo/prod), `location`, `regionToken`, `ownerTag`, `costCenterTag`; dataClassification is synthetic |
+| Modern names | `accountName`, `projectName`, globally unique `customSubDomainName`; optional `projectDisplayName` |
+| Model | `modelDeploymentName`, `modelFormat`, `modelName`, **`modelVersion`**, `modelDeploymentSkuName`, positive **`modelDeploymentCapacity`**, **`modelVersionUpgradeOption`**; optional `raiPolicyName` |
+| Deployment gates | `modelDeploymentApproved=true` attests owner approval of exact tuple, availability/quota/cost; **`modelDataResidencyApproval`** records processing/residency approval, not a provider setting |
+| Function publication | `functionPackageBlobName`: owner-selected immutable ZIP blob name under `function-packages`; separately upload a built package, never a SAS/connection string |
+| Destination | `arizeProjectName`; operator-populated private-vault secret names `arizeEndpointSecretName`, `arizeSpaceIdSecretName`, `arizeApiKeySecretName` |
+| Tracing | `appInsightsConnectionName`; `tracingAssociationMode=preserveExisting` by default, explicitly approved `ApiKey` only for fresh main |
 
-## Secrets and managed identity pattern
+Naming helpers define `{project}-{environment}-{type}-{region}` (`foundry`, `fproj`,
+`law`, `appi`, `kv`, `ehns`, `func`, `st`, `vnet`, `pe`). Storage drops hyphens.
+Explicit Foundry/account/model names are never normalized: keep approved exact
+names for adoption. The offline profile validator checks generated name lengths;
+operators must choose tokens fitting provider limits and global uniqueness.
+No other Azure cloud is certified by the public-cloud endpoint/DNS contract.
 
-- **No secrets are ever passed as Bicep parameters or stored in source.** Every
-  secret-capable resource (Foundry project, Function App, any future compute)
-  is wired with a **system-assigned managed identity** and granted
-  least-privilege RBAC access to Key Vault (`Key Vault Secrets User` for
-  readers) rather than embedding keys/connection strings.
-- Application Insights connection strings are stored in Key Vault as a secret
-  by the `app-insights.bicep` module's wiring step - never emitted as a plain
-  Bicep output.
-- Actual third-party secrets (e.g. the Arize API key) are entered into Key
-  Vault manually post-deploy by an operator and are never committed to this
-  repository.
+Model upgrade choices are `NoAutoUpgrade`, `OnceCurrentVersionExpired`,
+`OnceNewDefaultVersionAvailable`. Quota and capacity-unit RPM/TPM are
+region/model/deployment-type specific. Existing demo choices are **not defaults**.
+No availability/quota queries or cost estimates were run in this source phase.
 
-### Granting a compute resource access to Key Vault
+### Network ownership input
 
-Pattern used by every module that needs to read secrets (see
-`modules/key-vault.bicep` for the reusable role-assignment resource):
+Fresh `network` object (CIDRs are illustrative; obtain owner approval):
 
-1. Provision the compute resource with `identity: { type: 'SystemAssigned' }`.
-2. Capture its `identity.principalId` as a module output.
-3. In the Key Vault module (or a cross-wiring deployment that runs after both
-   resources exist), create a `Microsoft.Authorization/roleAssignments`
-   resource scoped to the Key Vault, assigning the
-   `Key Vault Secrets User` role (`4633458b-17de-408a-b874-0445c86b69e6`) to
-   that principal ID.
-4. The compute resource reads secrets via `https://<vault-name>.vault.azure.net/secrets/<name>`
-   using its managed identity token - no key material is ever configured in
-   app settings or source.
+```json
+{
+  "mode": "fresh",
+  "virtualNetworkAddressPrefix": "10.40.0.0/24",
+  "privateEndpointSubnetAddressPrefix": "10.40.0.0/26",
+  "functionIntegrationSubnetAddressPrefix": "10.40.0.64/26"
+}
+```
 
-This is a **two-phase deploy**: provision resource shells independently, then
-run a follow-up wiring deployment (or a second `module` block in `main.bicep`)
-that cross-references principal IDs once both sides exist. See
-`.squad/decisions.md` ("Function App ↔ Key Vault sequencing") for the
-reasoning behind this split.
+Existing `network` requires `mode="existing"`,
+`privateEndpointSubnetResourceId`, `functionIntegrationSubnetResourceId`,
+`dnsLinksManagedExternally=true`, and `privateDnsZoneIds` with these exact keys:
 
-## Network posture
+| Key | Azure public-cloud zone |
+|---|---|
+| cognitiveServices | privatelink.cognitiveservices.azure.com |
+| openAI | privatelink.openai.azure.com |
+| servicesAI | privatelink.services.ai.azure.com |
+| vault | privatelink.vaultcore.azure.net |
+| blob | privatelink.blob.core.windows.net |
+| queue | privatelink.queue.core.windows.net |
+| table | privatelink.table.core.windows.net |
 
-### Decision: public access + RBAC is the demo default
+Use exact full ARM zone IDs (including separately owned DNS RGs); existing zones,
+VNet, subnets and links receive **no PUT**. The two approved subnets must be distinct
+in the same VNet; integration is predelegated. External owners maintain links/
+forwarding, never registration-enabled autogenerated links or truncated subnet lists.
+Switching ownership modes after deployment is not an adoption procedure.
 
-**Default (demo) posture: public network access, secured by Azure AD/RBAC
-auth** - no private endpoints are deployed by default. Every resource in
-this stack (Foundry project, Application Insights/Log Analytics, Key Vault)
-authenticates and authorizes via Azure AD/RBAC (managed identity + role
-assignments, never shared keys where avoidable); "public network access" in
-this repo means reachable over the internet with that auth still enforced,
-not open/anonymous access.
+## Secrets, tracing and readiness
 
-**Rationale:** this is a sales-engineering demo, not a production
-deployment. Healthcare prospects evaluating the pipeline need to go from
-clone to working demo quickly; requiring a VNet, private DNS zones, and
-VPN/ExpressRoute/bastion connectivity just to view synthetic trace data
-would add setup friction with no corresponding benefit for a demo using
-only synthetic data (see `/.github/copilot-instructions.md` section 1).
-Network isolation is a legitimate requirement for a real POC/pilot using a
-customer's own data, which is exactly the scenario the optional upgrade
-path below exists for.
+Fresh main forwards secure `appInsightsConnectionString` through the unchanged
+#139 secure module boundary. Active `ApiKey` requires
+`appInsightsConnectionPropertiesReviewed=true` plus explicit sharing,
+`peRequirement` and `peStatus` review. Supply **only a version-pinned Key Vault
+deployment reference**, shaped like the non-executable
+`modern-foundry-tracing.secure-reference.parameters.json`, never plaintext
+`value`. The offline profile validator rejects plaintext/unpinned references.
+The operator must attest the immutable material belongs to the intended component.
+`preserveExisting` is no-PUT, **not** “tracing configured.”
 
-### Optional upgrade path: private endpoints
+Private-vault ARM template resolution is an explicit operator gate: deployer
+authorization, deployment-enabled vault and supported private service access must
+be established without secret reads or loosening network controls. A fresh vault
+cannot implicitly contain the newly created component's secret. Foundation-only
+provisioning followed by approved private secret custody and the narrow connection
+operation is valid staging, **not a finished tracing deployment**.
+`app-insights.bicep` retains optional explicit KV secret-write custody for independently
+approved use; main does not enable it or output the connection string.
 
-`modules/networking.bicep` (issue #21) is an **optional, parameterized**
-module, disabled by default (`enablePrivateEndpoints: false` in
-`main.bicep`/`main.parameters.json`). When a prospect needs network
-isolation during a POC, set `enablePrivateEndpoints: true` (see
-`main.parameters.private-endpoint.json` for a ready-made example) to
-additionally:
+ProjectManagedIdentity AppInsights ingestion stays a separately approved migration
+through the narrow #139 entrypoint (including component-scoped Monitoring Metrics
+Publisher and provider-readable metadata security review). It is not coupled to
+Foundry local auth, which remains disabled.
 
-- Provision a small scratch VNet + subnet with
-  `privateEndpointNetworkPolicies: 'Disabled'` (required by Azure for
-  private endpoints), or reuse an existing subnet via
-  `networkExistingSubnetResourceId` / `networkCreateVirtualNetwork: false`.
-- Create a `Microsoft.Network/privateEndpoints` resource for the Key Vault
-  (`groupId: 'vault'`) and the Foundry project
-  (`groupId: 'amlworkspace'`), without rewriting either module - the
-  private-endpoint wiring lives entirely in `networking.bicep` and is
-  parameterized from `main.bicep`.
-- No template changes are required to toggle between the two postures -
-  it is a single boolean parameter plus (optionally) an existing-subnet
-  resource ID.
+### Keyless Premium package and pipeline cutover
 
-Adding private endpoints for a given resource does **not** automatically
-disable its public network access flag in this module set - for a true
-network-isolated POC, also set that resource's own
-`publicNetworkAccess`/`networkAcls` parameter to deny public traffic (left
-as an explicit, separate choice so the default demo path is never
-accidentally broken by this module existing).
+Function package is **external private Blob URL + system MI**, not Azure Files:
+`WEBSITE_RUN_FROM_PACKAGE` points at the dedicated account's private
+`function-packages/<functionPackageBlobName>`, with
+`WEBSITE_RUN_FROM_PACKAGE_BLOB_MI_RESOURCE_ID=SystemAssigned`. No Azure Files
+share, shared key, content connection string or fake secret is provisioned.
+Package upload/build, private package fetch and trigger synchronization are
+separate approved gates. Without Azure Files, scaling can be limited; see the
+official [no-Azure-Files guidance](https://learn.microsoft.com/azure/azure-functions/storage-considerations#create-an-app-without-azure-files).
+The blob name is not evidence of an uploaded/usable package.
 
-**Validation performed:** the private-endpoint variant (`enablePrivateEndpoints:
-true`, `networkCreateVirtualNetwork: true`) was reviewed for Bicep syntax
-correctness (conditional resource/module deployment, `for` loop over
-`privateEndpointTargets`, DNS-free connection wiring). It was **not**
-deployed+torn-down against a live/scratch Azure subscription from this
-automated environment - see the `az` CLI limitation noted below. A team
-member with Azure access should run the deploy/teardown validation steps
-from issue #21 before treating this variant as demo-ready, and record the
-result in `.squad/decisions/inbox/infra-network-posture.md` (already filed
-with this PR) or a follow-up decision entry.
+Bindings explicitly set `EventHubConnection__fullyQualifiedNamespace`,
+`EventHubConnection__credential=managedidentity`,
+`EVENT_HUB_CONNECTION_SETTING_PREFIX`, `EVENT_HUB_NAME`,
+`EVENT_HUB_CONSUMER_GROUP=function-transform` (or chosen group),
+`AzureWebJobsStorage__accountName` and
+`AzureWebJobsStorage__credential=managedidentity`.
+Function KV references preserve `APPLICATIONINSIGHTS_CONNECTION_STRING`,
+`ARIZE_OTLP_ENDPOINT`, `ARIZE_SPACE_ID`, `ARIZE_API_KEY` interfaces. No raw settings/
+credential is read or exported by validation.
 
-This decision is also recorded in
-`.squad/decisions/inbox/infra-network-posture.md` for the Scribe to merge.
+Fresh main creates desired export/container/index state, but **TelemetryTransform
+and DurableGenAIOutbox are explicitly disabled**. It never sets
+`DURABLE_GENAI_ENABLED=true`. Before a separately reviewed runtime cutover:
+populate/resolve required vault references; publish the reviewed package; verify
+Function MI/private DNS/storage/EH/index access; establish exact durable workspace/
+component/Arize project destination identity and `DURABLE_*` gates per
+[ADR-0003](../docs/adr/0003-opt-in-durable-genai-content-correlation.md);
+verify native tables/retention/admission/ACK/outbox and destination behavior.
+`arizeProjectName` records intended project only; it does not set runtime durable
+scope or prove acceptance. Never enable a fresh consumer before readiness.
+Existing demo runtime enablement and all checkpoints remain untouched.
 
-## Event Hub telemetry streaming (issue #17)
+## Outputs
 
-`modules/event-hub.bicep` provisions a Standard-tier Event Hub namespace +
-hub sitting between Application Insights/Log Analytics (export source) and
-the Azure Function transform pipeline (issue #19, Milestone 2). Throughput
-units (`eventHubThroughputUnits`, default 1, auto-inflate to 2) and
-partition count (`eventHubPartitionCount`, default 2) are parameterized at
-demo scale - not sized for production ingestion volume.
+Preserved meanings: LAW/AppInsights/KV/EH/Function names/IDs and MI IDs.
+`foundryProjectResourceId`, `foundryProjectPrincipalId`, `foundryProjectEndpoint`
+are still named interfaces but now mean **Cognitive Services project** and
+`https://<customSubDomainName>.services.ai.azure.com/api/projects/<projectName>`,
+never ML discovery. Added account/project/model exact IDs/names/principals;
+workspace/component/namespace/Function/storage IDs/names; export/container IDs;
+PE subnet, Function integration subnet, seven DNS IDs and five PE IDs.
+`privateEndpointsEnabled=true` / `functionAppIsPremiumHostingPlan=true` describe
+the desired graph, not reachability. `consumerEnabled=false` is intentional.
+No key, token or connection string output.
 
-**Auth model: RBAC-only by default, no connection strings.** The namespace
-is provisioned with `disableLocalAuth: true` (SAS keys disabled). Producers
-and consumers are granted least-privilege data-plane roles instead:
+## Offline verification only
 
-- `senderPrincipalIds` -> **Azure Event Hubs Data Sender**
-- `receiverPrincipalIds` -> **Azure Event Hubs Data Receiver**
-
-As of the Function App module (issue #19) being wired into `main.bicep`,
-the Function App's system-assigned managed identity is passed into
-`receiverPrincipalIds` automatically - no manual cross-wiring step is
-required for a fresh deployment.
-
-An **optional** connection-string fallback (`storeConnectionStringInKeyVault:
-true` + `keyVaultName`) is available for tooling that cannot use
-identity-based Event Hub bindings - it requires explicitly re-enabling local
-auth (`disableLocalAuth: false`) and writes the connection string only into
-an existing Key Vault secret, never as a plaintext Bicep output. RBAC is the
-recommended and default posture per `/.github/copilot-instructions.md`
-section 8; this fallback is off by default and not wired in `main.bicep`.
-
-A dedicated consumer group (`functionConsumerGroupName`, default
-`function-transform`) is provisioned alongside `$Default` for the Function
-App to read from without competing with other consumers.
-
-## Function App telemetry transform pipeline (issue #19)
-
-`modules/function-app.bicep` provisions the Function App "shell" for the
-Event Hub -> OTLP transform pipeline: a dedicated storage account, an App
-Service plan, and the Function App itself, ready for Telemetry to deploy
-the actual transform code (Milestone 2).
-
-**Hosting plan: Consumption (Y1) by default.** This demo pipeline runs
-against bursty, low-volume manual/scripted demo traffic, not a
-latency-sensitive production workload - a few seconds of cold start after
-idle is an acceptable trade-off for near-zero idle cost, and reinforces the
-"low operational overhead" pitch in issue #19. Set `hostingPlanTier:
-'Premium'` for a single-parameter upgrade to an Elastic Premium (EP1) plan
-when a POC needs no cold start and/or VNet integration - no template
-rewrite required, same pattern as the private-endpoint upgrade path.
-
-**No inline secrets, no shared keys:**
-
-- System-assigned managed identity is enabled on the Function App.
-- `AzureWebJobsStorage` uses the identity-based connection
-  (`AzureWebJobsStorage__accountName` / `__credential: managedidentity`)
-  instead of a storage connection-string app setting. The identity is
-  granted least-privilege Storage Blob/Queue/Table Data Contributor roles
-  on the dedicated storage account.
-- The Event Hub (issue #17) trigger binding uses the identity-based
-  `<prefix>__fullyQualifiedNamespace` / `__credential: managedidentity`
-  pattern (the namespace host name is not a secret) when
-  `eventHubNamespaceFqdn` is supplied; the identity is granted "Azure Event
-  Hubs Data Receiver" when `eventHubNamespaceResourceId` is also supplied.
-  A Key-Vault-backed connection-string fallback is available via
-  `eventHubConnectionSecretName` for tooling that cannot use identity-based
-  bindings.
-- `APPLICATIONINSIGHTS_CONNECTION_STRING` is wired as a Key Vault reference
-  (`@Microsoft.KeyVault(SecretUri=...)`) against the secret
-  `app-insights.bicep` already writes (issue #16) - never a plaintext app
-  setting. `extraKeyVaultReferenceAppSettings` supports additional secrets
-  (e.g. a future Arize API key) the same way.
-- The module grants itself the necessary "Key Vault Secrets User" /
-  "Azure Event Hubs Data Receiver" roles when the corresponding Key
-  Vault/Event Hub namespace identifiers are supplied as parameters - which
-  `main.bicep` now does for both automatically.
-
-**Now wired into `main.bicep`.** `main.bicep` passes
-`eventHub.outputs.eventHubNamespaceFqdn` /
-`eventHub.outputs.eventHubNamespaceResourceId` into this module's
-`eventHubNamespaceFqdn`/`eventHubNamespaceResourceId` parameters, and this
-module's `functionAppPrincipalId` output into both
-`keyVault`'s `readerPrincipalIds` and `eventHub`'s `receiverPrincipalIds` -
-a single deployment now provisions the whole chain with RBAC fully
-cross-wired, no manual follow-up deployment required.
-
-## Azure CLI auth in a sandboxed coding-agent session
-
-A sandboxed coding agent (e.g. this repo's Squad/Copilot CLI session) is
-filesystem-scoped to the repo working directory and cannot read/write
-`~/.azure` (the default Azure CLI config/token cache location, outside the
-repo tree). Relocate the cache into the repo with the `AZURE_CONFIG_DIR`
-env var so it lands inside the sandbox's allowed path:
+Use an existing standalone Bicep binary (`BICEP_CLI` or PATH), existing Python
+test dependencies, and repository-contained dependencies if needed. No automatic
+installation, login or Azure query is part of these commands:
 
 ```powershell
-$env:AZURE_CONFIG_DIR = "<repo-root>\.azure-config"
-az login --use-device-code
+./infra/scripts/validate-deployment.ps1
+./infra/scripts/validate-naming.ps1
+python -B -m unittest discover -s infra/scripts -p 'test_modern*.py' -v
+python -B -m pytest -q -p no:cacheprovider src/telemetry-pipeline/tests/test_durable_infra.py
 ```
 
-Run this once from a real (non-sandboxed) terminal. `.azure-config/` is
-git-ignored (it holds cached auth tokens - never commit it). Any process
-(sandboxed or not) that sets the same `AZURE_CONFIG_DIR` env var before
-running `az` will reuse that logged-in session.
+`validate-deployment.ps1` is now **offline only**: all three entrypoints are compiled
+with `--stdout`; JSON is in memory, never generated under `infra`. Removed old
+cloud-default parameters (`SkipCreate`, RG creation, what-if/create). A caller using
+them fails parameter binding before any operation. Official cloud validation/
+deployment needs separate plan approval; it is not exposed as a script mode.
 
-## Validating a deployment
+For a completed reviewed ARM parameter file, run
+`python -B infra/scripts/validate-modern-foundation.py --parameters <reviewed.parameters.json>`.
+Checked-in examples must fail this gate. Passing validates only local shape/
+ownership/model-approval/secret-reference contracts, not provider capability,
+authorization, quota, unique names, residency compliance or actual private access.
+Graph tests require fresh compilation; retained #139 tests exercise secure no-PUT/
+exact-name/mutation guards, and durable tests retain the four-resource inventory.
 
-```
-az deployment group what-if -g <resource-group> -f infra/main.bicep -p infra/main.parameters.json
-az deployment group create  -g <resource-group> -f infra/main.bicep -p infra/main.parameters.json
-```
+Before **any** cloud phase: update `.azure/deployment-plan.md`, invoke official
+azure-validate, obtain exact scope/subscription/RG/resource/cost approval and
+review narrow provider validation/what-if. No broad main deployment against the
+live group; no automatic repair grants, model calls, fallback or deletion.
 
-> **Note:** `what-if`/`az bicep build` validation for the modules in this
-> directory could not be executed from the automated environment that
-> authored them (no Azure subscription context / `az` CLI profile access
-> available in that sandbox). Templates were manually reviewed for Bicep
-> syntax correctness. Run `az bicep build` and `az deployment group what-if`
-> against a real/scratch resource group before merging or demoing.
+## Resource / cost delta (source only)
 
-### End-to-end deployment validation script (issue #22)
+Classic Hub/ML Project and ML diagnostics are removed from fresh source. Fresh
+composition instead defines one S0 AIServices account/project, one explicitly
+selected billed model, account-scoped project MI role, Premium EP1 instead of Y1,
+one VNet/two subnets/seven DNS zones/seven links in fresh mode, five PEs with DNS
+groups, private keyless storage/KV, private package/container/index resources and
+one explicit three-table export. Existing-network mode reuses network/DNS without
+parent writes. LAW/AppInsights/EH pipeline services remain; no auxiliary AI stores,
+VM or hosted compute is added. EP1/PE/DNS/storage, model capacity and telemetry
+ingestion/export/egress may incur ongoing charges. No prices or savings are claimed;
+cost approval belongs to the chosen fresh model/region/capacity and usage budget.
+**No deployed resource, spend, grant, secret, checkpoint or state changed here.**
 
-`infra/scripts/validate-deployment.ps1` is the one-command pre-demo
-confidence check: it runs `what-if`, deploys the full stack to a scratch
-resource group, confirms every module's resource(s) reached provisioning
-state `Succeeded`, spot-checks the managed-identity RBAC wiring documented
-above (Function App -> Key Vault Secrets User, Function App -> Event Hub
-Data Receiver, Foundry project -> Key Vault Secrets User), and prints a
-pass/fail summary table with timestamps.
+## Public contract basis
 
-```powershell
-# Fast sanity check - what-if only, no resources created/modified:
-pwsh ./infra/scripts/validate-deployment.ps1 -ResourceGroupName fotoa-validate-demo -SkipCreate
+Read 2026-10-19, public documentation only:
 
-# Full validation - creates the scratch resource group if missing, deploys,
-# and verifies every resource + RBAC spot check:
-pwsh ./infra/scripts/validate-deployment.ps1 `
-  -ResourceGroupName fotoa-validate-demo `
-  -CreateResourceGroupIfMissing
-```
+- ARM [accounts](https://learn.microsoft.com/azure/templates/microsoft.cognitiveservices/2025-09-01/accounts),
+  [projects](https://learn.microsoft.com/azure/templates/microsoft.cognitiveservices/2025-09-01/accounts/projects),
+  [deployments](https://learn.microsoft.com/azure/templates/microsoft.cognitiveservices/2025-09-01/accounts/deployments)
+  and [connections](https://learn.microsoft.com/azure/templates/microsoft.cognitiveservices/2025-09-01/accounts/projects/connections).
+- [Foundry RBAC](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry),
+  [published Foundry User role](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles/ai-machine-learning#foundry-user),
+  [private isolation and standard-agent BYO prerequisites](https://learn.microsoft.com/azure/foundry/how-to/configure-private-link).
+- [Functions host identity roles](https://learn.microsoft.com/azure/azure-functions/manage-connections?tabs=host&pivots=functions-auth-identity),
+  [private Blob package MI](https://learn.microsoft.com/azure/azure-functions/deployment-zip-push#fetch-a-package-from-azure-blob-storage-by-using-a-managed-identity),
+  [no Azure Files](https://learn.microsoft.com/azure/azure-functions/storage-considerations#create-an-app-without-azure-files).
 
-Requires the `az` CLI installed and authenticated (`az login`) against a
-real subscription. Expected duration for a full run: roughly 10-20 minutes
-end-to-end (Foundry project and Key Vault purge-protection-enabled create
-are the slowest steps) - plan for that lead time before a demo, not a
-same-minute check.
-
-To exercise the induced-failure path (issue #22 validation step 2), pass a
-parameters file with a deliberately invalid value (e.g. set
-`eventHubPartitionCount` above its `@maxValue(32)` bound in a copy of
-`main.parameters.json`) and confirm the script reports the `what-if`/deploy
-failure clearly instead of a false pass.
-
-**Sandbox limitation:** this script could not be executed end-to-end from
-the automated environment that authored it - the same `az` CLI
-unavailability documented above and in
-`.squad/agents/infra/history.md` applies. It was validated by: (1) static
-PowerShell parse-checking
-(`[System.Management.Automation.Language.Parser]::ParseFile`, zero errors),
-and (2) a logic smoke test of the `az`-missing/not-logged-in failure paths
-(temporarily run under Windows PowerShell 5.1 with a 2-arg `Join-Path`
-substitution, since this script - like `validate-naming.ps1` - targets
-`pwsh`/PowerShell 7, which is only present in this sandbox as an
-unprovisioned Windows Store execution alias). A team member with `az` CLI
-access should run both example commands above against a real scratch
-resource group before treating this script as demo-ready.
-
-### Teardown / cleanup script (issue #23)
-
-`infra/scripts/teardown-deployment.ps1` safely deletes the demo resource
-group (or a targeted set of resource IDs) provisioned by `main.bicep`,
-with explicit confirmation safeguards since this is a destructive,
-hard-to-reverse operation - it removes everything the validation script
-above provisions.
-
-```
-# Delete an entire demo resource group (prompts for confirmation):
-pwsh ./infra/scripts/teardown-deployment.ps1 -ResourceGroupName rg-fotoa-demo-eastus2
-
-# Delete a targeted set of resources instead of the whole group:
-pwsh ./infra/scripts/teardown-deployment.ps1 -ResourceGroupName rg-fotoa-demo-eastus2 `
-  -ResourceIds @('/subscriptions/.../resourceGroups/.../providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2')
-
-# Also purge the Key Vault's soft-deleted record (separate, irreversible,
-# separately confirmed):
-pwsh ./infra/scripts/teardown-deployment.ps1 -ResourceGroupName rg-fotoa-demo-eastus2 -PurgeKeyVault
-
-# Non-interactive (CI/scripted) teardown - skips both confirmation prompts:
-pwsh ./infra/scripts/teardown-deployment.ps1 -ResourceGroupName rg-fotoa-demo-eastus2 -PurgeKeyVault -Force
-```
-
-What it does:
-
-1. Checks `az` CLI presence and login/auth state before doing anything else.
-2. Prompts for an explicit "yes" confirmation (unless `-Force`) before
-   deleting the resource group or targeted resources - this is the
-   irreversible step, so it is never skipped silently.
-3. Deletes the resource group (`--no-wait`) or the specific resource IDs
-   supplied via `-ResourceIds`, then polls `az group show`/`az resource
-   show` until the target(s) are confirmed absent (or a timeout is hit,
-   in which case it tells you how to check manually).
-4. If `-PurgeKeyVault` is set, asks for a **second, separate** explicit
-   confirmation before permanently purging the Key Vault's soft-deleted
-   record (`az keyvault purge`) - soft-delete and purge are independent,
-   differently-risky operations and are never bundled behind one prompt.
-5. Checks for orphaned role assignments still scoped to the deleted
-   resource(s)/group (Azure normally cleans these up, but this is a
-   documented edge case worth confirming rather than assuming).
-6. Prints a pass/fail summary table and exits non-zero if any check
-   failed, so it can be wired into a CI "demo cleanup" job.
-
-> **Sandbox limitation:** `az` CLI is present in the automated environment
-> that authored this script, but every invocation fails with a Python
-> traceback (`PermissionError` reading the cached profile at
-> `~/.azure/azureProfile.json`) - the script was validated via
-> `[System.Management.Automation.Language.Parser]::ParseFile` (0 errors)
-> and a smoke test of its "az present but not authenticated" failure path
-> (clean `[FAIL]` reporting, correct summary counts, exit code 1) rather
-> than a live deploy+teardown. **A team member with real Azure access must
-> run this script end-to-end against a scratch resource group before
-> relying on it for demo cleanup**, confirming: resource-group deletion,
-> targeted-resource deletion, Key Vault purge, and the orphaned-role-
-> assignment check all behave as documented. During this work, a reusable
-> PowerShell gotcha was found and fixed: under `$ErrorActionPreference =
-> 'Stop'`, piping a native command's stderr into the success stream via
-> `2>&1` throws a terminating error instead of letting the script's own
-> fail-handling logic run - fixed via `Invoke-AzJson`/`Invoke-AzCommand`
-> helper functions that scope `$ErrorActionPreference = 'Continue'` around
-> each individual `az` call. See
-> `.squad/decisions/inbox/infra-teardown-script.md` for the full design
-> rationale.
+Provider schemas establish documented shapes, not tenant availability or runtime
+success. Agent publication/API/tools/state prerequisites remain **pending**;
+standard BYO requirements are a scoped architecture gate, never silently stubbed.

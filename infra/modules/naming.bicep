@@ -46,8 +46,8 @@ var requiredTagKeys = [
 @description('Short resource-type tokens used across modules, kept here so every module author pulls from the same abbreviation list instead of inventing new ones.')
 @export()
 var resourceTypeTokens = {
-  foundryHub: 'aihub'
-  foundryProject: 'aiproj'
+  foundryAccount: 'foundry'
+  foundryProject: 'fproj'
   logAnalyticsWorkspace: 'law'
   applicationInsights: 'appi'
   keyVault: 'kv'

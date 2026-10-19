@@ -1,12 +1,31 @@
 # docs/current-state
 
-**Status: CURRENT-STATE implementation; NOT independently E2E validated (2026-10-16).**
+**Status (2026-10-19): current bridge with bounded #139/#143 acceptance;
+fresh private foundation/provider/runtime/end-to-end validation PENDING.**
 
 Start with the [root README](../../README.md) for the supported offline setup and synthetic
 demo, then the [mapping/export contract](telemetry-mapping-export-contract.md) for current
-behavior, publication provenance, held binding/settings work and evidence gates.
+behavior, publication provenance and evidence gates.
 Implementation, package publication, source capture, native delivery and independent Arize
 parity are separate claims; destination parity remains **UNKNOWN**.
+
+## Supported operations: one fresh path, narrow adoption, gated retirement
+
+Start with [current operations](runbooks.md) and
+[ADR-0004](../adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md).
+The accepted fresh composition is modern-only and private: account/project/model,
+private network/KV/host storage, Premium Function and telemetry infrastructure.
+Source implementation and offline checks are reported complete by Infra;
+**Ready for Validation** is not Validated. No #145 cloud validation/deployment
+was performed, and no classic Hub/public fallback is supported.
+Account/project/model alone is not agent-version publication or private runtime/
+state readiness. Model/quota/residency/cost, network ownership, secure immutable
+KV resolution and agent API/tool prerequisites remain explicit operator gates.
+
+Adoption keeps the existing-resource entrypoints below narrow; never run fresh
+main broadly over the live mixed RG. Retirement needs separate exact-ID approval,
+positive consumer/governance clearance and recovery acceptance under the
+[cleanup plan](resource-cleanup-plan.md), not RG teardown or vault purge.
 
 [`architecture.md`](architecture.md) retains the implemented-path diagrams with scoped
 limitations. Solid edges describe the implementation, not proof of live delivery.
@@ -22,9 +41,20 @@ bounded fresh playground/source-table/export signoff. Arize Input is
 **user-observed**, not independent full destination graph/output/token parity.
 Source/build or association readback alone never proves telemetry delivery.
 
+## Durable content correlation (#143)
+
+The [durable runbook](durable-genai-correlation.md) records the deployed/enabled
+existing demo and accepted native content transport with inline precedence.
+Independently verified missing-inline fallback used **generated fixtures**;
+no native missing-inline Foundry call was observed. Complete graph,
+custom-correlation, source-total and full resource parity remain unproven;
+this is not exactly-once delivery. Keep imported ACKs/checkpoints and the unrelated
+ambiguous operational send quarantined; do not resend or replay.
+These receipts do not validate a fresh modern foundation.
+
 ## Historical reference — not the active setup path
 
-The validation reports, milestone audits, capability matrix and runbooks linked below are
+The validation reports, milestone audits and capability matrix linked below are
 retained historical records. Their dated evidence remains intact, but earlier blanket
 "validated" or "not implemented" summaries are superseded by the canonical contract above.
 Do not execute their recipes or treat their checklists as fresh authorization.
@@ -34,8 +64,9 @@ Prompt Agent execution validation procedure, checklist, and evidence record (#49
 explicit breakdown of what is proven by static tests/code review versus what still requires a
 live Foundry deployment.
 
-Historical operational runbooks (superseded for setup):
-[`runbooks.md`](runbooks.md).
+The old operational recipes have been replaced by the bounded fresh/adopt/retire
+guide in [`runbooks.md`](runbooks.md); historical deployment receipts remain dated
+evidence in their original runbooks.
 
 For a capability-by-capability implementation status check (done / partial / not started, each
 cross-checked against the actual code/IaC), see

@@ -1,5 +1,12 @@
 # Observability for Foundry Prompt Agents — What This Demo Shows
 
+> **ARCHIVE — historical milestone handout, not current capability claims.**
+> The broad observability/readiness statements below are retained as historical
+> presentation copy, not verified guarantees. Use the
+> [current demo runbook](runbook.md) and
+> [current architecture/evidence limits](../docs/current-state/architecture.md).
+> Fresh private foundation validation remains PENDING.
+
 *Illustrative synthetic data — nothing in this demo or this page uses real patient, member, or
 claims information.*
 

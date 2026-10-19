@@ -1,16 +1,31 @@
 # Native telemetry mapping and export contract
 
-**CURRENT-STATE implementation; package deployed, NOT E2E VALIDATED (2026-10-16).**
+**CURRENT-STATE bridge contract (2026-10-19); bounded deployed #139/#143
+evidence, not universal E2E parity or fresh-foundation validation.**
 
-**Scope update (2026-10-19):** deployed/inline claims below remain scoped to the
-baseline with `DURABLE_GENAI_ENABLED` absent/false. The separately prepared
-[#143 durable correlation implementation](durable-genai-correlation.md) is
-**NOT DEPLOYED**, disabled by default, and uses different admission/acknowledgment
-semantics only when explicitly enabled. Native table export is not enabled by
-these source changes; live release gates and [ADR-0003](../adr/0003-opt-in-durable-genai-content-correlation.md)
-apply. The future-state direct-export architecture is unchanged.
+**Scope update (2026-10-19):** the inline baseline below remains the default
+behavior when `DURABLE_GENAI_ENABLED` is absent/false. The
+[#143 durable correlation implementation](durable-genai-correlation.md) is now
+deployed and **enabled in the approved existing demo**, with different durable
+admission/acknowledgment semantics. Its scoped rollout includes native
+AppGenAIContent export alongside AppDependencies/AppRequests. Native transport
+and unchanged inline precedence were verified; independently verified
+missing-inline fallback used **generated fixtures**, not a native missing-inline
+Foundry call. No exactly-once or complete graph/custom-correlation/source-total/
+full-resource parity claim follows. Preserve ledger/index/35 imported ACKs,
+unchanged checkpoints and ambiguous-send quarantine; do not resend.
 
-## Provenance and evidence limits
+The dated baseline receipts below are retained unchanged, including their
+then-current table coverage and package identity. Later evidence and rollout
+ownership live in the durable runbook and
+[ADR-0003](../adr/0003-opt-in-durable-genai-content-correlation.md).
+[ADR-0004](../adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md)
+separately accepts the modern-only private fresh foundation; provider/private/
+agent-runtime/end-to-end validation for that composition is **PENDING**.
+See [current operations](runbooks.md), not a broad main deployment over live
+resources. The future-state direct-export architecture is unchanged.
+
+## Historical inline-baseline provenance and evidence limits (2026-10-16/17)
 
 **Inline GenAI message enhancement (2026-10-16): code pushed and package deployed;
 active source parity verified, Arize UI not independently validated.** Source commit
@@ -167,7 +182,7 @@ cause host retries. An empty/all-malformed batch does not call the exporter.
 The many-event trigger uses worker-compatible `typing.List[EventHubEvent]`.
 `EVENT_HUB_NAME` defaults to `telemetry`; the identity binding prefix defaults
 to `EventHubConnection`. The consumer-group fallback remains `$Default`.
-Commit `65cb957`'s explicit hub/consumer-group settings are **HELD** because
+In the historical baseline, commit `65cb957`'s explicit hub/consumer-group settings were **HELD** because
 they require infrastructure changes. This changeset does not provision a group,
 wire settings, or change networking: an independently reviewed deployment must
 explicitly select the provisioned hub/group (normally `function-transform`).
@@ -211,12 +226,13 @@ metadata/failure cleanup, and real protobuf graph/token/resource encoding using
 synthetic inputs. No runtime receipts or live services are test prerequisites.
 No separate linter/type checker is configured for this package.
 
-## Work explicitly held
+## Historical baseline exclusions and current operational boundaries
 
 For the deployed inline baseline, infrastructure/settings/routing,
 casting/framework migration, Prompt Agent, evaluation, release tooling and unrelated dirty
-documentation remain excluded. Content joins beyond that baseline now exist only
-in the disabled, undeployed #143 path linked above. Issue #139's separate connection-only source
+documentation were excluded from that baseline publication. Content joins beyond
+that baseline are now deployed/enabled in the separately accepted #143 path
+linked above; this does not broaden the old package receipt. Issue #139's separate connection-only source
 `2fb796d` has native adoption/redeployment proof and separately approved
 isolated clean-create/redeployment proof; see PR141 and its current-state
 tracing runbook. This mapper change does not deploy that infrastructure or
