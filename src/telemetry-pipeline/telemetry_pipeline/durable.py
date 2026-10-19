@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import base64
 import copy
-import datetime
 import hashlib
 import json
 import logging
@@ -19,7 +18,7 @@ from typing import Callable, Iterable
 from .batch import _extract_records, _message_body_to_text
 from .durable_store import AdmissionError, BlobLedger, json_bytes
 from .mapping import (
-    MalformedRecordError, _message_json, normalize_dependency_record,
+    MalformedRecordError, _message_json, _parse_time_ns, normalize_dependency_record,
     parse_custom_dimensions, parse_parent_span_id, parse_span_id, parse_trace_id,
     record_to_span,
 )
@@ -146,10 +145,11 @@ class Correlator:
                 trace = parse_trace_id(record.get("TraceId"))
                 span = parse_span_id(record.get("SpanId"), trace)
                 timestamp = record.get("TimeGenerated")
-                if not isinstance(timestamp, str):
-                    raise MalformedRecordError("content_capture_time")
-                captured = datetime.datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
-                if captured.tzinfo is None or captured.utcoffset() != datetime.timedelta(0):
+                if (
+                    not isinstance(timestamp, str)
+                    or re.search(r"(?:Z|[+-]00(?::?00){0,2})$", timestamp) is None
+                    or _parse_time_ns(timestamp) is None
+                ):
                     raise MalformedRecordError("content_capture_time_requires_utc")
                 parent_present = record.get("ParentSpanId") not in (None, "")
                 parent = parse_parent_span_id(record.get("ParentSpanId"), trace)

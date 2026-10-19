@@ -357,6 +357,8 @@ def test_content_identity_never_uses_id_parent_and_trace_are_isolated(rig, caplo
     {"TraceId": "0" * 32},
     {"ParentSpanId": "bad-parent"},
     {"TimeGenerated": "2026-01-01T00:00:00"},
+    {"TimeGenerated": "2026-01-01T00:00:00+01:00"},
+    {"TimeGenerated": "2026-01-01T00:00:00.1234567890Z"},
     {"TimeGenerated": "invalid"},
     {"_ResourceId": "/wrong/source"},
     {"TenantId": "wrong-workspace"},
@@ -371,6 +373,22 @@ def test_invalid_content_does_not_suppress_valid_original(rig, changes, caplog):
     engine.drain(sender)
     assert count == 1 and len(sender.payloads) == 1
     assert "malformed_or_disallowed_content" in caplog.text
+
+
+@pytest.mark.parametrize("timestamp", [
+    "2026-01-01T00:00:00.123456789Z",
+    "2026-01-01T00:00:00.1234567+00:00",
+    "2026-01-01T00:00:00Z",
+])
+def test_content_capture_precision_does_not_prevent_enrichment(rig, timestamp):
+    engine, _, _, _ = rig
+    key = engine.admit(original())
+    assert engine.admit(content(TimeGenerated=timestamp)) == key
+    sender = Sender()
+    engine.drain(sender)
+    assert len(sender.payloads) == 1
+    _, attrs, _ = decoded(sender.payloads[0])
+    assert "input.value" in attrs and "output.value" in attrs
 
 
 def test_namespace_includes_source_and_destination(rig):

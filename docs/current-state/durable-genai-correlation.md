@@ -26,6 +26,8 @@ is safe to replay; the already-admitted original's clock is unchanged.
 - Content rows require `Type=AppGenAIContent`, valid nonzero 32-hex `TraceId` and
   16-hex `SpanId`, optional valid `ParentSpanId`, and timezone-aware UTC
   `TimeGenerated`. Capture time is validated, **not** used as span start or deadline.
+  Validation reuses the mapper's nanosecond parser across Python 3.10-3.12;
+  native seven/nine-digit fractions must not be rejected as malformed content.
   Content `Id` is not a span ID. A content-only row never produces a span.
 - Every row must match configured `TenantId` (workspace UUID) and `_ResourceId`
   (allowed Application Insights component resource ID), case-insensitively.
