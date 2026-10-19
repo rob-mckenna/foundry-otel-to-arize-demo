@@ -9,12 +9,22 @@ authorize another deployment, invocation, RBAC, authentication or network change
 
 ## Scope and recovery
 
-This focused implementation starts at main `ebaca4c`. Only the connection
+**Current boundary (2026-10-19):** this remains an **existing-resource,
+connection-only** entrypoint. The accepted modern-only private fresh foundation
+is being implemented separately under
+[ADR-0004](../adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md).
+Fresh provider/private/runtime/end-to-end validation is **PENDING**; #139 clean
+connection creation on an existing account is not fresh-environment validation.
+Use [current operations](runbooks.md) for fresh/adopt/retire boundaries; do not
+run fresh main over the mixed live RG.
+
+**Historical #139 recovery scope:** the implementation starts at main `ebaca4c`. Only the connection
 entrypoint/module, parameter profiles, bounded readback and relevant tests are
 recovered/adapted from preserved #139 work. The full unpublished modern Foundry
 foundation, model and private DNS/endpoint templates are deliberately **not**
-restored. `infra\main.bicep` remains the legacy hub baseline; it is not the modern
-project tracing deployment path.
+restored **in that recovery**. At that baseline `infra\main.bicep` was the legacy
+hub composition, not the modern project tracing entrypoint. This is historical
+context, not a supported classic deployment path.
 
 Use `infra\modern-foundry-tracing.bicep` independently against **existing**
 modern account/project resources in the deployment resource group. It creates
@@ -227,7 +237,7 @@ private service egress, UI-origin traffic or trace/span/token fidelity.
 After a separately approved MI migration require
 `--expected-auth-type ProjectManagedIdentity`; an ApiKey pass cannot satisfy it.
 
-## Deployment procedure and historical prerequisites
+## Existing-resource deployment procedure and historical prerequisites
 
 Historical cycle3 receipts reported vault metadata-version listing blocked by
 `Forbidden/ForbiddenByConnection`, no affirmed component Entra-only property,
@@ -281,6 +291,11 @@ diagnostic settings are not a replacement for that route. Independently reconcil
 the actual export configuration before claiming either table reaches Arize.
 
 ## Executed acceptance evidence (2026-10-16/17 UTC)
+
+The receipts below remain the dated #139 record. Later #143 native content
+transport and generated-fixture fallback acceptance is recorded separately in
+the [durable runbook](durable-genai-correlation.md); it does not rewrite these
+historical table/mapper observations or validate the fresh foundation.
 
 Reviewed implementation source is `2fb796d66f75384cdd4858bbee985eee2081d539`.
 This follow-up changes documentation only; deployed infrastructure source and

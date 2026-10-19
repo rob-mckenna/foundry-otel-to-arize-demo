@@ -1,5 +1,12 @@
 # Demo Narrative: Member Services Benefits Chatbot
 
+> **ARCHIVE — historical milestone script, not current instructions.**
+> The inline status labels and quoted readiness claims below are retained as
+> historical context. Use the [current demo runbook](runbook.md) and
+> [operations guide](../docs/current-state/runbooks.md) instead; fresh private
+> foundation validation remains PENDING. Do not execute this script as a live
+> invocation allowance or present its old claims as current evidence.
+
 **Status: CURRENT-STATE where marked ✅, flagged otherwise.** This script is written to be read
 nearly verbatim by a field engineer presenting to a healthcare enterprise evaluator (e.g. a UHG,
 CVS Health, or Elevance Health observability/platform team). **All member names, member IDs, plan

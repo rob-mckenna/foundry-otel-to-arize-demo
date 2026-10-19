@@ -1,154 +1,194 @@
-# Demo Environment Runbooks: Setup, Teardown, and Troubleshooting
+# Operations: Fresh Setup, Existing-Resource Adoption, and Gated Retirement
 
-> **HISTORICAL / SUPERSEDED (2026-10-16):** Retained recipes and milestone readiness claims
-> below are not the active setup path or authorization to execute. Use the
-> [root README](../../README.md) for the supported offline demo and the
-> [current contract](telemetry-mapping-export-contract.md) for implementation/evidence limits.
-> Deployment, teardown, model, replay and evaluation require separate explicit approval.
+**CURRENT GUIDANCE (2026-10-19); fresh provider/private/end-to-end validation
+PENDING.** [ADR-0004](../adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md)
+accepts one supported **modern-only, private fresh path**. Implementation is in
+progress; this page is not a deployment authorization or a claim that a clean
+clone can already reproduce the live environment. Historical classic/public
+setup and RG-wide teardown recipes are superseded, not alternate profiles.
 
-**Status: MIXED.** The setup and teardown runbooks below (§1, §2) cover infrastructure and
-Prompt Agent steps that are merged and validated today. The troubleshooting section (§3) covers
-the 4 most likely failure points named in issue #61; two of them (Event Hub throughput, Arize
-ingestion rejections) describe failure modes for components whose transform/export code is not
-yet implemented (see `docs/validation/demo-validation-plan.md` capabilities #9/#10) — those entries
-are written as **anticipated** guidance based on the documented design, not confirmed live
-incidents, and are labeled as such below.
+For a no-cloud synthetic walkthrough use the [root README](../../README.md) and
+[Prompt Agent README](../../src/prompt-agent/README.md). Local stub output is not
+a deployed Foundry agent or evidence of model invocation. The
+[demo runbook](../../demo/runbook.md) routes presenters to these same boundaries.
 
-This runbook is written so that **a customer's own engineers, or a different squad member, can run
-the demo without QA or Infrastructure being in the room.** It is the deeper operational companion
-to [`/demo/runbook.md`](../../demo/runbook.md) (#45), which is the shorter demo-day
-setup→run→teardown script read during a live presentation. Use this document when standing up a
-fresh environment, tearing one down for good, or diagnosing a failure outside of demo time.
+## 1. Choose the operation before choosing a template
 
-## 1. Setup runbook: standing up the demo environment from scratch
+| Operation | Supported boundary | Not interchangeable with |
+|---|---|---|
+| **Fresh** | `infra/main.bicep`: new, explicitly approved resource identities in a fresh RG; modern account/project/model, private reachability and telemetry infrastructure | Broad main deployment over the mixed live RG; account/project creation as proof of a published agent |
+| **Adopt / reconcile existing** | Exact-name [#139 connection-only entrypoint](foundry-appinsights-tracing.md) and [durable rollout](durable-genai-correlation.md), each with its own reviewed delta | Fresh main, parent-resource redeployment, runtime reset or a second writer for the export rule/container/role |
+| **Retire** | Separately approved exact-ID manifest after consumer, governance and recovery gates in the [cleanup plan](resource-cleanup-plan.md) | Source removal, omission from Incremental mode, RG teardown, Complete mode, stack unmanaged deletion, vault purge or orphan-IAM sweep |
 
-Prerequisites: see the root [`README.md`](../../README.md#prerequisites) — Azure subscription,
-`az` CLI + Bicep extension, Python 3.10+, PowerShell 7+.
+No classic Hub deployment, legacy toggle or public-network fallback is supported.
+An existing classic asset is a migration/retention decision, not a fresh setup option.
 
-| Step | Command | Expected result | Notes |
-|---|---|---|---|
-| 1 | `az login` | Browser/device-code auth succeeds | Confirm `az account show` returns the intended subscription before continuing |
-| 2 | `az group create -n <resource-group> -l <region>` | Resource group created | Pick a region matching `infra/main.parameters.json`'s region token |
-| 3 | `pwsh ./infra/scripts/validate-naming.ps1` (from `infra/`) | Exits 0, no naming/tagging violations reported | Static check, no Azure calls — safe to run before `az login` even completes |
-| 4 | `az deployment group what-if -g <resource-group> -f main.bicep -p main.parameters.json` | Shows planned creates for Foundry project, App Insights/Log Analytics, Key Vault, Event Hub, Function App shell — no unexpected deletes | If this is a re-run against an existing group, idempotency means no unexpected changes to already-matching resources |
-| 5 | `az deployment group create -g <resource-group> -f main.bicep -p main.parameters.json` | `provisioningState: Succeeded` | Full module list and RBAC wiring detail: `infra/README.md` |
-| 6 | Confirm managed-identity RBAC wiring | `az role assignment list --scope <key-vault-resource-id>` shows the Function App's and/or Foundry project's managed identity with `Key Vault Secrets User` | No connection strings/keys should appear anywhere in deployment output |
-| 7 | Set up the Prompt Agent locally (`python -m venv .venv`, `pip install -e ".[test]"`, optionally `".[azure]"`) | `pytest` passes (11 tests as of this writing) | See `src/prompt-agent/README.md` |
-| 8 | Point the agent at the deployed App Insights resource (`APPLICATIONINSIGHTS_CONNECTION_STRING`, sourced from Key Vault — never hardcoded) | `python -m prompt_agent.main --scenarios` runs and prints 5 scenario results | Omit this variable to run against the console exporter only (no live Azure needed) |
+## 2. Fresh private path: required contract and stop gates
 
-**Acceptance for a successful setup:** step 5 reports `Succeeded`, step 7's test suite passes, and
-step 8 produces a correlation ID that is subsequently queryable in Application Insights (see
-`demo/narrative.md` §3 for the exact KQL).
+The implementation/parameter authority is [infra/README.md](../../infra/README.md),
+subject to ADR-0004. Until Infra finishes the contract and independent review,
+do not copy an older deployment command or treat an example profile as executable.
+No hypothetical fresh deployment command is supplied here.
 
-## 2. Teardown runbook: leaving zero orphaned resources
+### Explicit portable inputs
 
-```powershell
-az group delete -g <resource-group> --yes --no-wait
-```
+- Choose `projectToken`, `environment`, `location`, `regionToken`, `ownerTag`,
+  `costCenterTag`, `accountName`, `projectName`, `customSubDomainName` and
+  `projectDisplayName`. Fresh naming uses `foundry` / `fproj`, not ML Hub tokens.
+  Do not normalize or rename existing resource identities.
+- Approve **one** account-scoped deployment using `modelDeploymentName`,
+  `modelFormat`, `modelName`, `modelVersion`, `modelDeploymentSkuName`,
+  positive `modelDeploymentCapacity`, `modelVersionUpgradeOption`, and only an
+  already approved optional `raiPolicyName`. A deployment alias is not the
+  catalog model name/version. The retained demo tuple is not a portable default.
+  Infra's in-progress interface also requires explicit
+  `modelDataResidencyApproval` and `modelDeploymentApproved`; supplying them is
+  an operator attestation, not proof of quota or permission to invoke a model.
+- Attest region/model/SKU availability, subscription-specific quota,
+  capacity-unit semantics, residency and cost before provisioning. Premium
+  hosting has persistent cost. No automatic alternate model/region, quota
+  increase, capacity increase, reservation or inference probe.
+- Choose the discriminated network ownership object: `mode=fresh` requires
+  three explicit CIDRs for the owned VNet/PE/integration topology and owns seven
+  DNS links; `mode=existing` requires approved PE and delegated Function
+  integration subnet IDs, seven exact private DNS zone IDs and
+  `dnsLinksManagedExternally=true`. Existing mode performs no VNet/zone PUT.
+  Exact object property names belong to Infra's implementation guide; do not
+  infer them here. Reused shared networks must not receive an authoritative
+  truncated subnet list.
 
-Wait for completion, then verify:
+### Minimum private graph, not just an account
 
-```powershell
-az resource list -g <resource-group> --output table
-az group show -g <resource-group>   # should error "ResourceGroupNotFound" once fully deleted
-```
+The target is `Microsoft.CognitiveServices/accounts` (`AIServices`, S0) with a
+distinct system-assigned project identity and one account model deployment,
+pinned to API `2025-09-01`. Account local auth is disabled, public network access
+disabled, ACL default Deny/bypass None. Project MI needs scoped **Foundry User**
+(formerly Azure AI User) at the account; this is not caller/deployer authority
+or an automatic project-to-vault grant.
 
-**Acceptance for a clean teardown:** `az resource list` returns an empty table and
-`az group show` errors with `ResourceGroupNotFound`. If either command still shows resources after
-a few minutes, re-run `az group delete` (idempotent) rather than deleting resources individually —
-individual deletion risks leaving RBAC role assignments or soft-deleted Key Vault instances behind
-(Key Vault soft-delete in particular: confirm with
-`az keyvault list-deleted --query "[?properties.vaultId.contains(@, '<resource-group>')]"` and
-purge with `az keyvault purge --name <vault-name>` if the demo environment will not be reused with
-the same name).
+The account PE uses group `account` with zone groups, VNet links and private DNS
+for `privatelink.cognitiveservices.azure.com`, `privatelink.openai.azure.com` and
+`privatelink.services.ai.azure.com`. KV uses `vault` PE/DNS; keyless Function host
+storage needs blob/queue/table private paths. The supported Function path uses
+Premium with a delegated outbound VNet integration subnet, DNS/routing and an
+approved deployment-package path. The selected fresh hosting contract uses a
+private Blob URL in `function-packages` with managed identity, **not Azure Files**;
+package publication is a separate operation. Private ingress alone is
+insufficient. Package existence/access and private runtime readiness still need
+evidence; do not enable shared keys to bypass a failure.
 
-> ⚠️ A dedicated, scripted teardown tool (issue #23, "Cleanup / teardown script for demo
-> resources") is tracked but not yet merged as of this writing. Until it lands, the commands above
-> — delete by resource group plus explicit `az resource list` / Key Vault soft-delete verification
-> — are the validated teardown path, since this repo's Bicep modules provision everything into a
-> single resource group with no cross-resource-group dependencies. Update this section once #23
-> merges, per the doc-drift checklist (#62).
+The composition must include workspace-based AppInsights → LAW → native export
+to an explicit EH namespace **and hub name**, plus the Function infrastructure.
+Review `EventHubConnection` (or explicit `EVENT_HUB_CONNECTION_SETTING_PREFIX`),
+`EVENT_HUB_NAME`, `EVENT_HUB_CONSUMER_GROUP`,
+`AzureWebJobsStorage__accountName` and
+`AzureWebJobsStorage__credential=managedidentity`. Do not assume the Python
+`$Default` fallback selects the provisioned consumer group. Preserve separate
+Function KV/EH/host-storage grants and Arize endpoint/project/space interfaces.
 
-## 3. Troubleshooting: the 4 most likely failure points
+Fresh composition owns the AppDependencies/AppRequests/AppGenAIContent export,
+`genai-correlation` container and additive container-local index role/assignment.
+The existing-resource durable rollout is not a concurrent second owner.
+The fresh incoming consumer and outbox are explicitly disabled in the
+in-progress composition. Runtime enablement/cutover remains gated by ADR-0003
+readiness; infrastructure creation is not permission to enable them.
 
-### 3.1 Foundry authentication failures
+### Secure trace association and runtime readiness
 
-**Symptom:** Prompt Agent calls fail with an auth/401-style error when `FOUNDRY_API_KEY` or a
-managed-identity token is rejected.
+Fresh completion requires an approved AppInsights project connection, not merely
+`preserveExisting` (which performs **no PUT**, even if absent). Follow the
+[#139 secure contract](foundry-appinsights-tracing.md): one intended association,
+reviewed sharing/PE properties, secure parameters across boundaries and an
+operator-supplied immutable Key Vault deployment reference. Do not read keys,
+emit secrets, or assume project MI resolves ARM secure parameters. Unavailable
+private vault template resolution is a **stop**, not a public fallback.
+Current `ApiKey` association semantics do not authorize account local auth;
+`ProjectManagedIdentity` ingestion is a separately approved migration.
 
-**Likely cause:** expired/incorrect API key placeholder still set from `src/prompt-agent/README.md`'s
-local-dev defaults (`REPLACE_ME_SYNTHETIC_KEY` is a placeholder, not a real credential — it will
-never authenticate against a real Foundry endpoint), or a managed identity missing the expected
-role assignment.
+Account + project + model is **not** agent definition/version publication,
+private agent runtime/state readiness or restoration of conversations/files.
+Caller Entra auth and the selected Prompt Agent API/tool/state prerequisites
+must be established separately. Do not automatically add Search, Cosmos DB,
+ACR, hosted-agent compute/capability hosts, VM/Bastion/NAT, storage or permissions.
+Surface an exact product requirement for a scoped decision first.
 
-**Fix:** confirm `FOUNDRY_ENDPOINT`/`FOUNDRY_DEPLOYMENT_NAME`/`FOUNDRY_API_KEY` are sourced from
-Key Vault (never the local placeholder) when targeting a real deployment; confirm the calling
-identity has the Foundry project's required data-plane role via
-`az role assignment list --scope <foundry-project-resource-id>`.
+A Foundry PE does not make Azure Monitor private. Approved ingestion, LAW/EH
+export and Arize HTTPS egress must be documented separately; no AMPLS/EH firewall
+redesign is implied. If enterprise policy forbids those service paths, stop for
+a reviewed network design rather than opening the environment.
 
-### 3.2 Event Hub throughput / ingestion lag
+### Completion evidence: still PENDING for the fresh composition
 
-**Status: anticipated guidance — not yet confirmed against a live incident**, since no component
-in this repo streams live traffic into the Event Hub yet (the Log Analytics → Event Hub export
-wiring is a documented baseline design per `docs/telemetry/log-analytics-export-baseline.md`, not
-a deployed/validated data flow).
+1. Offline compilation/graph tests and independent source review.
+2. Separately authorized Provider validation, exact what-if, fresh deployment
+   and identical redeployment with no unexpected drift.
+3. Private validator and Function DNS/MI/network/package/KV access checks.
+4. Separately authorized application publication and agent-version/runtime
+   readiness, followed by approved synthetic source/destination evidence.
 
-**Symptom (anticipated):** Event Hub throttling errors (`ServerBusyException`) or growing consumer
-lag once the export pipeline is live, under demo-scale but bursty traffic.
+Infra is changing `validate-deployment.ps1` to **offline-only**, with no cloud
+modes, and removing the obsolete broad teardown script. Use only its finalized
+documented interface after implementation; do not reuse historical cloud-mode
+flags or treat an offline pass as Provider/private/runtime verification.
 
-**Likely cause:** `infra/modules/event-hub.bicep` provisions at demo scale (1 throughput unit,
-auto-inflate to 2, per `infra/README.md`) — sufficient for scripted demo scenarios, not sized for
-production-volume ingestion.
+Expected modern outputs include account/project IDs and principal IDs, model
+deployment ID/alias, existing pipeline name/ID meanings, and
+`foundryProjectEndpoint` =
+`https://<customSubDomainName>.services.ai.azure.com/api/projects/<projectName>`
+in Azure public cloud, never an ML discovery URL. Other clouds need a reviewed
+endpoint/DNS contract. IDs and `privateEndpointsEnabled=true` describe topology,
+not private reachability or delivery proof.
 
-**Fix (anticipated):** raise `eventHubThroughputUnits`/the auto-inflate ceiling in
-`main.parameters.json` and redeploy (idempotent); confirm the Function's consumer group
-(`functionConsumerGroupName`, default `function-transform`) isn't competing with another consumer
-reading `$Default`.
+## 3. Existing resources: retain, adopt narrowly, do not recreate
 
-### 3.3 Azure Function cold start
+- Preserve names, identities, current model tuple, agent v1, network, vaults,
+  storage, export destination, runtime settings and checkpoints. Recreating a
+  same-name MI changes its principal; IaC is not state/secret recovery.
+- #139's `modern-foundry-tracing.bicep` only manages the child connection on an
+  existing modern account/project. Preserve exact names and secure-reference
+  safeguards; it has no foundation/model/network/role writes. Read the
+  [runbook and dated receipts](foundry-appinsights-tracing.md) before any approved
+  adoption. Account-path connection ambiguity remains UNKNOWN, not duplication
+  to remove. Retain the isolated test project/connection.
+- `durable-genai-rollout.bicep` remains the narrow existing-resource four-write
+  operation. Preserve the full current table union, enabled state, namespace,
+  explicit hub, container/role identity and imported ACKs. It does not publish
+  runtime code, reset checkpoints or authorize replay. The live demo's durable
+  incoming path stays enabled with checkpoints unchanged.
 
-**Symptom:** The first Function invocation after a period of inactivity takes several seconds
-longer than subsequent ones.
+[#143 accepted evidence](durable-genai-correlation.md) verifies native
+content-table transport and unchanged inline precedence; the missing-inline
+fallback was verified using **generated fixtures**, not a native missing-inline
+Foundry call. No exactly-once, complete graph, custom-correlation, source-total
+or full resource-parity claim follows. Preserve quarantine for operational
+trace `04f49dc16c02643b6a351a499cd4db5a`, span `b4cd6555d6c3ea92`: delivery
+remains unknown; **do not resend**.
 
-**Likely cause:** `infra/modules/function-app.bicep` defaults to a Consumption (Y1) hosting plan —
-an intentional cost/latency trade-off documented in `infra/README.md`, not a defect.
+## 4. Retirement: a separate irreversible-change gate
 
-**Fix:** for a POC that needs to eliminate cold start, set `hostingPlanTier: 'Premium'` in the
-Bicep parameters (single-parameter upgrade to Elastic Premium EP1, no template rewrite) and
-redeploy. For a one-off live demo, a warm-up invocation a few minutes before presenting avoids the
-issue without any infrastructure change.
+The cleanup plan's R01–R83 scope/evidence register is unchanged. The four classic
+workspaces are conditional candidates, not certified unused by empty collections
+or quiet traffic. Positive consumer/asset clearance, governance signoff,
+preservation/recovery acceptance and new exact-ID approval are required.
+Order is project first, hub only after all consumers, exclusive PE/DNS last.
+Unknown external consumers, governance diagnostics and antimalware subscriptions
+stay protected.
 
-### 3.4 Arize ingestion rejections
+Retain #138 evaluation/private-validation/browser assets, #139 test resources,
+the independent dev telemetry stack, both protected vaults, host/checkpoint
+containers, ledger/index/35 imported ACKs and quarantine. VM deallocation does
+not authorize deleting VM/disks/MI/network resources. No broad teardown helper,
+prefix deletion, vault purge or blanket IAM cleanup is a supported workflow.
 
-**Status: anticipated guidance — not yet confirmed against a live incident**, since no Function
-transform code exists yet to emit OTLP spans toward Arize (`src/telemetry-pipeline/` is
-infrastructure-only as of this writing — see `docs/validation/demo-validation-plan.md` capability
-#9).
+## 5. Troubleshooting without weakening the contract
 
-**Symptom (anticipated):** Arize's OTLP ingestion endpoint rejects a batch (e.g. malformed span
-schema, a non-numeric value in a field documented as requiring type coercion).
+| Symptom | Bounded response |
+|---|---|
+| Foundry auth failure | Separate local stub config from deployed modern endpoint/deployment alias/Entra caller. Review the exact caller role; do not restore `FOUNDRY_API_KEY` as account auth or grant blanket Owner/Contributor. |
+| Private endpoint/KV/package failure | Stop for approved DNS/routing/NSG/identity/vault-resolution reconciliation. Do not enable public access, shared keys or local auth. |
+| EH lag or consumer mismatch | Review intended hub/group and existing checkpoint/retention evidence. No automatic capacity change, consumer reset, replay or new grant. |
+| Arize rejection or ambiguous send | Retain bounded IDs/status only, use the [mapping/export contract](telemetry-mapping-export-contract.md) and durable runbook; never print payloads/secrets or blindly resend quarantine. |
 
-**Likely cause:** per `docs/telemetry/field-mapping.md`'s "transform-wide rule" — Application
-Insights exports every `customDimensions` value as a JSON string regardless of the OTel SDK's
-original type. Token counts, span-status booleans, and retry-attempt counters all require an
-explicit type cast in the Function; a raw string passthrough for any of these is the single most
-likely cause of an Arize-side schema rejection once that transform exists.
-
-**Fix (anticipated):** cross-check the Function's actual output against the field-by-field
-mapping table in `docs/telemetry/field-mapping.md` before investigating Arize-side configuration —
-this is a transform-code bug class, not typically an Arize configuration issue.
-
-## 4. When this runbook needs updating
-
-Per the doc-drift checklist (#62): any PR that changes `infra/modules/*.bicep`, adds
-`src/telemetry-pipeline/` transform code, or merges issues #22/#23/#41 must update the relevant
-section of this runbook in the same PR — do not leave §3.2/§3.4's "anticipated guidance" labels in
-place once those components are actually implemented and a live incident/validation can replace
-the anticipated guidance with a confirmed one.
-
-## Related
-
-- [`/demo/runbook.md`](../../demo/runbook.md) (#45) — the shorter demo-day setup→run→teardown script
-- [`/docs/current-state/architecture.md`](../current-state/architecture.md) — the authoritative current-state diagram this runbook assumes
-- [`/docs/validation/demo-validation-plan.md`](../validation/demo-validation-plan.md) — capability validation status
-- [`/infra/README.md`](../../infra/README.md) — full infrastructure module detail
+This guide authorizes no cloud query, model call, deployment, permission change,
+replay or deletion. Historical milestone checklists remain evidence of their
+dated scope, not instructions for a new environment.

@@ -1,5 +1,11 @@
 # Live Demo Fallback / Failure-Mode Guidance
 
+> **ARCHIVE — historical milestone guidance, not current operations.**
+> Old missing-implementation and Consumption/public setup assumptions below are
+> not the current contract. Use the [current demo runbook](runbook.md) and
+> [operations guide](../docs/current-state/runbooks.md). There is no automatic
+> warm-up/model call, retry, public fallback or infrastructure change allowance.
+
 **Status: CURRENT-STATE (documentation) — guidance for a live demo of the current-state
 pipeline.** This document is the companion to [`/demo/runbook.md`](runbook.md) (setup → run →
 teardown) and [`/demo/narrative.md`](narrative.md) (the talking-point script). Read it *before*
