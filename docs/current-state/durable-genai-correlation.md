@@ -1,12 +1,42 @@
 # Opt-in durable GenAI content correlation (#143)
 
 **CURRENT-STATE PIPELINE ENHANCEMENT: source and scoped infrastructure deployed;
-durable admission DISABLED, native content delivery and live Arize fidelity
-UNVALIDATED.**
+durable admission ENABLED in the approved demo. Native content-table transport
+and unchanged inline delivery verified; live content fallback NOT YET VERIFIED.**
 This is not the conceptual direct-OTLP architecture. The existing deployed inline
 path remains the baseline. [ADR-0003](../adr/0003-opt-in-durable-genai-content-correlation.md)
 records the accepted preparation policy; this document grants no deployment,
 export-rule, permission, replay, model invocation, or live OTLP authority.
+
+### Verified rollout and remaining acceptance (2026-10-19)
+
+Source `f650fed983a687eb97211b634af3d99e7286d6e1` is deployed with all twelve
+active source hashes verified. The scoped four-resource rollout is complete.
+All 35 approved legacy identities were imported once as content-free ACKs;
+both temporary VM grants were removed. Five actual empty-outbox successes
+preceded resuming the existing incoming consumer at `13:52:44Z`, preserving
+checkpoints. Relevant offline tests: **260 passed**; all seven source CI jobs passed.
+
+The first approved native synthetic call produced trace
+`73f0d801bf44af6dc1b7caad743b558e`. Independent source and Arize metadata agree on
+AGENT `9b5e6e600a520b25` and LLM `20cc9cf2a4cc00b5`, their parent IDs, model,
+timestamps and full 12,482-character synthetic user input. The LLM's prompt and
+completion counts arrive as integers, 5260 and 23. Two matching valid
+`AppGenAIContent` rows arrived through native export.
+
+**This call did not exercise fallback:** both originals retained valid full
+13,551-character inline input JSON and 118-character output JSON, which correctly
+won precedence. Exceeding an assumed 8-KiB inline boundary did not force truncation.
+No duplicate observed identity or content-generated span was found in the bounded
+destination snapshots. This is not an exactly-once guarantee.
+
+The upstream parent `98b6be7816270067` was not observed as an original in the
+bounded source query or among these destination spans. Source `correlation.id`
+and total-token fields were absent; Arize's reported total 5283 has no established
+source-total provenance. The REST response does not expose an OTLP resource block.
+Do not claim complete graph, custom-correlation, total-token or resource parity
+from this test. One global send was quarantined as ambiguous; its identity and
+delivery remain unresolved, and it must not be blindly resent. #143 remains open.
 
 ## Routing, admission and identity
 
@@ -218,7 +248,7 @@ prepares only the private container, an RG-assignable custom role containing
 assignment, and the existing export-rule update. Required snapshot parameters
 preserve its full table list, enabled state, namespace and explicit Event Hub name.
 There are no Function settings or parent-resource writes, and no retention changes.
-The [infra recipe](../../infra/README.md#narrow-existing-resource-rollout-prepared-not-deployed)
+The [infra recipe](../../infra/README.md#narrow-existing-resource-rollout)
 documents offline tests, drift review and coordinator validation/what-if commands.
 The scoped rollout has been deployed for #143, including AppGenAIContent on the
 existing export. Compilation and resource deployment alone cannot establish

@@ -1,6 +1,9 @@
 # src/telemetry-pipeline
 
-**Status: CURRENT-STATE implementation with synthetic offline tests; NOT E2E VALIDATED.**
+**Status: CURRENT-STATE implementation; scoped live evidence and remaining limits
+are recorded in the [durable runbook](../../docs/current-state/durable-genai-correlation.md).**
+
+Historical inline-baseline publication evidence (2026-10-16):
 The baseline source reconciles the eight-file package published on 2026-10-16 under an explicit
 user-approved package-only exception, not completed generic official validation. Independent
 Arize graph/field/token parity remains **UNKNOWN**. The inline GenAI message-content
@@ -15,8 +18,9 @@ See the scoped
 [native mapping and export contract](../../docs/current-state/telemetry-mapping-export-contract.md)
 for provenance, source-field mappings, failure handling, binding prerequisites, and held work.
 
-**#143 addition (2026-10-19): opt-in durable content joining is prepared locally,
-NOT DEPLOYED.** The deployed inline baseline above is unchanged. See the
+**#143 addition (2026-10-19): opt-in durable content joining is deployed and enabled
+in the approved demo.** Native content transport and unchanged full inline delivery
+are verified; live content fallback remains unverified. See the
 [durable correlation runbook](../../docs/current-state/durable-genai-correlation.md)
 and [ADR-0003](../../docs/adr/0003-opt-in-durable-genai-content-correlation.md)
 for the approved 300-second join, Blob/identity configuration, immutable outbox,

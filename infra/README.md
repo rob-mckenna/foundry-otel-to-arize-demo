@@ -2,7 +2,8 @@
 
 > **Baseline reference, not a turnkey deployment (2026-10-16).** Existing Bicep is retained
 > as the baseline. The #143 delta adds a disabled-by-default private application-container
-> preparation flag and a separate narrowly scoped rollout entrypoint; both are NOT DEPLOYED.
+> preparation flag and a separate narrowly scoped rollout entrypoint. Only the
+> four-resource scoped rollout was deployed on 2026-10-19, not the broad baseline.
 > Commands and historical validation claims below are not the active onboarding
 > path or permission to execute. Start with the [root README](../README.md) and review the
 > [current binding/export contract](../docs/current-state/telemetry-mapping-export-contract.md):
@@ -14,7 +15,7 @@ Bicep is the preferred Infrastructure-as-Code tool for this repo (see
 current-state infrastructure for `foundry-otel-to-arize-demo` - the resources
 needed to run the demo pipeline described in the repo root README.
 
-## Durable GenAI preparation (#143; NOT DEPLOYED)
+## Durable GenAI preparation (#143)
 
 `prepareDurableGenAIContainer=false` is a new safe-default parameter on `main.bicep`
 and the Function module. True prepares only `genai-correlation` in the existing
@@ -26,7 +27,12 @@ Exact scoped what-if, identity/network, retention/deletion, replay horizon and n
 content delivery reviews are separate release gates in the
 [durable runbook](../docs/current-state/durable-genai-correlation.md).
 
-### Narrow existing-resource rollout (prepared, NOT DEPLOYED)
+### Narrow existing-resource rollout
+
+Deployed on 2026-10-19 under explicit approval. The existing export now delivers
+native `AppGenAIContent`; current source, enablement and acceptance limits are
+recorded in the [durable runbook](../docs/current-state/durable-genai-correlation.md).
+This deployment is not permission to rerun or broaden it.
 
 `durable-genai-rollout.bicep` is a separate resource-group entrypoint. It writes
 only four resources:
