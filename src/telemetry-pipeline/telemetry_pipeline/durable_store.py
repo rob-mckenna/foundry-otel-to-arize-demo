@@ -75,6 +75,7 @@ class BlobLedger:
             payload = blob.download_blob(
                 etag=properties.etag,
                 match_condition=MatchConditions.IfNotModified,
+                offset=0,
                 length=MAX_LEDGER_BYTES + 1,
                 logging_enable=False,
             ).readall()

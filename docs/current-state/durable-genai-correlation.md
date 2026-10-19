@@ -330,6 +330,9 @@ Package test dependencies include the optional durable dependencies; the product
 requirements also include them. Base installs can select `[durable]` explicitly.
 Tests use synthetic messages, clocks, single-attempt transport outcomes, real OTLP
 protobuf encoding, and the real Blob adapter against a conditional fake client.
+The bounded-download regression also exercises the real Blob SDK's range and
+conditional-ETag request construction through a blocked HTTP transport. A length
+requires explicit `offset=0`; omitting it fails SDK validation before HTTP.
 They cover batch/order/restart/races, precedence/isolation/conflict, receipt clocks,
 cleanup/tombstones, immutable retries/stale-claim ambiguity, atomic admission,
 capacity limits, scan cursor fairness and compiled infrastructure restrictions.

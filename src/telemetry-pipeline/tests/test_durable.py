@@ -8,12 +8,15 @@ import re
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from types import SimpleNamespace
+from unittest.mock import MagicMock
 
 import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     AzureError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError,
 )
+from azure.core.pipeline.transport import HttpTransport
+from azure.storage.blob import BlobClient
 from opentelemetry.proto.collector.trace.v1.trace_service_pb2 import ExportTraceServiceRequest
 from opentelemetry.proto.trace.v1.trace_pb2 import Span
 
@@ -119,8 +122,9 @@ class FakeBlob:
             payload, etag = self.c.data[self.key]
             return SimpleNamespace(size=len(payload), etag=etag)
 
-    def download_blob(self, *, etag, match_condition, length, **kwargs):
+    def download_blob(self, *, etag, match_condition, offset, length, **kwargs):
         assert match_condition == MatchConditions.IfNotModified
+        assert offset == 0
         with self.c.lock:
             payload, actual = self.c.data[self.key]
             if actual != etag:
@@ -609,6 +613,35 @@ def test_admission_failure_and_uncertain_commit_are_safe_to_replay(rig):
     container.forced_conflicts = 100
     with pytest.raises(AdmissionError, match="admission_contention"):
         engine.admit(content())
+
+
+def test_blob_read_real_sdk_requires_offset_for_bounded_conditional_download(monkeypatch):
+    """Exercise SDK range validation and request construction without any HTTP."""
+    class NetworkBlocked(RuntimeError):
+        pass
+
+    transport = MagicMock(spec=HttpTransport)
+    transport.send.side_effect = NetworkBlocked()
+    etag = '"synthetic-etag"'
+    with BlobClient(
+        account_url="https://synthetic.blob.core.windows.net",
+        container_name="synthetic",
+        blob_name="synthetic-ledger",
+        transport=transport,
+        retry_total=0,
+    ) as blob:
+        monkeypatch.setattr(
+            blob, "get_blob_properties",
+            lambda **kwargs: SimpleNamespace(size=2, etag=etag),
+        )
+        store = BlobLedger(SimpleNamespace(get_blob_client=lambda key: blob))
+        # Reaching the blocked transport proves the real SDK accepted the range.
+        with pytest.raises(NetworkBlocked):
+            store.read("synthetic-ledger")
+        transport.send.assert_called_once()
+        request = transport.send.call_args.args[0]
+        assert request.headers["x-ms-range"] == f"bytes=0-{MAX_LEDGER_BYTES}"
+        assert request.headers["If-Match"] == etag
 
 
 def test_record_and_blob_bounds_before_write_and_before_download(rig):
