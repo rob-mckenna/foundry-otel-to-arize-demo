@@ -15,7 +15,9 @@ Start with [current operations](runbooks.md) and
 [ADR-0004](../adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md).
 The accepted fresh composition is modern-only and private: account/project/model,
 private network/KV/host storage, Premium Function and telemetry infrastructure.
-Implementation is in progress; no classic Hub/public fallback is supported.
+Source implementation and offline checks are reported complete by Infra;
+**Ready for Validation** is not Validated. No #145 cloud validation/deployment
+was performed, and no classic Hub/public fallback is supported.
 Account/project/model alone is not agent-version publication or private runtime/
 state readiness. Model/quota/residency/cost, network ownership, secure immutable
 KV resolution and agent API/tool prerequisites remain explicit operator gates.

@@ -16,7 +16,7 @@ the synthetic demo and not authorized by this README.
 | Telemetry transform | Native/legacy mapping, typed usage, opt-in durable content correlation and conservative OTLP delivery | Native content transport, inline preservation and controlled missing-inline fallback have bounded independent evidence; no exactly-once guarantee |
 | Function publication | Corrected source `f650fed` deployed and durable processing enabled in the approved demo on 2026-10-19 | Existing release evidence is not approval to deploy into another environment |
 | Destination parity | Native inline I/O and a separately injected missing-inline fixture verified in Arize | No native missing-inline Foundry capture, complete graph or full OTLP-resource parity claim |
-| Infrastructure | Modern-only reusable foundation accepted in ADR-0004; source implementation and fresh-environment verification in progress | Do not run a fresh composition over existing resources; connection-only adoption and durable rollout are separate operations |
+| Infrastructure | Modern-only private foundation implemented and checked offline under ADR-0004 | Fresh provider/private/runtime verification remains pending; do not run the fresh composition over existing resources |
 | Future work | Direct OTLP bypass | **CONCEPTUAL / NOT IMPLEMENTED**; excluded from this asset's implementation |
 
 The [mapping/export contract](docs/current-state/telemetry-mapping-export-contract.md) is the
@@ -94,8 +94,8 @@ establish destination parity. No separate telemetry lint/typecheck command is co
 The supported target is **one modern-only private deployment path**, not a classic
 AI Hub deployment or legacy compatibility switch. Follow
 [ADR-0004](docs/adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md)
-and the [`infra/README.md`](infra/README.md) readiness status. Source modernization
-is underway; fresh deployment, repeat-deployment idempotence and private agent
+and the [`infra/README.md`](infra/README.md) readiness status. Modern-only source
+is implemented and checked offline; fresh deployment, repeat-deployment idempotence and private agent
 runtime readiness must not be inferred from compilation or existing demo success.
 Before any live action:
 

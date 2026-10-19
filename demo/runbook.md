@@ -17,8 +17,9 @@ Keep cloud exporters and model calls out of an offline walkthrough.
 
 Use [current operations](../docs/current-state/runbooks.md) and the
 [Infra implementation guide](../infra/README.md) for the **one modern-only
-private fresh contract**. Implementation is in progress; no fresh deployment
-command is supplied here. Model/version/region/SKU/capacity/upgrade/residency,
+private fresh contract**. Infra reports source and offline checks complete;
+**Ready for Validation** is not Validated, and no #145 cloud workflow ran.
+No fresh deployment command is supplied here. Model/version/region/SKU/capacity/upgrade/residency,
 quota, Premium cost, network ownership and secure vault resolution need operator
 approval. Account/project/model provisioning does not publish an agent version
 or establish private agent runtime/state readiness.

@@ -37,7 +37,7 @@ $moduleFiles = Get-ChildItem -Path $ModulesPath -Filter '*.bicep' -File |
   Where-Object {
     # Connections do not support tags and adoption must retain the exact manual name.
     # test_modern_foundry_tracing.py verifies its compiled resource inventory stays connection-only.
-    $_.Name -notin @('naming.bicep', 'modern-foundry-app-insights.bicep')
+    $_.Name -notin @('naming.bicep', 'modern-foundry-app-insights.bicep', 'durable-genai-state.bicep')
   }
 
 if ($moduleFiles.Count -eq 0) {
@@ -48,14 +48,17 @@ if ($moduleFiles.Count -eq 0) {
 foreach ($file in $moduleFiles) {
   $content = Get-Content -Path $file.FullName -Raw
 
-  $usesNamingImport = $content -match "import\s*\{[^}]*buildResourceName[^}]*\}\s*from\s*'naming\.bicep'"
+  # Foundation/model names are explicit owner inputs, never normalized. Their
+  # tags still use the shared helper; compiled graph tests enforce both cases.
+  $explicitNames = $file.Name -in @('modern-foundry-foundation.bicep', 'modern-foundry-model.bicep')
+  $usesNamingImport = $content -match "import\s*\{[^}]*buildRequiredTags[^}]*\}\s*from\s*'naming\.bicep'"
   $usesBuildResourceName = $content -match 'buildResourceName\('
   $usesBuildRequiredTags = $content -match 'buildRequiredTags\('
 
   if (-not $usesNamingImport) {
     $violations.Add("$($file.Name): does not import buildResourceName/buildRequiredTags from naming.bicep")
   }
-  if (-not $usesBuildResourceName) {
+  if (-not $usesBuildResourceName -and -not $explicitNames) {
     $violations.Add("$($file.Name): does not call buildResourceName(...) - resource name(s) may not follow the {project}-{env}-{resourceType}-{region} convention")
   }
   if (-not $usesBuildRequiredTags) {

@@ -3,7 +3,7 @@
 // Provisions a Key Vault using RBAC authorization (not legacy access
 // policies), with purge protection and soft-delete enabled, and grants
 // least-privilege RBAC role assignments to the managed identities of
-// compute resources that need to read secrets (Foundry project, Function
+// compute resources that need to read secrets (Function
 // App, and any future compute).
 //
 // SEQUENCING (two-phase deploy - see issue #18 and .squad/decisions.md
@@ -43,7 +43,7 @@ import { buildResourceName, buildRequiredTags, resourceTypeTokens } from 'naming
 @description('Short project token used in resource names, e.g. "fotoa" for foundry-otel-to-arize-demo.')
 @minLength(2)
 @maxLength(10)
-param projectToken string = 'fotoa'
+param projectToken string
 
 @description('Environment token used in resource names and tags: dev, demo, or prod.')
 @allowed([
@@ -51,13 +51,13 @@ param projectToken string = 'fotoa'
   'demo'
   'prod'
 ])
-param environment string = 'demo'
+param environment string
 
 @description('Azure region for the deployment (full ARM location name, e.g. eastus2).')
-param location string = resourceGroup().location
+param location string
 
 @description('Short region token used in resource names, e.g. "eastus2".')
-param regionToken string = 'eastus2'
+param regionToken string
 
 @description('Owner tag value (responsible team/individual) - required by repo tagging convention.')
 param ownerTag string
@@ -86,7 +86,7 @@ param skuName string = 'standard'
 @maxValue(90)
 param softDeleteRetentionInDays int = 90
 
-@description('Array of managed identity principal IDs (system- or user-assigned) to grant the least-privilege "Key Vault Secrets User" role to - e.g. the Foundry project and Function App managed identities. Leave empty on first (shell) deploy and populate once those resources exist (phase 2 cross-wiring).')
+@description('Explicit approved reader principals only; modern project MI gets no automatic vault grant. Function owns its own vault assignment.')
 param readerPrincipalIds array = []
 
 @description('Array of managed identity principal IDs to grant the "Key Vault Secrets Officer" role to (can create/update/delete secrets, but not manage the vault itself). Use sparingly - most compute identities only need read access via readerPrincipalIds.')
@@ -114,10 +114,10 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
     enableSoftDelete: true
     softDeleteRetentionInDays: softDeleteRetentionInDays
     enablePurgeProtection: true
-    publicNetworkAccess: 'Enabled'
+    publicNetworkAccess: 'Disabled'
     networkAcls: {
-      defaultAction: 'Allow'
-      bypass: 'AzureServices'
+      defaultAction: 'Deny'
+      bypass: 'None'
     }
   }
 }
@@ -152,7 +152,7 @@ resource secretsOfficerRoleAssignments 'Microsoft.Authorization/roleAssignments@
 @description('Resource ID of the Key Vault.')
 output keyVaultResourceId string = keyVault.id
 
-@description('Name of the Key Vault - pass this to other modules (e.g. app-insights.bicep keyVaultName, foundry-project.bicep keyVaultResourceId) to wire secret storage.')
+@description('Name of the private Key Vault used by the Function reference contract.')
 output keyVaultName string = keyVault.name
 
 @description('URI of the Key Vault, e.g. https://<name>.vault.azure.net/')

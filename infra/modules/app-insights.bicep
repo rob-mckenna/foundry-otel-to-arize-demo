@@ -3,12 +3,9 @@
 // Provisions a Log Analytics workspace and a workspace-based Application
 // Insights resource to receive OTel/OpenInference traces from the Foundry
 // Prompt Agent. Retention and daily data cap are parameterized to keep demo
-// costs bounded. Optionally wires:
-//   - Diagnostic settings from an existing Foundry project to this workspace
-//     (managed-identity/diagnostic-settings based, not instrumentation key)
-//   - The Application Insights connection string into an existing Key Vault
-//     secret, so the plaintext connection string is never emitted as a
-//     deployment output (see acceptance criteria on issue #16).
+// costs bounded. Tracing is owned by the modern connection module, not a
+// diagnostic setting. Secret custody is an operator prerequisite; a private
+// vault is not bootstrapped by weakening network controls.
 //
 // Naming/tagging: resource names and required tags are built via the shared
 // infra/modules/naming.bicep helpers (buildResourceName/buildRequiredTags),
@@ -20,7 +17,7 @@ import { buildResourceName, buildRequiredTags, resourceTypeTokens } from 'naming
 @description('Short project token used in resource names, e.g. "fotoa" for foundry-otel-to-arize-demo.')
 @minLength(2)
 @maxLength(10)
-param projectToken string = 'fotoa'
+param projectToken string
 
 @description('Environment token used in resource names and tags: dev, demo, or prod.')
 @allowed([
@@ -28,13 +25,13 @@ param projectToken string = 'fotoa'
   'demo'
   'prod'
 ])
-param environment string = 'demo'
+param environment string
 
 @description('Azure region for the deployment (full ARM location name, e.g. eastus2).')
-param location string = resourceGroup().location
+param location string
 
 @description('Short region token used in resource names, e.g. "eastus2".')
-param regionToken string = 'eastus2'
+param regionToken string
 
 @description('Owner tag value (responsible team/individual) - required by repo tagging convention.')
 param ownerTag string
@@ -56,23 +53,19 @@ param retentionInDays int = 30
 @description('Daily data ingestion cap in GB for the Log Analytics workspace, to prevent runaway demo costs. -1 disables the cap.')
 param dailyQuotaGb int = 1
 
-@description('Optional name of an existing Foundry project workspace (same resource group) to wire diagnostic settings from, forwarding its logs/metrics to this Log Analytics workspace. Leave empty to skip - diagnostic wiring can be added in a later deployment once the Foundry project exists.')
-param foundryProjectName string = ''
+@minLength(1)
+param eventHubNamespaceResourceId string
+@minLength(1)
+param eventHubName string
 
-@description('Optional name of an existing Key Vault (same resource group) to store the Application Insights connection string in as a secret. Leave empty to skip - the connection string is never emitted as a plaintext output regardless.')
+// Optional independently approved secret write, retained for component custody.
+// Fresh main does not bootstrap a private vault or claim ARM can reach it.
 param keyVaultName string = ''
-
-@description('Name of the Key Vault secret used to store the Application Insights connection string, when keyVaultName is provided.')
 param connectionStringSecretName string = 'appinsights-connection-string'
 
 var workspaceName = buildResourceName(projectToken, environment, resourceTypeTokens.logAnalyticsWorkspace, regionToken)
 var appInsightsName = buildResourceName(projectToken, environment, resourceTypeTokens.applicationInsights, regionToken)
 var requiredTags = buildRequiredTags(environment, ownerTag, costCenterTag, dataClassificationTag)
-
-var namingSuffix = '${projectToken}-${environment}'
-
-var storeConnectionStringInKeyVault = !empty(keyVaultName)
-var wireFoundryDiagnostics = !empty(foundryProjectName)
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   name: workspaceName
@@ -105,49 +98,35 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-// Reference to the existing Foundry project (issue #15) to wire diagnostic
-// settings from, when the caller provides a name. Assumes same resource
-// group - cross-resource-group wiring should pass a fully qualified scope
-// via a separate cross-wiring deployment.
-resource existingFoundryProject 'Microsoft.MachineLearningServices/workspaces@2024-10-01' existing = if (wireFoundryDiagnostics) {
-  name: foundryProjectName
-}
-
-resource foundryDiagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = if (wireFoundryDiagnostics) {
-  name: '${namingSuffix}-diag-to-law'
-  scope: existingFoundryProject
-  properties: {
-    workspaceId: logAnalyticsWorkspace.id
-    logs: [
-      {
-        categoryGroup: 'allLogs'
-        enabled: true
+  resource exportRule 'Microsoft.OperationalInsights/workspaces/dataExports@2023-09-01' = {
+    parent: logAnalyticsWorkspace
+    name: 'telemetry-to-eventhub'
+    properties: {
+      destination: {
+        resourceId: eventHubNamespaceResourceId
+        metaData: {
+          eventHubName: eventHubName
+        }
       }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-      }
-    ]
+      tableNames: [
+        'AppDependencies'
+        'AppRequests'
+        'AppGenAIContent'
+      ]
+      enable: true
+    }
   }
-}
-
-// Reference to an existing Key Vault (issue #18) to store the connection
-// string in, when the caller provides a name. This keeps the Application
-// Insights connection string out of plaintext deployment outputs entirely.
-resource existingKeyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = if (storeConnectionStringInKeyVault) {
-  name: keyVaultName
-}
-
-resource connectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = if (storeConnectionStringInKeyVault) {
-  parent: existingKeyVault
-  name: connectionStringSecretName
-  properties: {
-    value: appInsights.properties.ConnectionString
-    contentType: 'text/plain'
+  resource existingKeyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = if (!empty(keyVaultName)) {
+    name: keyVaultName
   }
-}
+  resource connectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = if (!empty(keyVaultName)) {
+    parent: existingKeyVault
+    name: connectionStringSecretName
+    properties: {
+      value: appInsights.properties.ConnectionString
+      contentType: 'text/plain'
+    }
+  }
 
 @description('Resource ID of the Log Analytics workspace.')
 output logAnalyticsWorkspaceId string = logAnalyticsWorkspace.id
@@ -158,8 +137,7 @@ output appInsightsResourceId string = appInsights.id
 @description('Application Insights resource name.')
 output appInsightsName string = appInsights.name
 
-@description('True if the connection string was stored in Key Vault as part of this deployment.')
-output connectionStringStoredInKeyVault bool = storeConnectionStringInKeyVault
-
-@description('Key Vault secret URI for the Application Insights connection string, when keyVaultName was supplied. Empty string otherwise - callers must not expect a plaintext connection string output from this module.')
-output connectionStringSecretUri string = storeConnectionStringInKeyVault ? connectionStringSecret.properties.secretUri : ''
+output logAnalyticsWorkspaceName string = logAnalyticsWorkspace.name
+output exportRuleResourceId string = exportRule.id
+output connectionStringStoredInKeyVault bool = !empty(keyVaultName)
+output connectionStringSecretUri string = !empty(keyVaultName) ? connectionStringSecret!.properties.secretUri : ''

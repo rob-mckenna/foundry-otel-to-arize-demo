@@ -16,8 +16,9 @@ repository are historical, not independent end-to-end proof.
 
 [ADR-0004](../adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md)
 accepts **one modern-only private fresh path** through `infra/main.bicep`,
-replacing classic ML Hub/project setup and public-default profiles. Implementation
-is in progress; provider acceptance, private reachability, fresh idempotence and
+replacing classic ML Hub/project setup and public-default profiles. Infra reports
+source implementation and offline checks complete, **Ready for Validation**, not
+Validated; provider acceptance, private reachability, fresh idempotence and
 end-to-end runtime validation are **PENDING**. The diagrams below describe the
 telemetry bridge, not a newly verified deployable foundation.
 

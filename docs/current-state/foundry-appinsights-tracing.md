@@ -11,8 +11,9 @@ authorize another deployment, invocation, RBAC, authentication or network change
 
 **Current boundary (2026-10-19):** this remains an **existing-resource,
 connection-only** entrypoint. The accepted modern-only private fresh foundation
-is being implemented separately under
+is implemented in source separately under
 [ADR-0004](../adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md).
+Infra reports offline checks complete, not cloud validation.
 Fresh provider/private/runtime/end-to-end validation is **PENDING**; #139 clean
 connection creation on an existing account is not fresh-environment validation.
 Use [current operations](runbooks.md) for fresh/adopt/retire boundaries; do not

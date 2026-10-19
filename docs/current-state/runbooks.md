@@ -2,8 +2,10 @@
 
 **CURRENT GUIDANCE (2026-10-19); fresh provider/private/end-to-end validation
 PENDING.** [ADR-0004](../adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md)
-accepts one supported **modern-only, private fresh path**. Implementation is in
-progress; this page is not a deployment authorization or a claim that a clean
+accepts one supported **modern-only, private fresh path**. Infra reports source
+implementation and offline checks complete, **Ready for Validation**, not
+Validated. No cloud workflow/provider/private/runtime steps ran. This page is
+not a deployment authorization or a claim that a clean
 clone can already reproduce the live environment. Historical classic/public
 setup and RG-wide teardown recipes are superseded, not alternate profiles.
 
@@ -26,8 +28,10 @@ An existing classic asset is a migration/retention decision, not a fresh setup o
 ## 2. Fresh private path: required contract and stop gates
 
 The implementation/parameter authority is [infra/README.md](../../infra/README.md),
-subject to ADR-0004. Until Infra finishes the contract and independent review,
-do not copy an older deployment command or treat an example profile as executable.
+subject to ADR-0004. The source contract is implemented; independent review and
+separately approved live validation remain required. Do not copy an older
+deployment command or treat an example profile as executable: both checked-in
+fresh profiles intentionally contain incomplete selections and approvals.
 No hypothetical fresh deployment command is supplied here.
 
 ### Explicit portable inputs
@@ -41,7 +45,7 @@ No hypothetical fresh deployment command is supplied here.
   positive `modelDeploymentCapacity`, `modelVersionUpgradeOption`, and only an
   already approved optional `raiPolicyName`. A deployment alias is not the
   catalog model name/version. The retained demo tuple is not a portable default.
-  Infra's in-progress interface also requires explicit
+  The interface also requires explicit
   `modelDataResidencyApproval` and `modelDeploymentApproved`; supplying them is
   an operator attestation, not proof of quota or permission to invoke a model.
 - Attest region/model/SKU availability, subscription-specific quota,
@@ -76,6 +80,10 @@ private Blob URL in `function-packages` with managed identity, **not Azure Files
 package publication is a separate operation. Private ingress alone is
 insufficient. Package existence/access and private runtime readiness still need
 evidence; do not enable shared keys to bypass a failure.
+The new-resource host contract includes scoped Storage Blob Data Owner alongside
+the retained Blob/Queue/Table contributor grants; this is not approval to change
+an existing live identity. Hosting without Azure Files can limit scaling; review
+the linked Infra hosting guidance before accepting that operational trade-off.
 
 The composition must include workspace-based AppInsights → LAW → native export
 to an explicit EH namespace **and hub name**, plus the Function infrastructure.
@@ -90,7 +98,7 @@ Fresh composition owns the AppDependencies/AppRequests/AppGenAIContent export,
 `genai-correlation` container and additive container-local index role/assignment.
 The existing-resource durable rollout is not a concurrent second owner.
 The fresh incoming consumer and outbox are explicitly disabled in the
-in-progress composition. Runtime enablement/cutover remains gated by ADR-0003
+source composition. Runtime enablement/cutover remains gated by ADR-0003
 readiness; infrastructure creation is not permission to enable them.
 
 ### Secure trace association and runtime readiness
@@ -102,6 +110,9 @@ reviewed sharing/PE properties, secure parameters across boundaries and an
 operator-supplied immutable Key Vault deployment reference. Do not read keys,
 emit secrets, or assume project MI resolves ARM secure parameters. Unavailable
 private vault template resolution is a **stop**, not a public fallback.
+Foundation-only staging followed by approved private secret custody and the
+narrow connection operation is valid staging, **not completed tracing**: a fresh
+vault does not implicitly hold the new component's secure material.
 Current `ApiKey` association semantics do not authorize account local auth;
 `ProjectManagedIdentity` ingestion is a separately approved migration.
 
@@ -126,10 +137,10 @@ a reviewed network design rather than opening the environment.
 4. Separately authorized application publication and agent-version/runtime
    readiness, followed by approved synthetic source/destination evidence.
 
-Infra is changing `validate-deployment.ps1` to **offline-only**, with no cloud
-modes, and removing the obsolete broad teardown script. Use only its finalized
-documented interface after implementation; do not reuse historical cloud-mode
-flags or treat an offline pass as Provider/private/runtime verification.
+`validate-deployment.ps1` is now **offline-only**, with no cloud modes; the
+obsolete broad teardown script is removed. Use the documented interface in the
+[Infra guide](../../infra/README.md), not historical cloud-mode flags.
+An offline pass is not Provider/private/runtime verification.
 
 Expected modern outputs include account/project IDs and principal IDs, model
 deployment ID/alias, existing pipeline name/ID meanings, and
