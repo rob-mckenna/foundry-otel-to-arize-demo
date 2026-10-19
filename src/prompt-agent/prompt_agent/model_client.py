@@ -2,11 +2,11 @@
 
 This module defines the boundary between the agent's request/response flow
 and the actual model backend. In a fully provisioned environment,
-`FoundryModelClient` would call the real Microsoft Foundry Prompt Agent SDK.
-Since this sandbox has no live Foundry project/credentials provisioned yet
-(see Infra's #15/#16/#18), `FoundryModelClient` falls back to a deterministic
-stub so the rest of the pipeline (and its telemetry) can be built, run, and
-tested end-to-end without live Azure resources.
+A live implementation would call the Microsoft Foundry Prompt Agent SDK.
+The shipped local client is a deterministic stub, independently of any
+deployed Azure resources or configured endpoint. It allows instrumentation
+and synthetic scenarios to run without live services; it does not authenticate
+to or register an agent in a modern Foundry project.
 """
 from __future__ import annotations
 
@@ -147,4 +147,3 @@ class FlakyStubFoundryModelClient(StubFoundryModelClient):
                 f"synthetic transient failure on attempt {self._calls} (demo/validation only)"
             )
         return super().complete(prompt)
-

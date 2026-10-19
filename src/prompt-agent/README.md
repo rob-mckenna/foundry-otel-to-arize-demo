@@ -1,8 +1,8 @@
 # src/prompt-agent
 
-**Status: CURRENT-STATE (validated, implemented)**
+**Status: implemented offline synthetic scaffold; not a live Foundry SDK backend.**
 
-This directory holds the Microsoft Foundry Prompt Agent implementation, instrumented with
+This directory holds the local synthetic Prompt Agent scaffold, instrumented with
 OpenTelemetry and OpenInference semantic conventions for LLM spans (model name, token usage,
 prompt/completion content references, correlation ID).
 
@@ -13,9 +13,9 @@ Only validated, implemented code belongs here. Conceptual or proposed changes to
 Agent exports telemetry (e.g. direct OTLP export) belong under `/docs/future-state` instead, not
 as stubs or partial implementations in this directory.
 
-> This scaffold (#24) ships a placeholder "hello agent" response only. The real
-> prompt/response flow, OpenTelemetry instrumentation, and retry logic are
-> added incrementally in follow-on issues (#25–#31).
+The CLI includes synthetic scenario responses, instrumentation and bounded retries.
+It always uses the stub client; setting endpoint or credential variables does not
+turn it into the independently deployed Foundry Prompt Agent.
 
 ## Requirements
 
@@ -24,7 +24,7 @@ as stubs or partial implementations in this directory.
 ## Setup
 
 ```powershell
-cd src/prompt-agent
+Set-Location .\src\prompt-agent
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -e ".[test]"
@@ -33,7 +33,7 @@ pip install -e ".[test]"
 ## Running tests (#31)
 
 ```powershell
-cd src/prompt-agent
+Set-Location .\src\prompt-agent
 pip install -e ".[test]"
 pytest
 ```
@@ -59,29 +59,39 @@ calls, asserting:
   a response with no unhandled error, a root span with a valid trace ID, and sane/relevant
   response content (`tests/test_scenario_validation.py`, #49)
 
-All 17 tests pass as of this writing (verified by static code review against the existing,
-previously-passing fixture/assertion patterns in this suite; this specific count could not be
-re-executed in the current sandbox session — no Python interpreter is available, see
-`/docs/current-state/prompt-agent-execution-validation.md` §4 for details).
+Run the commands above for the current result. Historical execution evidence is
+separate from live model or destination validation.
 
 ## Configuration
 
 All configuration is read from environment variables — **never hardcoded**.
-In a real deployment these are populated via Azure Key Vault references on
-the hosting App Service / Function App; locally they default to obviously-
-fake placeholder values so the scaffold runs without any Azure resources.
+Local defaults are obviously fake, so the scaffold runs without Azure resources.
+The supported modern infrastructure uses an Entra-authenticated, local-auth-disabled
+Foundry account. Its project endpoint has the form
+`https://<custom-subdomain>.services.ai.azure.com/api/projects/<project-name>`;
+it is not an ML workspace discovery URL. The deployment name is the configured
+model deployment alias, not its catalog model name or version.
 
 | Variable | Purpose | Local default |
 |---|---|---|
 | `FOUNDRY_ENDPOINT` | Foundry project endpoint | `https://synthetic-placeholder.foundry.azure.com` |
 | `FOUNDRY_DEPLOYMENT_NAME` | Model deployment name | `synthetic-gpt-demo` |
-| `FOUNDRY_API_KEY` | API key (sourced from Key Vault in real deployments) | `REPLACE_ME_SYNTHETIC_KEY` |
+| `FOUNDRY_API_KEY` | Legacy scaffold field used only for the configuration label; not modern Foundry authentication | `REPLACE_ME_SYNTHETIC_KEY` |
 | `OTEL_SERVICE_NAME` | OpenTelemetry resource `service.name` | `foundry-prompt-agent` |
 | `OTEL_SERVICE_VERSION` | OpenTelemetry resource `service.version` | `0.1.0` |
 | `DEPLOYMENT_ENVIRONMENT` | OpenTelemetry resource `deployment.environment` | `dev` |
 
 None of the defaults above are real credentials or endpoints — they are
 intentionally obvious placeholders.
+
+No API key is needed for the offline demo. A live caller requires its own approved
+Entra identity and project permissions; the project's managed identity is not the
+caller identity. Foundation provisioning does not publish an agent version,
+restore agent/thread/file state or prove private agent runtime readiness.
+See [ADR-0004](../../docs/adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md)
+and the [infrastructure guide](../../infra/README.md) for the modern foundation
+and separate runtime prerequisites. This cleanup does not introduce a live SDK
+backend or an automatic public/authentication fallback.
 
 ## OpenTelemetry / Application Insights export (#26)
 

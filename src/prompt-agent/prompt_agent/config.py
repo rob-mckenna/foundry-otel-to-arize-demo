@@ -49,8 +49,8 @@ class PromptAgentConfig:
     def has_placeholder_credentials(self) -> bool:
         """True when the agent is running against placeholder/synthetic config.
 
-        Used to decide whether to use the real Foundry SDK call path or the
-        stubbed/mocked call path (see prompt_agent/agent.py).
+        Used only for the CLI configuration label. Supplying values does not
+        select a live SDK backend or establish modern Foundry authentication.
         """
         return self.foundry_api_key in ("", "REPLACE_ME_SYNTHETIC_KEY") or self.foundry_endpoint.startswith(
             "https://synthetic-placeholder"
@@ -62,9 +62,9 @@ def load_config() -> PromptAgentConfig:
 
     Environment variables (all optional for local/demo use — defaults are
     synthetic placeholders, never real Foundry resources):
-      - FOUNDRY_ENDPOINT
-      - FOUNDRY_DEPLOYMENT_NAME
-      - FOUNDRY_API_KEY           (sourced from Key Vault reference in real deployments)
+      - FOUNDRY_ENDPOINT          (placeholder in the offline scaffold)
+      - FOUNDRY_DEPLOYMENT_NAME   (deployment alias, not the catalog model name)
+      - FOUNDRY_API_KEY           (legacy scaffold field, not modern account auth)
       - OTEL_SERVICE_NAME
       - OTEL_SERVICE_VERSION
       - DEPLOYMENT_ENVIRONMENT

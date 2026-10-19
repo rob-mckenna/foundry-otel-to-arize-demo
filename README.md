@@ -13,11 +13,11 @@ the synthetic demo and not authorized by this README.
 | Area | What this asset supports | Evidence limit |
 |---|---|---|
 | Local Prompt Agent | Synthetic scenarios, stub responses, OpenTelemetry/OpenInference spans, correlation IDs and token attributes | The baseline client is a stub, not a live Foundry model; its token estimates are not live usage |
-| Telemetry transform | Native/legacy span mapping, ID preservation, typed metadata/usage, bounded failure handling and OTLP serialization | Offline fixtures and protobuf tests do not prove actual Event Hub delivery or Arize acceptance |
-| Function publication | Source reconciled to the package published on 2026-10-16 | Explicit **package-only approval exception**, not completed generic official validation or a new deployment allowance |
-| Destination parity | Requires independent same-invocation graph, field and token evidence | **Arize parity UNKNOWN**; publication or an export success count is not destination proof |
-| Infrastructure | Baseline Bicep plus focused modern project tracing connection entrypoint | Operator review/configuration required; not a turnkey reconciled deployment |
-| Future work | Direct OTLP bypass and content conversion | **PROPOSAL ONLY / NOT IMPLEMENTED**; excluded from this asset's implementation |
+| Telemetry transform | Native/legacy mapping, typed usage, opt-in durable content correlation and conservative OTLP delivery | Native content transport, inline preservation and controlled missing-inline fallback have bounded independent evidence; no exactly-once guarantee |
+| Function publication | Corrected source `f650fed` deployed and durable processing enabled in the approved demo on 2026-10-19 | Existing release evidence is not approval to deploy into another environment |
+| Destination parity | Native inline I/O and a separately injected missing-inline fixture verified in Arize | No native missing-inline Foundry capture, complete graph or full OTLP-resource parity claim |
+| Infrastructure | Modern-only reusable foundation accepted in ADR-0004; source implementation and fresh-environment verification in progress | Do not run a fresh composition over existing resources; connection-only adoption and durable rollout are separate operations |
+| Future work | Direct OTLP bypass | **CONCEPTUAL / NOT IMPLEMENTED**; excluded from this asset's implementation |
 
 The [mapping/export contract](docs/current-state/telemetry-mapping-export-contract.md) is the
 canonical technical status, including source-package provenance and limitations. Issue #139's
@@ -26,7 +26,11 @@ deployed from reviewed source `2fb796d`: native same-name adoption and identical
 redeployment passed, followed by isolated clean creation/redeployment on
 2026-10-17 UTC. The runbook records retained test resources and bounded
 user-observed Arize Input versus independently reconciled source/export evidence;
-complete destination graph/content/token parity remains unknown.
+complete destination graph/resource parity remains unknown. The later
+[durable correlation runbook](docs/current-state/durable-genai-correlation.md)
+records #143's deployed rollout, native transport and controlled fallback evidence.
+One unrelated operational send remains quarantined with delivery unknown;
+do not resend it blindly.
 Historical private runtime allowances are **CLOSED
 3/3**; evaluation remains **PARTIAL_OR_UNKNOWN_DO_NOT_RETRY**. Offline checks do not reopen
 model, replay, registration, evaluation or deployment budgets.
@@ -87,21 +91,29 @@ establish destination parity. No separate telemetry lint/typecheck command is co
 
 ## Live setup: operator review and explicit approval required
 
-There is no supported one-command live deployment in this sharing path. Retained
-[`infra/README.md`](infra/README.md) documents baseline resources, not approval to execute its
-historical recipes. Before any live action:
+The supported target is **one modern-only private deployment path**, not a classic
+AI Hub deployment or legacy compatibility switch. Follow
+[ADR-0004](docs/adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md)
+and the [`infra/README.md`](infra/README.md) readiness status. Source modernization
+is underway; fresh deployment, repeat-deployment idempotence and private agent
+runtime readiness must not be inferred from compilation or existing demo success.
+Before any live action:
 
 1. Obtain explicit scope/budget approval and follow the official Azure prepare → validate →
    deploy lifecycle. Review the exact source/package and deployment plan; a prior exception
-   is not reusable authorization.
+   is not reusable authorization. Fresh deployment, narrow existing-resource
+   adoption and exact-resource retirement are distinct operations.
 2. Review baseline parameters: `projectToken`, `environment`, `location`, `regionToken`,
-   `ownerTag`, `costCenterTag`, SKUs and networking choices. Keep required tags and synthetic
-   classification. Do not apply example defaults to an existing private environment.
+   `ownerTag`, `costCenterTag`, explicit modern account/project names, model
+   version/deployment SKU/capacity/upgrade policy and private network ownership.
+   Confirm model availability, quota, residency and ongoing hosting cost. Keep
+   required tags and synthetic classification. Do not apply fresh examples to
+   the existing private environment.
 3. Independently reconcile Log Analytics export tables/routes, Function package publication,
    identity permissions, networking and binding app settings. Source defaults are hub
    `telemetry`, prefix `EventHubConnection` and consumer group `$Default`; select the actually
-   provisioned hub/group explicitly (normally `function-transform`). Held binding/settings
-   changes are **not** included in this branch.
+   provisioned hub/group explicitly (normally `function-transform`). Preserve
+   working bindings, durable state and checkpoints during adoption.
 4. Review the HTTPS `/v1/traces` destination, Arize Space/key and project resource routing.
    Use Key Vault and managed identity where supported; never print or commit secret values.
 5. Plan separately authorized same-invocation source capture, native delivery, OTLP
@@ -124,7 +136,7 @@ remain missing rather than fabricated.
 - [Demo archive](demo/README.md): retained historical narratives/runbooks, **not** alternate
   setup instructions or current validation claims.
 
-Current code lives in `src\prompt-agent` and `src\telemetry-pipeline`; baseline Bicep lives
+Current code lives in `src\prompt-agent` and `src\telemetry-pipeline`; infrastructure lives
 in `infra\main.bicep` and `infra\modules`. Tests use synthetic fixtures under the component
 test directories, `tests\telemetry-mapping` and `tests\export`.
 The `.squad` framework/casting is retained, not migrated. Tracked portable MCP definitions
