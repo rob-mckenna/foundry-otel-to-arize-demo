@@ -1,6 +1,9 @@
 # src/telemetry-pipeline
 
-**Status: CURRENT-STATE implementation with synthetic offline tests; NOT E2E VALIDATED.**
+**Status: CURRENT-STATE implementation; scoped live evidence and remaining limits
+are recorded in the [durable runbook](../../docs/current-state/durable-genai-correlation.md).**
+
+Historical inline-baseline publication evidence (2026-10-16):
 The baseline source reconciles the eight-file package published on 2026-10-16 under an explicit
 user-approved package-only exception, not completed generic official validation. Independent
 Arize graph/field/token parity remains **UNKNOWN**. The inline GenAI message-content
@@ -14,6 +17,18 @@ operator receipt is `.azure-sandbox\genai-e2c557f-20261016-reconciled-proof.json
 See the scoped
 [native mapping and export contract](../../docs/current-state/telemetry-mapping-export-contract.md)
 for provenance, source-field mappings, failure handling, binding prerequisites, and held work.
+
+**#143 addition (2026-10-19): opt-in durable content joining is deployed and enabled
+in the approved demo.** Native content transport and unchanged full inline delivery
+are verified. A separately approved synthetic Event Hub fixture with no original
+I/O verifies controlled live content fallback into Arize; this is not a native
+missing-inline Foundry capture. See the
+[durable correlation runbook](../../docs/current-state/durable-genai-correlation.md)
+and [ADR-0003](../../docs/adr/0003-opt-in-durable-genai-content-correlation.md)
+for the approved 300-second join, Blob/identity configuration, immutable outbox,
+ambiguous-send quarantine, 24h orphan cleanup and initial 48h tombstone gate.
+`DURABLE_GENAI_ENABLED` defaults to false; source publication enables neither the
+runtime feature nor native content-table export.
 
 This directory holds the Azure Function transform/mapping code and Event Hub consumer logic for the
 telemetry pipeline:
@@ -38,8 +53,8 @@ four detail docs (`/docs/telemetry/mapping/*.md`, issues #89–#92):
   with `application/json` MIME. Explicit values and their MIME win independently; stale
   MIME without a value is replaced on conversion or omitted. Invalid message content
   emits a key/reason-only warning and omits that side's generated I/O, retaining the
-  span. Nested parts are preserved; no new truncation, AppGenAIContent join, or copying
-  content to parents is introduced.
+  span. Nested parts are preserved; the default mapper adds no truncation or content
+  joins and never copies content to parents.
 - `batch.py` — decodes an Event Hub message batch (single record, JSON array, or the Log Analytics
   Data Export `{"records": [...]}` envelope) into OTel SDK `ReadableSpan` objects and exports the
   whole batch in one `exporter.export()` call (per §4's whole-batch-checkpointing recommendation),
@@ -52,6 +67,13 @@ four detail docs (`/docs/telemetry/mapping/*.md`, issues #89–#92):
   wiring, matching the identity-based binding app-setting prefix documented in
   `infra/modules/function-app.bicep`. This is the only module requiring the `azure-functions`
   package; the transform logic above does not depend on it and is unit-testable without it.
+- `durable.py`, `durable_store.py`, `durable_runtime.py`, `strict_sender.py` — the
+  disabled-by-default cross-batch correlator, conditional Blob ledger, managed-identity
+  wiring and single-attempt OTLP sender. A separately gated timer drains bounded work.
+  Confirmed delivery removes active content; uncertain delivery retains immutable
+  recovery state without automatic resend. Install `.[durable]` for this mode;
+  `.[test]` and deployment requirements include its dependencies. No live validation
+  or deployment is implied by offline tests.
 
 **Unit tests** (`tests/`) cover every field group, the type-coercion rule, the root-span-no-parent
 edge case, and a synthetic 3-span batch (`prompt_agent.invoke` → `tool.lookup_plan_details` +

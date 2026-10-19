@@ -1,10 +1,10 @@
 # Azure Function Transformation — Field-by-Field Mapping (Authoritative Spec)
 
-**Status: CURRENT-STATE DESIGN, pending #19 (Azure Function infrastructure) merge.** This is the
-living specification the Azure Function transform step (`Microsoft Monitor record → OTLP`) must
-match. **No Azure Function code exists in this repo yet** (`src/telemetry-pipeline/` currently has
-only a placeholder `README.md`) — this doc is the authoritative spec to build/audit that Function
-against once #19 lands, not a description of deployed behavior. Every field below is grounded in
+**Status: CURRENT-STATE mapping specification and implementation reference.** The Azure Function
+transform (`Azure Monitor record → OTLP`) is implemented in
+`src/telemetry-pipeline/telemetry_pipeline/mapping.py`. Local mapping and durable-admission tests
+validate the native root-marker behavior below; they do not establish deployment or durable
+activation. Every field in the original mapping table below is grounded in
 the attribute inventory already validated in #32/#33/#34 against the merged Prompt Agent source
 (`src/prompt-agent/prompt_agent/agent.py`, `retry.py`) — nothing here is invented.
 
@@ -54,6 +54,41 @@ raw passthrough, or it lands in Arize as a quoted string instead of a queryable 
 This single rule is the most common correctness bug risk in this transform step — call it out
 prominently in Function code review once #19/this mapping is implemented.
 
+## Native LAW span rows and observed root markers
+
+The mapper accepts native `AppDependencies` and `AppRequests` rows alongside legacy fixtures.
+Native columns normalize as follows: `OperationId` → `operation_Id`, `Id` → `id`,
+`ParentId` → `operation_ParentId`, `Properties` → `customDimensions`,
+`TimeGenerated` → `timestamp`, `DurationMs` → `duration`, and
+`AppRoleName`/`AppRoleInstance` → `cloud_RoleName`/`cloud_RoleInstance`.
+Supplied native and legacy aliases must agree; conflicts are rejected.
+
+**Observed AppRequests evidence (2026-10-19):** the coordinator's metadata-only LAW query
+reported 1,939 native `AppRequests` rows in the preceding 24 hours, all with a 32-hex W3C
+`OperationId`, a 16-hex W3C `Id`, and `ParentId == OperationId`. `Name` was present,
+`Success` was boolean, and `DurationMs` was real-valued; no GenAI request kind was present.
+This is evidence for the observed native AppRequests shape, not a claim that all undocumented
+32-hex parent values are root markers. The same equal marker was already supported for the
+observed synthetic AppDependencies root.
+
+For these native tables, when native `OperationId` and a 32-character native `ParentId`
+are supplied, both must parse as valid nonzero trace IDs and be equal (hex case-insensitive).
+Only that equal marker maps to an absent OTLP parent: a true root span, not an invented parent.
+`AppRequests` maps to OTLP `SERVER` even without GenAI/OpenInference kind attributes.
+Original trace/span IDs, name, status, timestamp precision, duration, and supplied token
+attributes retain their existing mappings; missing token/kind attributes are not fabricated.
+Normalization does not mutate the source row.
+
+A mismatched or malformed 32-hex native parent is still rejected. Legacy-only or partially
+aliased identity rows retain strict parent-span validation and do not gain this exception.
+Invalid originals still fail durable admission with backpressure; this change does not skip
+them or filter AppRequests out of the export.
+
+Regression coverage reuses the native root-marker tests in
+`tests/telemetry-mapping/test_native_dependencies.py` and the admission/export tests in
+`src/telemetry-pipeline/tests/test_durable.py`, including native AppRequests without GenAI
+attributes and optional token-preserving enrichment. Local success is not rollout evidence.
+
 ## No field silently dropped
 
 Every attribute documented in #32 (App Insights custom-dimensions inventory) and #33
@@ -65,9 +100,9 @@ exports entire rows, not a column subset.
 
 - Depends on #35 (Log Analytics export baseline) — the Function consumes what that export rule
   streams to Event Hub.
-- Depends on #19 (Azure Function infrastructure) — no Function code exists to implement this
-  mapping against yet.
-- QA should cross-check the eventual Function source against this doc for drift once #19 lands
+- Azure Function infrastructure is tracked in #19; the mapping implementation exists under
+  `src/telemetry-pipeline/`.
+- QA should cross-check the Function source against this doc for drift
   (per issue #36's own validation step, see also #61 in the traceability matrix).
 
 ## Related

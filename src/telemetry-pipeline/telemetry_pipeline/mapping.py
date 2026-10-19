@@ -505,10 +505,11 @@ def normalize_dependency_record(record: Mapping[str, Any]) -> dict[str, Any]:
             ):
                 raise MalformedRecordError(f"conflicting {native!r} and {legacy!r} values")
         normalized[legacy] = value
-    # Actual synthetic b58 source root: native LAW ParentId == OperationId.
-    # This is a root marker, not a 128-bit parent span; legacy rows stay strict.
+    # Observed native LAW roots: AppDependencies (synthetic b58) and AppRequests
+    # (2026-10-19 metadata query) use ParentId == OperationId. This equal marker
+    # is not a 128-bit parent span; mismatches and legacy rows stay strict.
     if (
-        record.get("Type") == "AppDependencies"
+        record.get("Type") in ("AppDependencies", "AppRequests")
         and "OperationId" in record
         and isinstance(record.get("ParentId"), str)
         and len(record["ParentId"]) == _TRACE_ID_HEX_LEN

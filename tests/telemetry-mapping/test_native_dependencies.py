@@ -12,8 +12,13 @@ from telemetry_pipeline.mapping import MalformedRecordError, record_to_span
 
 
 @pytest.mark.parametrize("uppercase_parent", [False, True])
-def test_observed_native_root_marker_preserves_source_root(uppercase_parent):
+@pytest.mark.parametrize("table", ["AppDependencies", "AppRequests"])
+def test_observed_native_root_marker_preserves_source_root(uppercase_parent, table):
     row = json.loads((Path(__file__).parent / "fixtures" / "native_preflight_root.json").read_text())
+    row["Type"] = table
+    if table == "AppRequests":
+        row.update(Name="synthetic.native.request", DurationMs=12.5,
+                   Properties={"correlation.id": "synthetic-native-request"})
     original_parent = row["ParentId"]
     if uppercase_parent:
         row["ParentId"] = original_parent.upper()
@@ -21,25 +26,33 @@ def test_observed_native_root_marker_preserves_source_root(uppercase_parent):
     assert span.parent is None
     assert span.context.trace_id == int(row["OperationId"], 16)
     assert span.context.span_id == int(row["Id"], 16)
-    assert span.attributes["correlation.id"] == json.loads(row["Properties"])["correlation.id"]
-    assert span.end_time == span.start_time
+    properties = json.loads(row["Properties"]) if isinstance(row["Properties"], str) else row["Properties"]
+    assert span.attributes["correlation.id"] == properties["correlation.id"]
+    assert span.kind == (SpanKind.SERVER if table == "AppRequests" else SpanKind.INTERNAL)
+    assert span.name == row["Name"]
+    assert span.status.status_code == StatusCode.OK
+    assert span.end_time - span.start_time == int(row["DurationMs"] * 1_000_000)
     assert "llm.token_count.total" not in span.attributes
     assert row["ParentId"] == (original_parent.upper() if uppercase_parent else original_parent)
 
 
-def test_native_mismatching_trace_parent_is_rejected(native_dependency):
+@pytest.mark.parametrize("table", ["AppDependencies", "AppRequests"])
+def test_native_mismatching_trace_parent_is_rejected(native_dependency, table):
+    native_dependency["Type"] = table
     native_dependency["ParentId"] = "11111111111111111111111111111111"
     with pytest.raises(MalformedRecordError, match="root marker differs"):
         record_to_span(native_dependency)
 
 
-@pytest.mark.parametrize("native_shape", ["AppRequests", "legacy"])
-def test_unobserved_trace_parent_shapes_still_reject(native_dependency, native_shape):
+@pytest.mark.parametrize("table", ["AppDependencies", "AppRequests"])
+@pytest.mark.parametrize("legacy_fields", [
+    ("OperationId",), ("ParentId",), ("OperationId", "ParentId"),
+])
+def test_legacy_trace_parent_shapes_still_reject(native_dependency, table, legacy_fields):
+    native_dependency["Type"] = table
     native_dependency["ParentId"] = native_dependency["OperationId"]
-    if native_shape == "AppRequests":
-        native_dependency["Type"] = native_shape
-    else:
-        for native, legacy in (("OperationId", "operation_Id"), ("ParentId", "operation_ParentId")):
+    for native, legacy in (("OperationId", "operation_Id"), ("ParentId", "operation_ParentId")):
+        if native in legacy_fields:
             native_dependency[legacy] = native_dependency.pop(native)
     with pytest.raises(MalformedRecordError):
         record_to_span(native_dependency)

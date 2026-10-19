@@ -72,3 +72,11 @@ class StubSpanExporter:
 @pytest.fixture
 def stub_exporter() -> StubSpanExporter:
     return StubSpanExporter()
+
+
+@pytest.fixture(scope="session")
+def registered_pipeline_functions():
+    from telemetry_pipeline import function_app
+
+    # Azure Functions' metadata builder must be materialized only once.
+    return function_app.app.get_functions()

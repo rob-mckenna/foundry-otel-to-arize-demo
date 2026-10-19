@@ -15,8 +15,8 @@ from .conftest import StubSpanExporter, make_record
 
 
 @pytest.fixture(scope="module")
-def registered_function():
-    return function_app.app.get_functions()[0]
+def registered_function(registered_pipeline_functions):
+    return registered_pipeline_functions[0]
 
 
 @pytest.fixture

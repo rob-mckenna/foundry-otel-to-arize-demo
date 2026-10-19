@@ -79,6 +79,16 @@ def telemetry_transform(events: List[func.EventHubEvent]) -> None:
     are deferred during retries, but can advance after retry exhaustion;
     operator recovery/replay is still required for persistent failures.
     """
+    # Importing the gate does not require the optional Blob/identity dependencies.
+    value = os.environ.get("DURABLE_GENAI_ENABLED", "false").lower()
+    if value not in ("true", "false"):
+        raise RuntimeError("DURABLE_GENAI_ENABLED requires true or false")
+    if value == "true":
+        from .durable_runtime import DurableRuntime
+        with DurableRuntime() as runtime:
+            count = runtime.correlator.admit_batch(events)
+            logger.info("telemetry_transform: durably_admitted=%d", count)
+        return
     exporter = _resolve_exporter()
     try:
         result = transform_batch(events, exporter)
@@ -111,3 +121,18 @@ def telemetry_transform(events: List[func.EventHubEvent]) -> None:
                 "failure (%s)",
                 type(exc).__name__,
             )
+
+
+@app.function_name(name="DurableGenAIOutbox")
+@app.timer_trigger(
+    arg_name="timer", schedule="*/30 * * * * *", run_on_startup=False, use_monitor=True,
+)
+def durable_genai_outbox(timer: func.TimerRequest) -> None:
+    value = os.environ.get("DURABLE_GENAI_ENABLED", "false").lower()
+    if value not in ("true", "false"):
+        raise RuntimeError("DURABLE_GENAI_ENABLED requires true or false")
+    if value == "true":
+        from .durable_runtime import DurableRuntime
+        with DurableRuntime() as runtime:
+            count = runtime.correlator.drain(runtime.sender)
+            logger.info("durable_genai_outbox: scanned=%d", count)
