@@ -15,6 +15,7 @@ from azure.core.exceptions import (
     AzureError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError,
 )
 from opentelemetry.proto.collector.trace.v1.trace_service_pb2 import ExportTraceServiceRequest
+from opentelemetry.proto.trace.v1.trace_pb2 import Span
 
 from telemetry_pipeline.durable import (
     ACK_SECONDS, CLAIM_SECONDS, JOIN_SECONDS, MAX_CANDIDATES_PER_SIDE,
@@ -224,30 +225,63 @@ def test_cross_batch_restart_join_and_original_fidelity(rig, content_first):
 
 
 @pytest.mark.parametrize("table", ["AppDependencies", "AppRequests"])
-def test_native_root_aliases_and_nanoseconds_survive_durable_enrichment(rig, table):
+@pytest.mark.parametrize("parent", ["", TRACE])
+@pytest.mark.parametrize("genai", [False, True])
+def test_native_root_aliases_and_nanoseconds_survive_durable_enrichment(rig, table, parent, genai):
     engine, _, _, _ = rig
     source = {
         "Type": table, "OperationId": TRACE, "Id": SPAN,
-        "ParentId": TRACE if table == "AppDependencies" else "",
+        "ParentId": parent,
         "Name": "synthetic.native.invoke", "Success": True,
         "TimeGenerated": "2026-10-03T12:00:00.123456789Z", "DurationMs": 2.5,
         "Properties": json.dumps({
             "gen_ai.operation.name": "chat", "gen_ai.usage.input_tokens": "7",
-        }),
+        } if genai else {}),
         "TenantId": SCOPE.workspace, "_ResourceId": SCOPE.component,
         "AppRoleName": "synthetic-agent",
     }
-    engine.admit(content())
+    if genai:
+        engine.admit(content())
     key = engine.admit(source)
     sender = Sender()
     engine.drain_key(key, sender)
+    assert len(sender.payloads) == 1
     span, attrs, resource = decoded(sender.payloads[0])
+    assert span.trace_id.hex() == TRACE and span.span_id.hex() == SPAN
     assert span.parent_span_id == b""
+    expected_kind = Span.SPAN_KIND_CLIENT if genai else Span.SPAN_KIND_INTERNAL
+    assert span.kind == (Span.SPAN_KIND_SERVER if table == "AppRequests" else expected_kind)
+    assert span.name == source["Name"]
     assert span.start_time_unix_nano == 1791028800123456789
     assert span.end_time_unix_nano - span.start_time_unix_nano == 2500000
-    assert attrs["llm.token_count.prompt"].int_value == 7
-    assert json.loads(attrs["input.value"].string_value) == messages()
+    if genai:
+        assert attrs["llm.token_count.prompt"].int_value == 7
+        assert json.loads(attrs["input.value"].string_value) == messages()
+    else:
+        assert "llm.token_count.prompt" not in attrs
+        assert "input.value" not in attrs
+        assert "openinference.span.kind" not in attrs
+    assert source["ParentId"] == parent
     assert {a.key: a.value.string_value for a in resource.attributes}["service.name"] == "synthetic-agent"
+
+
+@pytest.mark.parametrize("table", ["AppDependencies", "AppRequests"])
+@pytest.mark.parametrize("shape", ["mismatch", "legacy"])
+def test_invalid_trace_root_marker_still_fails_durable_admission(rig, table, shape):
+    engine, _, container, _ = rig
+    source = {
+        "Type": table, "OperationId": TRACE, "Id": SPAN, "ParentId": TRACE,
+        "Name": "synthetic.native.invoke", "Success": True,
+        "TenantId": SCOPE.workspace, "_ResourceId": SCOPE.component,
+    }
+    if shape == "mismatch":
+        source["ParentId"] = "1" * 32
+    else:
+        source["operation_Id"] = source.pop("OperationId")
+        source["operation_ParentId"] = source.pop("ParentId")
+    with pytest.raises(AdmissionError, match="durable_admission_failure"):
+        engine.admit_batch([json.dumps(source)])
+    assert container.data == {}
 
 
 def test_per_side_precedence_empty_explicit_and_invalid_inline_fallback(rig):

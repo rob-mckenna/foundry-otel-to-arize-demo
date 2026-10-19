@@ -1,7 +1,8 @@
 # Opt-in durable GenAI content correlation (#143)
 
-**CURRENT-STATE PIPELINE ENHANCEMENT: implemented locally, offline-tested,
-NOT DEPLOYED; native content delivery and live Arize fidelity UNVALIDATED.**
+**CURRENT-STATE PIPELINE ENHANCEMENT: source and scoped infrastructure deployed;
+durable admission DISABLED, native content delivery and live Arize fidelity
+UNVALIDATED.**
 This is not the conceptual direct-OTLP architecture. The existing deployed inline
 path remains the baseline. [ADR-0003](../adr/0003-opt-in-durable-genai-content-correlation.md)
 records the accepted preparation policy; this document grants no deployment,
@@ -219,8 +220,9 @@ preserve its full table list, enabled state, namespace and explicit Event Hub na
 There are no Function settings or parent-resource writes, and no retention changes.
 The [infra recipe](../../infra/README.md#narrow-existing-resource-rollout-prepared-not-deployed)
 documents offline tests, drift review and coordinator validation/what-if commands.
-**Prepared, not deployed:** successful compilation cannot establish effective MI
-access, native content transport, strict-mode enablement or destination fidelity.
+The scoped rollout has been deployed for #143, including AppGenAIContent on the
+existing export. Compilation and resource deployment alone cannot establish
+effective MI access, native content transport, enablement or destination fidelity.
 
 Before any enablement, authorize and verify:
 
@@ -246,6 +248,32 @@ Rollback needs its own plan for retained outbox work. Simply disabling strict mo
 restores legacy immediate export for subsequent deliveries but leaves pending
 ledgers unsent and can duplicate identities on replay. Preserve state and reconcile
 before resuming another sender.
+
+### First-cutover acknowledgment migration
+
+A fresh ledger does not know which identities the legacy sender already delivered.
+For the approved #143 cutover, pause the incoming trigger without changing its
+consumer group or checkpoints, then take a complete, bounded identity-only
+snapshot from the exact Arize project. Reconcile the query window with observed
+source age and the approved recovery horizon; an empty/incomplete query is not
+proof of nondelivery.
+
+Import only confirmed trace/span identities as create-only `acknowledged` records
+in the actual configured runtime namespace. Use the ordinary content-free schema,
+48-hour expiry and atomic `scope`/`due` tags. Do not import prompt/response bodies,
+resend historical spans, fabricate acknowledgments for unseen identities or
+overwrite pending work. Verify every imported receipt and the complete due-index
+identity set before admitting events. An existing nonempty ledger requires
+separate reconciliation rather than rerunning this fresh-ledger procedure.
+
+The approved temporary migration identity receives Blob Data Contributor plus
+the existing two-action index role only at `genai-correlation`. Remove both
+temporary assignments before admitting new traffic; no host-checkpoint access,
+Event Hub receiver grant, credential forwarding or permanent operator grant is
+needed. Preserve the snapshot and explicit partial-failure evidence. A failed or
+ambiguous import is not permission to overwrite, erase or blindly rerun it.
+This suppresses confirmed legacy identities within the bounded migration scope;
+it is not a receiver upsert or global exactly-once guarantee.
 
 ## Safe operational evidence and recovery
 
@@ -315,4 +343,6 @@ compile reports pre-existing nullable-resource warnings BCP318 in
 `app-insights.bicep:165`, BCP422 in `event-hub.bicep:207`, and BCP318 in
 `event-hub.bicep:231`; the Function module compile adds no warning.
 `.\infra\scripts\validate-naming.ps1` **passed for six modules**.
-No cloud what-if/deployment or live delivery validation was run.
+That initial preparation included no cloud what-if/deployment or live delivery
+validation. Subsequent scoped ARM validation, what-if and deployment succeeded;
+positive durable-path delivery acceptance remains a separate release gate.
