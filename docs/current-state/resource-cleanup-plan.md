@@ -1,10 +1,9 @@
 # Resource cleanup plan: retire classic Foundry without breaking the demo
 
-> **PLANNING ONLY / NO DELETIONS AUTHORIZED.**
-> This document is a proposal, not an approved change, deployment recipe, teardown
-> allowlist or architecture acceptance. No resource was deleted, disabled, deployed,
-> reconfigured or granted access for this assignment. No model/agent was invoked.
-> Lead architecture review and fresh, resource-specific user approval are required.
+> **Historical inventory baseline; subsequent execution status is recorded below.**
+> This inventory is not a teardown allowlist or blanket deletion authority.
+> The original inventory assignment made no cloud changes. Later approvals and
+> observed retirement results do not rewrite its as-of evidence or unknowns.
 
 ## Current execution status — issue #145
 
@@ -15,11 +14,64 @@ naming and 31 focused infrastructure/tracing checks passed. The classic
 `foundry-project.bicep` and broad `teardown-deployment.ps1` are removed from
 supported source; historical references below describe the inventory baseline.
 
-The deployment plan is **Ready for Validation, not Validated**. No fresh
-deployment, provider/private-runtime/idempotence success or live resource
-retirement is claimed. A fresh metadata-only clearance pass is checking the four
-classic candidates; unresolved consumer, governance and recovery dependencies
-remain protected. Removing definitions does not delete live resources.
+PR #146 is merged as `46e5ebb`; source issue #145 is closed. Fresh deployment,
+provider/private-runtime/idempotence and end-to-end portability validation remain
+unperformed under #147. The separate scoped administrative validation below is
+not validation of the fresh infrastructure deployment path.
+
+## Live retirement status - issue #148
+
+On 2026-10-19, the requester separately approved the four exact classic workspace
+IDs, project-before-hub ordering, owner/governance/consumer clearance and accepted
+contained configuration, asset and managed-identity loss. This owner attestation
+does not establish that unsupported asset inventory APIs proved empty.
+
+**All four approved classic workspaces are retired.** Each received exactly one
+DELETE, projects before hubs; native DELETE/wait commands returned exit 0.
+Independent exact-ID checks confirmed HTTP **404 / ResourceNotFound**:
+
+| Workspace | Verified absent, 2026-10-19 UTC |
+| --- | --- |
+| `fotoa-demo-aiproj-eastus2` | 18:41:58 |
+| `fotoa-demo-aihub-eastus2` | 20:12:26 |
+| `fotoa-dev-aiproj-eastus2` | 20:31:08 |
+| `fotoa-dev-aihub-eastus2` | 20:35:31 |
+
+Execution paused when service-associated effects exceeded the initial protection
+conditions. The requester separately accepted automatic removal of four
+workspace-contained assignments, the two exact hub-identity RG assignments and
+eight hub-GUID A-records in `privatelink.api.azureml.ms`. No explicit IAM/DNS
+mutation was issued; service causality is inferred from timing/identity matches,
+not independently established by activity logs. Approval and pause history is
+retained in #148 and the local execution receipts.
+
+The final aggregate comparison at **20:44:00 UTC** found only the four approved
+primary removals and exact accepted automatic effects: **83 -> 79 primary
+resources, 25 -> 17 DNS record sets, 91 -> 85 role assignments**. All **79
+non-target primary resource IDs/projected metadata**, **48 network IDs**, **8 DNS
+zones**, remaining DNS/assignment metadata, modern-project, Event-Hub-consumer
+and host/state-container projections were preserved. Both legacy project
+Key Vault grants and the existing telemetry sender grant remain; the validation
+VM remains deallocated.
+
+These non-atomic management-plane observations do not certify runtime/model
+health or inspect stored ledger/checkpoint contents. No agent/model invocation,
+replay, force/purge, explicit IAM/DNS cleanup or fresh deployment occurred.
+#148 remains open for separately cleared retained classic private endpoints,
+provider-owned NICs and other exclusive dependencies; those were not authorized
+by the four-workspace approval. Fresh deployment validation remains open in #147.
+
+Metadata-only local execution receipts are
+`.azure-sandbox\issue148-exact-workspace-retirement.json` and
+`.azure-sandbox\issue148-preservation-comparison.json`, followed by
+`.azure-sandbox\issue148-exact-workspace-retirement-continuation.json` and
+`.azure-sandbox\issue148-exact-workspace-retirement-aggregate-preservation.json`.
+Final completion and aggregate preservation are recorded in
+`.azure-sandbox\issue148-exact-workspace-retirement-final.json` and
+`.azure-sandbox\issue148-exact-workspace-retirement-final-aggregate-preservation.json`.
+Approval and execution outcomes are also tracked in #148. The original
+83-resource inventory below is retained as historical evidence, not presented
+as the current resource count.
 
 ## Accepted direction addendum — issue #145
 
