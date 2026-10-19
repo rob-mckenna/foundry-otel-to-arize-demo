@@ -60,4 +60,4 @@ docs/adr/0003-...
 |---|---|---|
 | [0001](0001-record-architecture-decisions.md) | Record architecture decisions | Accepted |
 | [0002](0002-use-event-hub-for-telemetry-streaming.md) | Use Event Hub for telemetry streaming instead of a direct Log Analytics trigger | Accepted |
-| [0003](0003-opt-in-durable-genai-content-correlation.md) | Opt-in durable GenAI content correlation before OTLP delivery | Accepted; scoped rollout enabled, native content transport verified; live fallback acceptance pending |
+| [0003](0003-opt-in-durable-genai-content-correlation.md) | Opt-in durable GenAI content correlation before OTLP delivery | Accepted; scoped rollout enabled; native content transport and controlled live fallback verified |

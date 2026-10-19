@@ -2,7 +2,8 @@
 
 **CURRENT-STATE PIPELINE ENHANCEMENT: source and scoped infrastructure deployed;
 durable admission ENABLED in the approved demo. Native content-table transport
-and unchanged inline delivery verified; live content fallback NOT YET VERIFIED.**
+and unchanged inline delivery verified; controlled missing-inline content fallback
+independently VERIFIED in Arize.**
 This is not the conceptual direct-OTLP architecture. The existing deployed inline
 path remains the baseline. [ADR-0003](../adr/0003-opt-in-durable-genai-content-correlation.md)
 records the accepted preparation policy; this document grants no deployment,
@@ -35,8 +36,62 @@ bounded source query or among these destination spans. Source `correlation.id`
 and total-token fields were absent; Arize's reported total 5283 has no established
 source-total provenance. The REST response does not expose an OTLP resource block.
 Do not claim complete graph, custom-correlation, total-token or resource parity
-from this test. One global send was quarantined as ambiguous; its identity and
-delivery remain unresolved, and it must not be blindly resent. #143 remains open.
+from this test.
+
+A second native synthetic attempt returned HTTP 429, without retry. Trace
+`a3693010d8ae5c44a8d38350be17e4ab`, AGENT `f292fba5c7009d46`, reached Arize
+with matching ERROR status, parent, model and timing. Its full 32,962-character
+user input remained in valid 34,884-character inline JSON; output was valid `[]`.
+One matching content row arrived, but inline correctly won again. No further
+model call was used to force truncation.
+
+### Controlled missing-inline fallback evidence (2026-10-19)
+
+The separately approved test injected two small **generated synthetic fixtures,
+not native Foundry/LAW records**, into the existing Event Hub. The original had
+neither explicit nor inline I/O; matching content followed 60 seconds later.
+Exactly two POST attempts returned 201, at `15:17:46.069986Z` and
+`15:18:46.230786Z`; there was no model call, retry or new permission grant.
+The existing namespace sender assignment was preserved.
+
+Independent, fully paginated Arize readback at `15:20:06.133976Z` found exactly
+one record for trace `8208543a85be4c219f8ec74cd2943597`, span
+`9967f3a19455454c`. Both native I/O fields contain valid JSON with
+`application/json` MIME: input 101 characters, output 107 characters. Their
+single text-part SHA256 values match the prepared content:
+
+- Input: `b7a7e7b8d5e6004e216cc3da3f70611c987fc085af6fa64e6ba5567176fc7545`.
+- Output: `87aa6e913b26cab18df603d77eef221b04b9222d458df8aa0591c5e2aaa534dd`.
+
+The original's name `synthetic.appgenaicontent.fallback`, omitted root parent,
+AGENT kind, OK status, start `15:17:45.382828Z`, 1-ms duration, model
+`synthetic-no-model-invocation` and correlation
+`issue143-controlled-fallback-d186e048-d86a-4c53-a799-86d4695fe554` are preserved.
+Prompt/completion/total values arrive as integers 12/3/15; these are **invented
+fixture values, not actual model usage**. Unknown `test.*` properties are not
+mapped span attributes; synthetic provenance is explicit in name/model/correlation.
+
+Because the original had no I/O, this verifies the deployed Event Hub -> Function
+-> durable correlation -> Arize content-fallback branch. Native content-table
+transport was verified separately above; a native missing-inline Foundry call was
+**not** observed. No live full-resource parity or exactly-once guarantee follows
+from this bounded test.
+
+An exact-key, metadata-only host query independently observed original admission
+at `15:17:46.1457789Z`, pending at `15:18:00.7229532Z`, content admission at
+`15:18:46.3373888Z`, matched at `15:19:00.5651887Z` and acknowledged at
+`15:19:00.7248125Z`. Original/content admissions have distinct incoming OperationIds,
+proving separate invocations; the ledger remained pending before content arrived.
+No failure or ambiguous outcome appeared among these five returned rows.
+The validation VM was restored to `PowerState/deallocated` at `15:23:04Z`.
+No IAM grant was created or removed for this test; the pre-existing sender remains.
+
+One unrelated operational send remains quarantined: trace
+`04f49dc16c02643b6a351a499cd4db5a`, span `b4cd6555d6c3ea92`.
+Its source identity was recovered using a metadata-only hash join; it is not either
+native test or the controlled fixture. No matching destination record was observed
+in the bounded reconciliation, which does not prove definitive nonacceptance.
+Delivery remains unknown; preserve quarantine and do not blindly resend.
 
 ## Routing, admission and identity
 

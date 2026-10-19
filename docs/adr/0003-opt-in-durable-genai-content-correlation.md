@@ -9,15 +9,18 @@ The later [rollout approval/progress record](https://github.com/rob-mckenna/foun
 records explicit requester approval of the bounded cloud, retention and migration
 scope below, separately from acceptance of the architecture.
 **Source and four-resource scoped infrastructure deployed; durable admission
-ENABLED; native content transport verified; live fallback acceptance PENDING.**
+ENABLED; native content transport and controlled live fallback VERIFIED.**
 Corrected source `f650fed983a687eb97211b634af3d99e7286d6e1` is deployed,
 the 35-identity ACK migration is verified and both temporary VM grants are removed.
 After actual outbox readiness, incoming processing resumed at `13:52:44Z`.
-One native synthetic call verified independent content arrival and unchanged full
-inline delivery to Arize, but did not exercise content fallback. The
+Two native synthetic attempts verified independent content arrival and unchanged
+inline delivery, including an HTTP 429 error path; neither exercised fallback.
+A separately approved two-event synthetic Event Hub fixture without original I/O
+verified content-derived native Input/Output in exactly one observed Arize identity.
+This is controlled branch validation, not a native missing-inline Foundry capture. The
 [durable runbook](../current-state/durable-genai-correlation.md) records precise
 evidence and remaining limits. These are coordinator-reconciled rollout facts,
-not Lead live verification. Issue #143 remains open. This ADR records existing approval;
+not Lead live verification. This ADR records existing approval;
 it does not itself grant new authority or waive acceptance gates.
 
 ## Context
@@ -144,12 +147,12 @@ to widen access or change the architecture.
   quarantined indefinitely; payload-bearing recovery requires operators and cost
   monitoring. Finite host retry exhaustion can still advance Event Hub checkpoints
   after an admission failure; durable storage cannot recover never-admitted events.
-- **Remaining acceptance gates:** active source, actual host readiness, ACK-only
+- **Acceptance evidence and operating limits:** active source, actual host readiness, ACK-only
   migration, grant removal and activation are verified. Native content transport
-  and unchanged inline I/O have independent source/Arize evidence, but the first
-  call retained valid inline input/output and therefore did not exercise fallback.
-  Prove fallback selection and destination fidelity within the observable fields;
-  retain explicit limits for missing source parents/correlation/totals and unexposed
+  and unchanged inline I/O have independent source/Arize evidence. A separately
+  approved original-without-I/O/content fixture verifies controlled live fallback
+  and destination fidelity within observable fields; it is not native LAW provenance.
+  Retain explicit limits for missing source parents/correlation/totals and unexposed
   resources, capacity/timer lag and ambiguous-send reconciliation. The coordinator owns final
   positive evidence in the durable runbook; offline tests, CI and ARM deployment do
   not establish it. These gates do not authorize query fallback, historical replay,

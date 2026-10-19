@@ -20,7 +20,9 @@ for provenance, source-field mappings, failure handling, binding prerequisites, 
 
 **#143 addition (2026-10-19): opt-in durable content joining is deployed and enabled
 in the approved demo.** Native content transport and unchanged full inline delivery
-are verified; live content fallback remains unverified. See the
+are verified. A separately approved synthetic Event Hub fixture with no original
+I/O verifies controlled live content fallback into Arize; this is not a native
+missing-inline Foundry capture. See the
 [durable correlation runbook](../../docs/current-state/durable-genai-correlation.md)
 and [ADR-0003](../../docs/adr/0003-opt-in-durable-genai-content-correlation.md)
 for the approved 300-second join, Blob/identity configuration, immutable outbox,
