@@ -24,6 +24,10 @@ param workspaceSkuName string = 'PerGB2018'
 param keyVaultName string
 @minLength(1)
 param functionHealthConnectionStringSecretName string = 'function-health-connection-string'
+@description('Secret expiration as UTC Unix seconds. Defaults to 90 days from deployment; renew before expiry. Supply a future timestamp for an approved rollout.')
+@minValue(1)
+@maxValue(2147483647)
+param functionHealthSecretExpirationEpoch int = dateTimeToEpoch(dateTimeAdd(utcNow(), 'P90D'))
 
 var requiredTags = buildRequiredTags(environment, ownerTag, costCenterTag, 'synthetic')
 
@@ -65,9 +69,14 @@ resource vault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
 resource connectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
   parent: vault
   name: functionHealthConnectionStringSecretName
+  tags: requiredTags
   properties: {
     value: component.properties.ConnectionString
     contentType: 'text/plain'
+    attributes: {
+      enabled: true
+      exp: functionHealthSecretExpirationEpoch
+    }
   }
 }
 

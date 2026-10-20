@@ -16,3 +16,7 @@
 # coding agent's workspace-scoped filesystem boundary can reach it. Contains
 # cached auth tokens - never commit.
 .azure-config/
+
+# Local immutable package staging and sanitized preflight evidence.
+.release/
+__pycache__/

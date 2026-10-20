@@ -33,6 +33,10 @@ param privateDnsZoneResourceIds privateDnsZoneIds
 @minLength(1)
 param functionPackageBlobName string
 param functionHealthConnectionStringSecretName string = 'function-health-connection-string'
+@description('Health secret expiration as UTC Unix seconds; defaults to 90 days from deployment. Renew before expiry.')
+@minValue(1)
+@maxValue(2147483647)
+param functionHealthSecretExpirationEpoch int = dateTimeToEpoch(dateTimeAdd(utcNow(), 'P90D'))
 @minValue(30)
 @maxValue(90)
 param functionHealthRetentionInDays int = 30
@@ -62,6 +66,7 @@ module functionHealth 'function-health.bicep' = {
     costCenterTag: costCenterTag
     keyVaultName: keyVaultName
     functionHealthConnectionStringSecretName: functionHealthConnectionStringSecretName
+    functionHealthSecretExpirationEpoch: functionHealthSecretExpirationEpoch
     retentionInDays: functionHealthRetentionInDays
     dailyQuotaGb: functionHealthDailyQuotaGb
   }

@@ -11,6 +11,10 @@ param ownerTag string
 param costCenterTag string
 param keyVaultName string
 param functionHealthConnectionStringSecretName string = 'function-health-connection-string'
+@description('Approved future health secret expiration as UTC Unix seconds. Defaults to 90 days from deployment; pin explicitly for the existing rollout.')
+@minValue(1)
+@maxValue(2147483647)
+param functionHealthSecretExpirationEpoch int = dateTimeToEpoch(dateTimeAdd(utcNow(), 'P90D'))
 @minValue(30)
 @maxValue(90)
 param retentionInDays int = 30
@@ -31,6 +35,7 @@ module health 'modules/function-health.bicep' = {
     costCenterTag: costCenterTag
     keyVaultName: keyVaultName
     functionHealthConnectionStringSecretName: functionHealthConnectionStringSecretName
+    functionHealthSecretExpirationEpoch: functionHealthSecretExpirationEpoch
     retentionInDays: retentionInDays
     dailyQuotaGb: dailyQuotaGb
     workspaceSkuName: workspaceSkuName

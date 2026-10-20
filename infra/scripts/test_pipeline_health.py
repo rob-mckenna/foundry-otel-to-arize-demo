@@ -40,6 +40,7 @@ class PipelineHealthTopologyTests(unittest.TestCase):
         cls.rollout = compile_bicep("infra/pipeline-health-rollout.bicep")
         cls.health = compile_bicep("infra/modules/function-health.bicep")
         cls.function = compile_bicep("infra/modules/function-app.bicep")
+        cls.main = compile_bicep("infra/main.bicep")
         cls.agent = compile_bicep("infra/modules/app-insights.bicep")
 
     def test_scoped_rollout_has_only_health_pair_and_secret(self):
@@ -130,6 +131,35 @@ class PipelineHealthTopologyTests(unittest.TestCase):
         self.assertIn(".secretUriWithVersion",
                       self.health["outputs"]["functionHealthSecretUri"]["value"])
         self.assertNotIn("connectionString", self.health["parameters"])
+
+    def test_secret_has_required_synthetic_tags_and_bounded_expiration(self):
+        secret, = [r for r in writable(self.health)
+                   if r["type"] == "Microsoft.KeyVault/vaults/secrets"]
+        self.assertEqual(secret["tags"], "[variables('requiredTags')]")
+        self.assertIn("'synthetic'", self.health["variables"]["requiredTags"])
+        self.assertEqual(secret["properties"]["attributes"], {
+            "enabled": True,
+            "exp": "[parameters('functionHealthSecretExpirationEpoch')]",
+        })
+        for template in (self.health, self.function, self.rollout, self.main):
+            expiry = template["parameters"]["functionHealthSecretExpirationEpoch"]
+            self.assertEqual(expiry["type"], "int")
+            self.assertEqual(expiry["minValue"], 1)  # Reject zero and negative epochs.
+            self.assertEqual(expiry["maxValue"], 2147483647)
+            self.assertEqual(expiry["defaultValue"],
+                             "[dateTimeToEpoch(dateTimeAdd(utcNow(), 'P90D'))]")
+
+    def test_expiration_override_reaches_health_secret_through_each_caller(self):
+        for template, module_name in (
+            (self.rollout, "pipeline-function-health"),
+            (self.function, "function-health"),
+            (self.main, "function-app-deployment"),
+        ):
+            module, = [r for r in resources(template) if r["name"] == module_name]
+            self.assertEqual(
+                module["properties"]["parameters"]["functionHealthSecretExpirationEpoch"]["value"],
+                "[parameters('functionHealthSecretExpirationEpoch')]",
+            )
 
 
 if __name__ == "__main__":

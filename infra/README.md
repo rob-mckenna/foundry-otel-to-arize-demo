@@ -23,6 +23,38 @@ separate health sink; agent tracing and native export remain unchanged.
 No #153 live cutover is claimed. Old rollback identifiers, private runtime/package
 verification and external diagnostic no-feedback evidence remain prerequisites.
 
+### Health-secret expiration and renewal (#153)
+
+The health secret carries all five required tags, with `dataClassification=synthetic`,
+and `attributes.enabled=true` / `attributes.exp` set by
+`functionHealthSecretExpirationEpoch` (UTC Unix seconds, integer range
+1–2147483647). The reusable health module, Function module, fresh `main.bicep`
+and additive rollout all default to **90 days from deployment** and propagate
+an explicit override unchanged. ARM validates the integer bounds, not whether
+an override is in the future; the operator must reject expired or overly long
+overrides before approval. No other secret or deployment receives a fixed date.
+
+For the existing #153 rollout, pin
+`functionHealthSecretExpirationEpoch=1800230400` (**2027-01-18 00:00:00 UTC**),
+less than 90 days after the 2026-10-20 review. This is a proposed expiry, not
+evidence of a deployed secret. If deployment is delayed beyond that date,
+stop and obtain a newly reviewed future expiry; do not remove expiration.
+Include this non-secret parameter in the exact approved rollout/what-if.
+
+The named `owner` must schedule renewal **at least 14 days before expiry**
+(by 2027-01-04 for this rollout). Obtain approval for a new future expiry
+no more than 90 days from renewal, then reapply only the additive rollout
+with the same identities and the new explicit epoch. ARM keeps custody of the
+component connection string; do not retrieve or print secret values.
+This creates a new secret version rather than rotating the component key.
+Verify only secret metadata (tags, enabled state, expiration, version URI),
+refresh/verify the Function's existing **versionless** Key Vault reference
+through the separately approved cutover procedure, and verify health ingestion
+and absence of export feedback before the old version expires.
+The versioned URI output is metadata, not permission to pin the Function to an
+expiring version. Expiration does not revoke or rotate the underlying
+Application Insights ingestion credential; such rotation is a separate scope.
+
 | Operation | Entrypoint / ownership | Scope |
 |---|---|---|
 | Fresh | `main.bicep` | New, explicitly approved identities in a fresh RG. Owns foundation, private graph and pipeline state/export. Never apply to the mixed live RG. |
