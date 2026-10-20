@@ -15,6 +15,54 @@ The approval SHA-256 and safe evidence are in
 [the execution index](issue147-bounded-execution.json). The receipt has **no
 numeric spending ceiling**; neither USD25 nor USD60 is invented as one.
 
+## Existing-target native request — 2026-10-20 06:58Z
+
+Separate approved existing-target lease SHA256
+`C7754054BBBA38B5A84CB7CB9971B8144F169505178BD48504452AD00A46931F`;
+exclusive Infra executor `6f62330e-9039-4a38-a51f-87c695b55c9d`, custodian
+Squad QA. **Existing GlobalStandard/capacity 5 only**: no fresh deployment,
+DataZone/capacity-1 completion or US-zone processing assertion.
+
+Fresh VM identity/state/permissions/governance and exact model tuple passed.
+Guest accepted source, dependency lock, actual wheels/interpreter/environment
+hashes matched without installation. Private DNS resolved `10.20.0.14`, TLSv1.3;
+existing managed-identity SDK GET retrieved `PromptAgentDefinition`, prompt v1,
+zero tools and exact model alias. Canonical retrieved definition SHA256
+`69ccd005e568a7429cb23ccd198ec2149981d660491c534d04465166efcf9e97`.
+Immutable preflight at `06:58:38.800394Z` binds definition/source/environment/
+lease and request before invocation.
+
+Exactly one accepted built-in synthetic Responses request completed, outcome
+`06:58:43.804231Z`, run/request UUID
+`d2c13606-e59e-4143-8b04-9e7dc7fcf471`, response ID
+`resp_01a5508925f97685006ad711210f688197aa32beed7db906cb`.
+Actual input/output/total usage: **104 / 34 / 138**. Output cap 1024 includes
+reasoning; zero client/SDK/HTTP retries and no tools. Durable per-run and
+per-authorization intents precede authentication; old receipts untouched.
+
+Client-only trace `89d6a1200019ef6d6a77eba778e11f07`,
+span `5db9efa4b4c938f6`, initialized by a standard OTel SDK provider with no
+exporters. **These IDs and the successful client receipt are not native graph
+or end-to-end proof.** Independent Insights/LAW → Event Hub → Function → Arize
+presence/content-field/token/correlation verification remains pending.
+
+One START `06:57:22.285537Z`; immediate finally deallocate submitted
+`06:59:12.271628Z`. Independent DEALLOCATED/release `07:00:05.348617Z`;
+second-process confirmation `07:00:50.400324Z`. No VM held for telemetry.
+New sanitized evidence only, under TEAM_ROOT
+`.azure-sandbox\issue147-native-6f62330e-9039-4a38-a51f-87c695b55c9d-20261020`:
+`exclusive-custody.json`, `start-submission-guard.json`, `preflight.json`,
+`outcome.json`, `ledger-*.json` (new guest paths/hashes), power/release receipts,
+`verified-summary.json`, `evidence-sha256-final.json`.
+Guest current-run copies persist under the approved root's
+`native-6f62330e-20261020`; canonical immutable intents/outcome remain in
+`.foundry-live-receipts`. No second model call, registration or publication.
+
+Validation: `python .azure-sandbox\issue147-native-6f62330e-9039-4a38-a51f-87c695b55c9d-20261020\execute.py --prepare-test`
+**passed** (syntax, supported dual-shape power polling, timeout and finally
+restoration tests); same command with `--execute` **passed** the scoped live
+operation/restoration. This is not a full deployment or native E2E test.
+
 ## 1. EP1 scale proof and implemented controls
 
 `infra/main.bicep` exposes `functionMaximumInstances=1`, constrained by
