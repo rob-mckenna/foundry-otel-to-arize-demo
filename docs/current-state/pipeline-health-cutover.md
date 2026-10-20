@@ -169,16 +169,61 @@ The previous #143 deployment used native config-zip. Earlier in-repo
 SCM/basic-auth publishing credentials or host keys. They are **reference only**:
 do not execute/import historical entrypoints with old mutation logic.
 
+### Authorized GET-only follow-up: channel proven, old bytes NOT bound
+
+Parent accepted Lead's tag/typed-90-day-expiry revision and separately authorized
+only ARM-bearer SCM GET/VFS reads. The new fixed-target helper
+`infra/scripts/pipeline-health-scm.py` extracts no old mutation entrypoint:
+in-memory `az account get-access-token` for the explicit subscription/ARM audience,
+exact tenant/subscription validation, HTTPS with certificate verification,
+redirects/retries disabled, bounded responses and structured redacted diagnostics.
+It never reads publishing credentials, host keys, settings, env files or logs.
+
+At **2026-10-20T16:03:44.968162Z**, ARM before/after and authenticated SCM
+deployment GET all agreed on active, complete, status-4 deployment
+`127794d4-c4a1-466f-b000-08ca0bec3bcb` with the historical timestamps above.
+However, exact GET hashes of the allowlisted SCM-visible `site/wwwroot` files
+did **not** match the independently digest-checked original #143 source ZIP:
+
+| Allowlisted files | Result |
+|---|---|
+| `function_app.py`, `host.json`, `requirements.txt`, `telemetry_pipeline/{__init__,batch,exporter,function_app,mapping}.py` | 8 readable, **all 8 exact byte hashes differ** |
+| `telemetry_pipeline/{durable,durable_runtime,durable_store,strict_sender}.py` | 4 HTTP **404 NotFound** |
+
+No newline-normalized equality or historical receipt was substituted for those
+actual hashes. This is **SCM-visible filesystem evidence**, not proof that those
+bytes are the Linux worker's mounted/running script root. Worker/package binding
+therefore remains unproven; do not conclude that the worker is executing the eight
+different files or that the historical active-package receipt is currently true.
+No dependency metadata was needed/read after this source-binding failure.
+
+Ignored immutable evidence:
+`.release/scm-baseline-allowlisted-complete.json` contains all eight fetched
+SHA256s, all 12 expected candidate hashes, every mismatch/404 and before/after
+deployment identity. The first fail-fast 404 is separately preserved in
+`.release/scm-baseline-proof.json`. The complete pass used exactly **15 GETs,
+zero POSTs**; no broader directories, package ZIPs or command endpoints were read.
+
+The helper has **10 passing synthetic tests**, including exact path allowlisting,
+unauthorized/digest-mismatched POST rejection, HTTP error redaction, redirect
+blocking, source mismatch/missing-file handling, explicit CLI 429 classification
+and deployment-race rejection.
+Parent must review the helper before future cloud-write use.
+
 Narrow transport option for parent review: one ARM-bearer POST of the complete
 offline ZIP to
 `https://fotoa-demo-func-eastus2.scm.azurewebsites.net/api/zipdeploy?isAsync=true`,
 remote build disabled, token held in memory only, no redirects/retries on
 ambiguous submission. Reconcile deployment status via GET, then use the same
 bearer-authenticated VFS channel to read active package/script-root bytes and
-compare all 13 source/1,415 dependency hashes, confirm Linux imports and indexed
-triggers. This is an **existing SCM management channel, not a private Blob
+compare the source hashes. **The observed SCM VFS mismatch means this channel
+alone is not an established worker-mounted-root/dependency/import proof.**
+Worker verification needs a separately authorized known authoritative channel;
+no POST-based command is authorized by this follow-up.
+This is an **existing SCM management channel, not a private Blob
 publisher or new public ingress**. Current metadata and historical success
-support the option; current bearer authorization/byte readback remain untested.
+support the transport option; current bearer GET authorization is now proven.
+ZIP POST authorization/success and worker runtime parity remain untested.
 
 No private publisher is needed for that option, so VM start needed: **no**;
 incremental VM duration/cost: **0 minutes / $0**. If parent requires a strictly
@@ -189,8 +234,8 @@ that concrete alternate-scope decision first; a VM start alone cannot fix a
 missing destination. Existing storage/Function runtime private dependencies are
 not evidence that SCM itself is private.
 
-Before changing code, parent must either fresh-verify the active old bytes via
-the existing bearer channel or explicitly accept containment-only code recovery.
+Before changing code, parent must either separately authorize authoritative
+worker-byte verification or explicitly accept containment-only code recovery.
 Historical receipts do not prove an exact present rollback image. Original
 monitoring exists but no safe old KV URI was found. Its known agent component
 identity permits a separately authorized ARM-custodied monitoring recovery
@@ -201,8 +246,10 @@ invent an absence attestation or retrieve the current plaintext setting.
 
 1. Parent finishes official workflow validation/what-if against only
    `infra/pipeline-health-rollout.bicep`, reviews Lead metadata and this package,
-   chooses the existing bearer route and accepts the recovery limit or performs
-   fresh GET-only byte proof. Pair/cost/cutover approval is already recorded.
+   chooses the existing bearer route and explicitly accepts the recovery limit
+   or separately authorizes authoritative worker-byte verification. The executed
+   GET-only attempt did not establish exact old-runtime bytes.
+   Pair/cost/cutover approval and Lead metadata acceptance are already recorded.
 2. Recheck `1800230400` is future and <=90 days away at execution. Deploy only
    the health rollout after parent authorization:
 
@@ -222,25 +269,56 @@ invent an absence attestation or retrieve the current plaintext setting.
    tags/expiry, component→LAW, empty exports and no unexpected forwarding.
 3. Pause both triggers via settings-only update, observe existing 120-second
    claim boundary plus at least 150 seconds and content-free in-flight counts.
-   Preserve all leases/checkpoints/quarantine. Record exact prior build flags;
-   disable Oryx/remote build for this complete offline ZIP. One reviewed bearer
+   Preserve all leases/checkpoints/quarantine. No build-setting values were read
+   in this follow-up. Optional flags that must be false for this complete ZIP:
+   `SCM_DO_BUILD_DURING_DEPLOYMENT=false` and `ENABLE_ORYX_BUILD=false`
+   (change only if not already false; no dependency-resolution/remote-build step).
+   One reviewed bearer
    ZIP submission, no blind retry. No new `WEBSITE_RUN_FROM_PACKAGE` Blob setting,
    no storage publication or Function parent PUT.
 4. Set exact JSON arrays:
    `PIPELINE_EXCLUDED_SERVICE_NAMES=["fotoa-demo-func-eastus2"]`,
    `PIPELINE_EXCLUDED_COMPONENT_RESOURCE_IDS=["R/providers/Microsoft.Insights/components/fotoa-demo-funcappi-eastus2"]`
-   (expand literal `R`). Never exclude the agent component. Verify active bytes,
-   Linux dependency imports and indexing, not merely deployment status.
+   (expand literal `R`). Never exclude the agent component. Verify authoritative
+   worker bytes, Linux dependency imports and indexing, not merely SCM status/VFS.
 5. Confirm the health output URI belongs to the exact expected vault/secret,
    record its version as metadata, and set `APPLICATIONINSIGHTS_CONNECTION_STRING`
    to the consistent versionless reference
    `@Microsoft.KeyVault(SecretUri=https://fotoa-demo-kv-eastus2.vault.azure.net/secrets/function-health-connection-string)`;
    remove only
    `APPINSIGHTS_INSTRUMENTATIONKEY`. Refresh/verify KV reference resolution.
-   Restore prior build flags if reviewed as necessary, without triggering a rebuild.
+   Do not restore remote build to true for this offline package.
 6. Restore outbox first, then incoming only after count-only health/agent/Arize
    evidence establishes isolation and legitimate child preservation. No model
    calls/replays/deletions are authorized by this prep handoff.
 7. On unresolved routing/code/parity, keep both triggers paused. Do not reset
    sending/ambiguous/rejected ledger states or claim full rollback. Parent alone
    accepts live result; keep draft PR #154 and issue #153 open until then.
+
+### Exact helper commands for the future authorized parent cutover
+
+The fixed package remains `16de4fdd…40382` from source `a49bfd21…839cc`;
+adding this helper does not rebuild or change runtime bytes. It has no arbitrary
+URL/path/token argument and no remote-command implementation.
+
+```powershell
+# OFFLINE tests only (executed in this follow-up)
+python -B -m unittest discover -s infra/scripts -p 'test_pipeline_health_scm.py' -v
+
+# CLOUD WRITE — NOT executed; requires separate parent authorization AFTER
+# trigger pause, remote-build-off and recovery/runtime-channel gates above.
+python -B infra/scripts/pipeline-health-scm.py --mode publish --authorize-zip-post
+
+# GET-only source comparison after the new deployment becomes active.
+# This checks SCM-visible files ONLY, not worker/import/dependency acceptance.
+python -B infra/scripts/pipeline-health-scm.py --mode readback
+```
+
+The publish mode pins the exact ZIP digest, writes a single-attempt local intent
+before POST and refuses another submission if that intent exists. No automatic
+poll/retry is hidden in the helper. Status GET is exactly
+`https://fotoa-demo-func-eastus2.scm.azurewebsites.net/api/deployments/<returned-guid>`.
+On ambiguous POST, reconcile GET-only; never delete the intent to retry blindly.
+Sanitized failures distinguish HTTP 401/403/404/409/429, blocked redirects,
+TLS certificate/handshake, DNS, timeout and connection failure; no raw response,
+error body or bearer material is persisted/emitted.

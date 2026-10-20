@@ -15,7 +15,7 @@ acceptance. Owner pair/cost/cutover approval has since been granted.
 | Dependency artifact / hashes | Approved #143 input `c1a276b62af37da8810c0c120b9cbe8cdff913fc76f43e51399f50db61d540f7`; 29 distributions /1,415 staged files |
 | Package transport / readback | Existing native ARM-bearer SCM option identified; no publication/readback executed. Proposed Blob container does not exist |
 | Live runtime parity | **NOT VERIFIED** |
-| Legacy baseline | ARM active deployment matches historical #143 receipt; package setting absent, monitoring present/non-KV. Fresh byte proof or explicit containment-only code recovery remains |
+| Legacy baseline | ARM/SCM active identity agrees, but actual SCM-visible source differs (8 mismatches /4 missing). Worker-mounted bytes unproven; separately authorized authoritative proof or explicit containment-only recovery remains |
 
 Use the single authoritative [cutover/resource/cost manifest](pipeline-health-cutover.md)
 for exact resource IDs, tags, roles, secret custody, private publication/runtime
@@ -31,6 +31,7 @@ allowances; the daily cap is not a hard spend ceiling.
   Infra was excluded from revision/advice. Five synthetic tags and enabled
   expiry, 90-day reusable default, consistent input propagation; explicit
   rollout expiry `1800230400` (2027-01-18T00:00:00Z), renewal by 2027-01-04.
+  Parent subsequently accepted that metadata revision on review.
 - Four changed Bicep entrypoints compiled; scoped rollout inventory exactly
   deployment + LAW + component + secret. Fresh-caller inventory unchanged.
 - `python -B -m unittest discover -s infra/scripts -p 'test_pipeline_health*.py' -v`:
@@ -73,6 +74,36 @@ Both `.release/pipeline-health-final-a.zip` and `-b.zip` have the package
 digest above; both package receipts are equal. Generated files and parent-owned
 `.azure/deployment-plan.md` are not committed. No Azure CUD, credentials/settings
 dump, VM start, telemetry/log read, model call or #147 artifact access occurred.
+
+### Fresh authorized bearer GET/VFS evidence
+
+At 2026-10-20T16:03:44.968162Z, the fixed-target helper independently hashed
+the allowlisted SCM-visible source. ARM before/after and authenticated SCM GET
+agreed on active successful deployment `127794d4-c4a1-466f-b000-08ca0bec3bcb`.
+**All 8 readable source members differ** from the original digest-checked #143
+source ZIP; **4 durable/strict-sender members return HTTP 404**. This proves bearer
+GET access, not the worker-mounted script-root binding. Exact fresh old-runtime
+rollback bytes remain **unproven**. No package/FS discovery, settings values,
+dependency reads, remote commands or POST occurred.
+
+Full hashes/statuses are in ignored
+`.release/scm-baseline-allowlisted-complete.json` (15 GETs /0 POSTs); the initial
+fail-fast 404 remains `.release/scm-baseline-proof.json`. The new minimal
+`infra/scripts/pipeline-health-scm.py` pins targets/package digest, bounds responses,
+keeps bearer only in memory, blocks redirects and retries, and gates future ZIP
+POST behind explicit authorization plus a durable single-attempt intent.
+Its **10 synthetic tests passed**. Future `readback` mode explicitly proves only
+SCM-visible source, not worker imports/dependencies. Parent must separately
+authorize an authoritative worker channel or accept containment-only recovery;
+no POST-based remote command is authorized by this GET-only follow-up.
+
+| GET-only evidence | SHA256 |
+|---|---|
+| `.release/scm-baseline-allowlisted-complete.json` | `f4db24086b720e4379722b694762f6dd17f9cad99ca76a735acbb77c7c12a19d` |
+| `.release/scm-baseline-proof.json` (initial fail-fast 404) | `bc50826e500398361ff6ee9f5174a086fab699a52bf75dafe05a47a84515da3a` |
+
+No ARM/AAD 429 occurred in these SCM reads. Parent's separate policy metadata
+collection/throttling and ignored `.azure` evidence were not read or modified.
 
 ## Initial assembly validation provenance and exact commands
 
@@ -167,8 +198,9 @@ generated-file ignores, then refreshes only this receipt and the cutover manifes
 
 - Parent review of Lead's revision, official Azure validation/what-if and final
   live gate (owner pair/cost/cutover approval already granted).
-- Fresh exact old-byte proof via the identified existing bearer channel, or
-  explicit acceptance of containment-only code recovery. Old monitoring was not
+- Separately authorized authoritative worker-byte proof, or explicit acceptance
+  of containment-only code recovery: executed SCM-visible GET hashes did not
+  match the historical candidate. Old monitoring was not
   absent; separately authorized ARM custody can use its known component identity.
 - One reviewed complete-ZIP submission with remote build off; active byte/hash,
   Linux import, indexing and KV-resolution verification.
