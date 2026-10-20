@@ -2,29 +2,79 @@
 
 **CURRENT-STATE source implementation, offline evidence only — NOT DEPLOYED.**
 Related to #153; the issue remains open for separately authorized live acceptance.
-This assembly is not Lead approval, owner cost approval or live acceptance.
+This receipt records source/package evidence, not final parent review or live
+acceptance. Owner pair/cost/cutover approval has since been granted.
 
 | Revision / release fact | Exact value |
 | --- | --- |
 | BASE | `2219075f86a7ba387490abdb88ceae5e2a775e9d` |
 | Runtime SOURCE HEAD (first implementation commit) | `38ff29e0d3d9d67989b19e75bc84724feee47194` |
 | Branch | `squad/153-pipeline-health-isolation` |
-| Final branch HEAD | The separate receipt-only commit containing this document; resolve with `git rev-parse HEAD`. It changes documentation only, not runtime source. |
-| Package SHA256 | **NOT BUILT** |
-| Dependency artifact / hashes | **BLOCKED: no approved complete Linux/Python 3.11 dependency tree established** |
-| Private package URL / readback | **BLOCKED: no final package or private publication evidence** |
+| Immutable final source/build-tools SHA | `a49bfd21d242b28f070500a446e9d38c2b8839cc`; subsequent receipt commit changes documentation only |
+| Package SHA256 | `16de4fdd0e951efa957d470d9e71822d5de558bcb3f16fb44522169a9bd40382` |
+| Dependency artifact / hashes | Approved #143 input `c1a276b62af37da8810c0c120b9cbe8cdff913fc76f43e51399f50db61d540f7`; 29 distributions /1,415 staged files |
+| Package transport / readback | Existing native ARM-bearer SCM option identified; no publication/readback executed. Proposed Blob container does not exist |
 | Live runtime parity | **NOT VERIFIED** |
-| Legacy rollback identifiers | **BLOCKED: custody baseline package URL + digest and monitoring secret reference/absence attestation missing** |
+| Legacy baseline | ARM active deployment matches historical #143 receipt; package setting absent, monitoring present/non-KV. Fresh byte proof or explicit containment-only code recovery remains |
 
 Use the single authoritative [cutover/resource/cost manifest](pipeline-health-cutover.md)
 for exact resource IDs, tags, roles, secret custody, private publication/runtime
-gates, diagnostics attestation and containment/rollback. Do not substitute a fresh
-environment or deploy `main.bicep` to the existing demo. The one owner choice is a
-dedicated non-exported health LAW/component in existing `fotoa-demo-rg`, `eastus2`.
+gates, observed governance routing and containment/rollback. Do not substitute a
+fresh environment or deploy `main.bicep` to the existing demo. The owner approved
+the dedicated non-exported health LAW/component in existing `fotoa-demo-rg`, `eastus2`.
 Retail ingestion is USD 2.76/GB: gross USD 82.80/30 days at 1 GB/day before
 allowances; the daily cap is not a hard spend ceiling.
 
-## Validation provenance and exact commands
+## Cycle 2 executed evidence (2026-10-20)
+
+- Lead independently revised rejected health-secret metadata; original author
+  Infra was excluded from revision/advice. Five synthetic tags and enabled
+  expiry, 90-day reusable default, consistent input propagation; explicit
+  rollout expiry `1800230400` (2027-01-18T00:00:00Z), renewal by 2027-01-04.
+- Four changed Bicep entrypoints compiled; scoped rollout inventory exactly
+  deployment + LAW + component + secret. Fresh-caller inventory unchanged.
+- `python -B -m unittest discover -s infra/scripts -p 'test_pipeline_health*.py' -v`:
+  **14 passed in 15.861s**. Wrapper synthetic tests and diff check PASS.
+- Parent independently reviewed runtime and ran the exact runtime command below:
+  **319 passed in 60.98s**, accepts guard/child preservation/quarantine/ETag
+  source. No runtime edit or rerun by this cycle.
+- Approved archive SHA independently checked via PowerShell and Python. All
+  distribution RECORDs and recursive current Linux311 dependency closure
+  checked. Native wheel tags and six ELF64 x86_64 members checked; maximum
+  detected GLIBC requirement 2.28. This is not running-worker import proof.
+- Two identical real offline ZIP builds from final source: **8,522,761 bytes**,
+  **1,428 members** (13 runtime +1,415 dependencies), Python 3.11.9 /zlib 1.3.1.
+  All 13 binary-git runtime hashes equal initial SOURCE HEAD below. No Windows
+  environment, old source, settings or payload was included.
+- Binary-git builder SHA256:
+  `047b8026a2710af4e550333a643991cef228b27417a2c7eda71f942ef2149760`.
+- Safe read-only baseline: expected Function/MI/Python3.11, durable/source scopes
+  unchanged, monitoring present/non-KV/legacy key present; package setting absent.
+  ARM active deployment `127794d4-c4a1-466f-b000-08ca0bec3bcb` matches the
+  historical project release receipt, not fresh current-code proof.
+- Exact authorized governance LAW's dataExports and diagnostic-settings lists
+  both empty. No policy-assignment ID/custodian attestation is needed to describe
+  those observed routes. No universal external no-feedback claim is made.
+- Proposed `function-packages` ARM container GET: `ContainerNotFound`, exit 1.
+  Existing SCM route is the concrete narrower option, not private-Blob readiness.
+  No VM is needed for that option (0 minutes /$0 incremental VM); existing B2s
+  remains deallocated.
+
+Full generated evidence remains ignored, available in this worktree:
+
+| Evidence path | SHA256 |
+|---|---|
+| `.release/dependency-vetting.json` (versions, wheel/native evidence, every dependency hash) | `0e145eba36fa8dbc60874d8f41afe7ee966d918142769ab57045caf19368fe0f` |
+| `.release/pipeline-health-final-a.receipt.json` (all source/dependency member hashes) | `2e89247c11dfbced591cd10000c2e4c746217ac4b47bd716288240aa1c47b808` |
+| `.release/compiled-resource-inventory.json` | `0d3226b7af37a1ee3ab5fe3869a5cf22e01d2d84930ccbdc7e656be8a8a11bad` |
+| `.release/baseline-metadata.json` | `384e9dbb2778af272514e30a46f3cdd312970b310efddc761df4474f2feb0095` |
+
+Both `.release/pipeline-health-final-a.zip` and `-b.zip` have the package
+digest above; both package receipts are equal. Generated files and parent-owned
+`.azure/deployment-plan.md` are not committed. No Azure CUD, credentials/settings
+dump, VM start, telemetry/log read, model call or #147 artifact access occurred.
+
+## Initial assembly validation provenance and exact commands
 
 The coordinator independently observed the following results on the assembled
 source before the implementation commit (2026-10-20), as supplied in the assembly
@@ -77,7 +127,7 @@ inventory, not a dependency-complete deployment package or active runtime proof.
 | `telemetry_pipeline/source_policy.py` | `1232efdf89e22eef52a5c47117dcc7502a9abb78aa47d5f3f269b4797c5cdc29` |
 | `telemetry_pipeline/strict_sender.py` | `d210d9f0f80bb4c59f04d7de7a468edf866d7b8563dd6f1c1f20bae0bbe57179` |
 
-## Exact implementation file list / diffstat
+## Original implementation file list / diffstat (historical)
 
 BASE → SOURCE HEAD: **20 files changed, 1776 insertions(+), 10 deletions(-)**.
 Paths below are repository-relative; counts are added/deleted lines.
@@ -105,22 +155,26 @@ Paths below are repository-relative; counts are added/deleted lines.
 | `src/telemetry-pipeline/tests/test_durable.py` | 196 / 0 |
 | `src/telemetry-pipeline/tests/test_source_policy.py` | 115 / 0 |
 
-The second commit adds this receipt and updates only `pipeline-health-cutover.md`
+The original second commit added this receipt and updated only `pipeline-health-cutover.md`
 and `pipeline-health-guard.md` to point to it and pin SOURCE HEAD. It deliberately
 does not self-embed its final SHA; resolve that documentation-only HEAD from git/PR.
 No mutable `.squad` state, generated caches, root dirt or cancelled #147/PR151
-readiness artifacts are part of either commit.
+readiness artifacts were part of either original commit. Cycle 2 adds the
+independent metadata revision, package vetting/safe metadata tooling and tests,
+generated-file ignores, then refreshes only this receipt and the cutover manifest.
 
 ## Pending acceptance gates
 
-- External diagnostic custodian's exact policy assignment ID and bounded
-  no-feedback attestation for the identifiers in the cutover manifest.
-- Custody baseline: prior immutable package URL + SHA256 and versioned monitoring
-  secret URI, or custodian attestation that a legacy URI never existed.
-- Approved dependency provenance; final package SHA256; private publication and
-  independent running-script-root/dependency parity, package resolution/indexing.
-- Owner's one pair/cost approval, separately authorized live cutover/readback,
-  and passive synthetic-only acceptance evidence. Parent/user owns the review gate.
+- Parent review of Lead's revision, official Azure validation/what-if and final
+  live gate (owner pair/cost/cutover approval already granted).
+- Fresh exact old-byte proof via the identified existing bearer channel, or
+  explicit acceptance of containment-only code recovery. Old monitoring was not
+  absent; separately authorized ARM custody can use its known component identity.
+- One reviewed complete-ZIP submission with remote build off; active byte/hash,
+  Linux import, indexing and KV-resolution verification.
+- Live isolated health topology/ingestion and legitimate-child acceptance.
+  Issue #153/draft PR #154 stay open. No new private-Blob container or VM approval
+  is assumed or needed for the proposed existing SCM management route.
 
 Exact service/component exclusions are record-local, not operation/LLM/trace-wide
 filters. Durable `excluded` is a distinct 48-hour terminal, **not acknowledged
