@@ -479,6 +479,27 @@ def test_pinned_sdk_real_wire_envelope_no_retry_and_mock_auth(spec, monkeypatch,
     assert len(sent) == 1
 
 
+def test_directory_pinning_stays_within_trusted_root(root, spec, monkeypatch):
+    pin_directory = caller._pin_directory
+    plain_directory = caller._plain_directory
+    pinned = []
+
+    def contained_pin(path):
+        assert path.is_relative_to(root)
+        pinned.append(path)
+        return pin_directory(path)
+
+    def contained_check(path):
+        assert path.is_relative_to(root)
+        return plain_directory(path)
+
+    monkeypatch.setattr(caller, "_pin_directory", contained_pin)
+    monkeypatch.setattr(caller, "_plain_directory", contained_check)
+    with caller.Ledger(root, spec) as ledger:
+        ledger.finish({"status": "ambiguous"})
+    assert pinned == [root, root / caller.LEDGER_NAME]
+
+
 def test_windows_directory_rename_blocked_during_intent(root, spec):
     if os.name != "nt":
         pytest.skip("Windows-specific no-delete-sharing handle")

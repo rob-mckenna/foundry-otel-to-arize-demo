@@ -192,9 +192,8 @@ class Ledger:
 
     def __enter__(self):
         try:
-            # Pin every ancestor before examining/creating descendants.
-            for parent in (*reversed(self.root.parents), self.root):
-                self.stack.enter_context(_pin_directory(parent))
+            # The supplied checkout root is trusted; never inspect or pin host ancestors.
+            self.stack.enter_context(_pin_directory(self.root))
             try:
                 self.path.mkdir(mode=0o700)
             except FileExistsError:

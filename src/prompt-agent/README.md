@@ -68,7 +68,9 @@ Do not remove/move receipts, change checkout/host to evade a stop, or reuse the
 authorization elsewhere. Preserve the operator-owned durable ledger with the
 approved executor; this is a local filesystem guard, not a distributed/global
 idempotency service or a guarantee against administrator tampering, storage
-rollback or power-loss metadata loss. Reparse/symlink directories are rejected;
+rollback or power-loss metadata loss. The supplied source checkout root is the
+trust boundary: only that root and its ledger directory are checked/pinned,
+never host ancestors. Reparse/symlink roots and ledger directories are rejected;
 Windows directory handles deny rename/deletion during execution; POSIX uses
 directory-relative exclusive creation. Existing files are never read or followed.
 Only one custodian/executor/checkout may hold a given authorization.
