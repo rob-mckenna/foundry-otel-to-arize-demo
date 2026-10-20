@@ -1,5 +1,12 @@
 # Issue 148: retained classic private endpoints — owner decision packet
 
+**Execution update (2026-10-20 04:34 UTC):** owner approval was subsequently
+recorded for the frozen proposal, but fresh execution preflight stopped before
+any mutation because inherited delete-policy applicability was unresolved.
+See [the execution record](issue148-retained-network-execution.md).
+The preparation packet below remains the historical decision basis, not a
+completion claim; the structured proposal is unchanged.
+
 **PREPARATION ONLY — no deletion or network/IAM mutation performed or authorized.**
 Infra, 2026-10-19 local / 2026-10-20 UTC. Related: [cleanup history](resource-cleanup-plan.md),
 [ADR-0004](../adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md),
