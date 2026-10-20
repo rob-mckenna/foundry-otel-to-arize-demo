@@ -1,14 +1,19 @@
 # Issue 147 — fresh application on the supported existing network
 
 **CURRENT-STATE STAGED IMPLEMENTATION / PARTIAL VALIDATION — 2026-10-20.
-QA owns OPEN #147; PR #151 remains unmerged. Subscription provider validate
-passed; ResourceIdOnly what-if succeeded with 36 Create and one Unsupported
-dynamic role assignment. No deployment, secret operation, publication, IAM
+QA owns OPEN #147; PR #151 remains unmerged. Revised subscription provider
+validate passed; revised ResourceIdOnly what-if exited 1 (diagnostic code not
+captured safely). Analysis stopped, with no fallback. The derived projection is
+33 Create / one unresolved dynamic role assignment, NOT a live what-if result.
+No deployment, secret operation, publication, IAM
 change, VM start or inference was executed. NOT officially Validated.**
 
-Latest implementation worker: `d1b017bf-b669-4c1c-847c-cba52dbb1d57`.
-Baseline: `be84fb30f44c82526e54fa62c4c4a6f4220c0494`; prior route worker
-`47b39bff-7553-495e-a0da-117c5b757a62`.
+Independent composition revision worker: `c0769ac8-18a5-4872-8916-8d5326dc0c14`.
+Baseline: `db53b0ff37dc6fb7d03e63e832b227be3d05509c`.
+Runtime identity mechanically asserted different from locked-out composition
+author `47b39bff-7553-495e-a0da-117c5b757a62`; no advice, consultation or
+coauthoring from that author. Parent re-review remains pending. Secure-bootstrap
+author's accepted source and behavior are unchanged.
 Exact later resource/role/action/cost handoff:
 [first-allocation manifest](issue147-first-allocation-manifest.json).
 
@@ -68,8 +73,8 @@ The profile contains their **full ARM IDs**, not these abbreviated descriptions.
 |---|---|
 | `virtualNetworks/fotoa-demo-vnet-eastus2` | East US 2, `10.20.0.0/24`, Azure-provided DNS (custom servers null), no peerings |
 | `.../subnets/private-endpoints` | `10.20.0.0/26`, 59 usable addresses, **12 IP configurations**, 7 existing PEs, no delegation; PE network policies Disabled |
-| New application's 5 PEs | Foundry account **3 IPs** (`default`, `secondary`, `third` required members), vault 1, Blob/Queue/Table 3: **7 expected new IP slots**, not 5 |
-| PE headroom snapshot | **47 remaining** from 59−12; 7 new slots leave **40**. Not an allocation reservation; recheck before execution |
+| New application's 4 PEs | Foundry account **3 IPs** (`default`, `secondary`, `third` required members), Blob/Queue/Table 3: **6 expected new IP slots**, no new vault PE |
+| PE headroom snapshot | **47 remaining** from 59−12; 6 new slots leave **41**. Prior metadata snapshot, not an allocation reservation; recheck before execution |
 | `.../subnets/function-integration` | `10.20.0.128/26`, delegated `Microsoft.Web/serverFarms`, existing `AppServiceLink` to `fotoa-demo-plan-eastus2` |
 | Existing plan | Same subscription/region, Linux ElasticPremium EP1, 1 site/worker, plan maximumElasticWorkerCount **1** |
 | New plan | Distinct fresh-RG EP1, 1 worker; budget at least **2 IPs** for temporary replacement, not a transient instance/billing guarantee |
@@ -111,7 +116,7 @@ probe**. No metadata result establishes Arize HTTPS/SNAT availability, extension
 bundle download, Entra/Monitor/Event Hub connectivity or private runtime success.
 No NAT/firewall/public-access changes are authorized to “fix” an untested path.
 
-Later leased runtime proof must resolve the fresh Foundry, vault and
+Later leased runtime proof must resolve the fresh Foundry, existing custody vault and
 Blob/Queue/Table names to the intended PEs; complete TLS 443 and MI operations
 from the existing validator and fresh Function; verify Function host/package
 startup, extension-bundle access, KV reference **status only**, Event Hub
@@ -130,9 +135,23 @@ profile. No VM start or guest operation occurred here.
 - `mode=freshVault` preserves existing source behavior and local-vault grants.
 - `mode=existing` constructs App Service `@Microsoft.KeyVault(SecretUri=...)`
   settings from **four URI identifiers**, and suppresses the unused fresh-vault
-  reader assignment. No values are copied; no external vault/secret/IAM write
-  occurs in fresh main. The fresh private vault/PE remains unchanged in the
-  foundation graph; no bootstrap requires opening it.
+  reader assignment, owned vault deployment and vault PE/zone-group.
+  No values are copied; no external vault/secret/IAM write occurs in fresh main.
+  The separate secure bootstrap still writes only the required NEW routing
+  secret in the existing custody vault; it does not need an unused fresh vault.
+- `keyVaultName` and `keyVaultResourceId` outputs are nullable owned-resource
+  metadata: **null** in existing mode, unchanged name/ID in default freshVault.
+  `keyVaultReferenceMode` makes selection explicit; `externalKeyVaultReferences`
+  returns URI identifiers only in existing mode (otherwise null). The Function's
+  owned `keyVaultName` parameter is nullable and receives null only for existing
+  mode. No invented owned name, implicit external-vault PUT or grant widening.
+
+Default freshVault still creates its vault, vault PE and local reader and
+expects five PEs / seven IP slots. Existing-network/seven-zone input compatibility
+and externally owned vault DNS links are unchanged. Existing mode uses four
+PE-zone-group pairs and six zones for new records; the supplied vault zone/link
+continues serving the existing custody vault. Provider actual IP allocation
+and private DNS resolution remain runtime gates.
 
 The offline validator rejects missing fields, non-vault hosts, non-HTTPS URIs,
 query/fragment injection, malformed versions and duplicate references.
@@ -280,21 +299,32 @@ az deployment sub what-if --location eastus2 --name issue147-first-allocation-an
 
 - Both builds **PASS, no warnings**.
 - CLI **2.91.0**, selected subscription Enabled; fresh RG metadata **false**.
-- Validate **exit 0**, 2026-10-20 **08:09:20Z** start, error code null.
-- What-if **exit 0 / Succeeded**, **08:09:28Z** start; **36 Create,
+- Historical pre-revision validate **exit 0**, 2026-10-20 **08:09:20Z** start.
+- Historical pre-revision what-if **exit 0 / Succeeded**, **08:09:28Z** start; **36 Create,
   0 Modify, 0 Delete, 1 Unsupported**. The secret is specifically **Create**.
 - The Unsupported item is the already-source-defined container-local durable
   index role assignment: its deterministic GUID incorporates the **future
   Function principal ID**, which what-if cannot resolve. It is **not** a
   rejected secure-bootstrap schema or an observed authorization/network error.
   Do not call that assignment validated or guess a principal to remove the gap.
-- No VNet/subnet/private-DNS-zone/link resource changes appear. Five new
-  PE/zone-group pairs register fresh names in the existing seven zones.
+- Revised Provider validate **exit 0**, **08:25:18Z** start, error null.
+- Revised ResourceIdOnly what-if **exit 1**, **08:25:29Z** start. The safe
+  capture yielded no parenthesized error code and deliberately persisted no raw
+  failure. Exact provider diagnostic is therefore **unknown**, not an empty
+  successful result or a proven permission denial. Analysis stopped; no retry,
+  fallback, further provider query or mutation. Diagnosis requires a separately
+  authorized safe error-code capture; official workflow remains incomplete.
+- **Derived, not live proof:** 36 prior Creates minus owned vault, vault PE and
+  vault zone-group = **33 projected Creates**, retaining the NEW external secret
+  and the unresolved future-principal index assignment. New graph has four
+  PE/zone-group pairs. No predicted VNet/subnet/zone/link resource PUT; new DNS
+  record registration and separately leased secret-scoped IAM remain required.
 - Admission analysis is **not allocation proof** of EP1 MPSJ, capacity-1 model,
   network egress, secret provisioning or private resolution. No execution
   occurred and no permission/provider/network failure was bypassed.
 
-Projected receipts: worktree `.azure/bootstrap-provider-{validate,what-if}.json`,
+Historical receipts: worktree `.azure/bootstrap-provider-{validate,what-if}.json`.
+Revised receipts: `.azure/composition-provider-{validate,what-if}.json`,
 hashes and source/compiled bindings in the manifest. No full what-if properties
 were emitted or saved. The manifest distinguishes exact Windows-checkout
 CRLF source hashes from independently verified canonical LF Git blob hashes;
@@ -374,11 +404,11 @@ Run from the issue worktree with repository-local `BICEP_CLI` set:
 | `bicep.exe build infra\main.bicep --outfile .azure\main-existing-network.compiled.json` | PASS, no warnings |
 | `bicep.exe build infra\existing-function-secret-access.bicep --outfile .azure\existing-function-secret-access.compiled.json` | PASS, no warnings |
 | `python -B infra\scripts\validate-modern-foundation.py --parameters infra\main.issue147-existing-network.parameters.json` | PASS: offlineProfileValid true; tracingPutRequested/providerValidated/privateRuntimeVerified/consumerEnabled false |
-| `python -B -m unittest discover -s infra\scripts -p 'test_modern*.py' -v` | PASS, 31 tests |
-| `.\infra\scripts\validate-naming.ps1` | PASS, 8 modules |
-| `python -B -m unittest discover -s tests\readiness -p 'test_issue147_planning.py' -v` | PASS, 5 tests |
-| `.\tests\readiness\check-issue147-docs.ps1` | PASS, 17 documentation examples and 2 pinned scripts parse; none executed |
-| `python -B -m pytest -q -p no:cacheprovider src\telemetry-pipeline\tests tests\telemetry-mapping tests\export\test_otlp_export_conformance.py` | PASS, 260 tests |
+| `python -B -m unittest discover -s infra\scripts -p 'test_modern*.py' -q` | PASS, 34 tests; includes both selected compiled vault graphs |
+| `.\infra\scripts\validate-naming.ps1` | PASS, 9 modules |
+| `python -B -m unittest discover -s tests\readiness -p 'test_issue147_planning.py' -q` | PASS, 6 tests, including selected-route inventory/cost/hash consistency |
+| `.\tests\readiness\check-issue147-docs.ps1` | PASS, 18 documentation examples and 2 pinned scripts parse; none executed |
+| `$env:PYTHONPATH="$PWD\src\telemetry-pipeline"; python -B -m pytest -q -p no:cacheprovider tests\telemetry-mapping tests\export` | PASS, 108 synthetic mapping/export tests |
 | `git diff --check` | PASS |
 
 Compiled ARM uses `equals(network.mode,'fresh')` on VNet and `fresh` on

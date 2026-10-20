@@ -6,6 +6,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import unittest
@@ -46,6 +47,56 @@ def all_templates(template):
     yield template
     for resource in resources(template, "Microsoft.Resources/deployments"):
         yield from all_templates(resource["properties"]["template"])
+
+
+def evaluate_vault_expression(expression, parameters, references):
+    """Evaluate the compiled ARM subset used by vault selection, with lazy if."""
+    def evaluate(text):
+        text = text.strip()
+        if text.startswith("'") and text.endswith("'"):
+            return text[1:-1]
+        match = re.match(r"(\w+)\(", text)
+        if not match:
+            raise AssertionError(f"Unsupported ARM expression: {text}")
+        depth, quoted, start, args = 1, False, match.end(), []
+        for index in range(start, len(text)):
+            char = text[index]
+            if char == "'":
+                quoted = not quoted
+            if quoted:
+                continue
+            if char == "(":
+                depth += 1
+            elif char == ")":
+                depth -= 1
+                if depth == 0:
+                    if text[start:index].strip():
+                        args.append(text[start:index])
+                    break
+            elif char == "," and depth == 1:
+                args.append(text[start:index])
+                start = index + 1
+        name = match[1]
+        if name == "if":
+            value = evaluate(args[1] if evaluate(args[0]) else args[2])
+        elif name == "reference":
+            value = references[evaluate(args[0])]
+        elif name == "parameters":
+            value = parameters[evaluate(args[0])]
+        else:
+            values = [evaluate(arg) for arg in args]
+            operations = {
+                "equals": lambda a, b: a == b,
+                "null": lambda: None,
+                "createArray": lambda *items: list(items),
+                "createObject": lambda *items: dict(zip(items[::2], items[1::2])),
+                "concat": lambda *items: sum(items, []),
+            }
+            value = operations[name](*values)
+        for property_name in text[index + 1:].split(".")[1:]:
+            value = value[property_name]
+        return value
+    return evaluate(expression.removeprefix("[").removesuffix("]"))
 
 
 class CompiledModernFoundationTests(unittest.TestCase):
@@ -165,10 +216,10 @@ class CompiledModernFoundationTests(unittest.TestCase):
 
     def test_account_pe_three_zones_vault_and_storage_pe_groups(self):
         edges = module(self.main, "foundation-private-endpoints")
-        targets = edges["properties"]["parameters"]["targets"]["value"]
+        targets = self.selected_vault_graph("freshVault")["targets"]
         account, vault = targets
         self.assertEqual(account["groupId"], "account")
-        self.assertIn("foundryAccountResourceId", account["targetResourceId"])
+        self.assertEqual(account["targetResourceId"], "new-foundry")
         self.assertEqual(len(account["privateDnsZoneResourceIds"]), 3)
         self.assertEqual(vault["groupId"], "vault")
         host_edges = module(self.function, "host-storage-private-endpoints")
@@ -187,6 +238,47 @@ class CompiledModernFoundationTests(unittest.TestCase):
             self.assertEqual(configs["input"]["properties"]["privateDnsZoneId"],
                              "[parameters('targets')[copyIndex()].privateDnsZoneResourceIds[copyIndex('privateDnsZoneConfigs')]]")
             self.assertNotIn("Microsoft.Network/privateDnsZones/A", {x["type"] for x in resources(t)})
+
+    def selected_vault_graph(self, mode):
+        references = {
+            "modernFoundry": {"outputs": {"foundryAccountResourceId": {"value": "new-foundry"}}},
+            "networking": {"outputs": {"privateDnsZoneResourceIds": {"value": foundation.ZONES}}},
+        }
+        if mode == "freshVault":
+            references["keyVault"] = {"outputs": {
+                "keyVaultResourceId": {"value": "new-vault"},
+                "keyVaultName": {"value": "new-vault-name"}}}
+        parameters = {"keyVaultReferences": {"mode": mode}}
+        evaluate = lambda expression: evaluate_vault_expression(expression, parameters, references)
+        vault = module(self.main, "key-vault-deployment")
+        targets = module(self.main, "foundation-private-endpoints")["properties"]["parameters"]["targets"]["value"]
+        return {"vaultCount": len(resources(vault["properties"]["template"], "Microsoft.KeyVault/vaults"))
+                if evaluate(vault["condition"]) else 0,
+                "targets": evaluate(targets), "evaluate": evaluate}
+
+    def test_selected_existing_omits_owned_vault_and_endpoint_while_default_preserves_both(self):
+        self.assertEqual(self.main["parameters"]["keyVaultReferences"]["defaultValue"], {"mode": "freshVault"})
+        host_targets = module(self.function, "host-storage-private-endpoints")["properties"]["parameters"]["targets"]["value"]
+        for mode, vault_count, pe_count, ip_count in (("freshVault", 1, 5, 7), ("existing", 0, 4, 6)):
+            with self.subTest(mode=mode):
+                graph = self.selected_vault_graph(mode)
+                self.assertEqual(graph["vaultCount"], vault_count)
+                groups = [target["groupId"] for target in graph["targets"] + host_targets]
+                self.assertEqual(len(groups), pe_count)
+                self.assertEqual(sum(3 if group == "account" else 1 for group in groups), ip_count)
+                self.assertEqual("vault" in groups, mode == "freshVault")
+                for output, expected in (("keyVaultResourceId", "new-vault"), ("keyVaultName", "new-vault-name")):
+                    self.assertTrue(self.main["outputs"][output]["nullable"])
+                    self.assertEqual(graph["evaluate"](self.main["outputs"][output]["value"]),
+                                     expected if mode == "freshVault" else None)
+                call = module(self.main, "function-app-deployment")["properties"]["parameters"]["keyVaultName"]
+                self.assertEqual(graph["evaluate"](call)["value"], "new-vault-name" if mode == "freshVault" else None)
+                local_role = next(r for r in resources(self.function, "Microsoft.Authorization/roleAssignments")
+                                  if "keyVault" in r.get("scope", ""))
+                self.assertEqual(graph["evaluate"](local_role["condition"]), mode == "freshVault")
+                self.assertEqual(graph["evaluate"](self.main["outputs"]["keyVaultReferenceMode"]["value"]), mode)
+                self.assertEqual(graph["evaluate"](self.main["outputs"]["externalKeyVaultReferences"]["value"]),
+                                 {"mode": "existing"} if mode == "existing" else None)
 
     def test_keyless_private_storage_vault_premium_and_outbound_integration(self):
         storage, = resources(self.function, "Microsoft.Storage/storageAccounts")

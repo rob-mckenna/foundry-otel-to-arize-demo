@@ -29,7 +29,8 @@ param pythonVersion string = '3.11'
 @allowed([1])
 param maximumInstances int = 1
 @minLength(1)
-param keyVaultName string
+@description('Owned vault name for freshVault only; null when all four runtime references are external.')
+param keyVaultName string?
 @minLength(1)
 param eventHubNamespaceFqdn string
 @minLength(6)
@@ -241,7 +242,7 @@ resource eventHubReceiverRoleAssignment 'Microsoft.Authorization/roleAssignments
   }
 }
 resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
-  name: keyVaultName
+  name: keyVaultName!
 }
 var keyVaultSecretsUserRoleId = '4633458b-17de-408a-b874-0445c86b69e6'
 resource keyVaultSecretsUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (keyVaultReferences.mode == 'freshVault') {

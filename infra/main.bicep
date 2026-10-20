@@ -139,7 +139,7 @@ module appInsights 'modules/app-insights.bicep' = {
     eventHubName: eventHub.outputs.eventHubName
   }
 }
-module keyVault 'modules/key-vault.bicep' = {
+module keyVault 'modules/key-vault.bicep' = if (keyVaultReferences.mode == 'freshVault') {
   name: 'key-vault-deployment'
   params: {
     projectToken: projectToken
@@ -188,7 +188,7 @@ module endpoints 'modules/private-endpoints.bicep' = {
     ownerTag: ownerTag
     costCenterTag: costCenterTag
     subnetResourceId: networking.outputs.privateEndpointSubnetResourceId
-    targets: [
+    targets: concat([
       {
         name: 'foundry'
         targetResourceId: modernFoundry.outputs.foundryAccountResourceId
@@ -199,15 +199,16 @@ module endpoints 'modules/private-endpoints.bicep' = {
           networking.outputs.privateDnsZoneResourceIds.servicesAI
         ]
       }
+    ], keyVaultReferences.mode == 'freshVault' ? [
       {
         name: 'kv'
-        targetResourceId: keyVault.outputs.keyVaultResourceId
+        targetResourceId: keyVault!.outputs.keyVaultResourceId
         groupId: 'vault'
         privateDnsZoneResourceIds: [
           networking.outputs.privateDnsZoneResourceIds.vault
         ]
       }
-    ]
+    ] : [])
   }
 }
 module functionApp 'modules/function-app.bicep' = {
@@ -226,7 +227,7 @@ module functionApp 'modules/function-app.bicep' = {
     privateEndpointSubnetResourceId: networking.outputs.privateEndpointSubnetResourceId
     privateDnsZoneResourceIds: networking.outputs.privateDnsZoneResourceIds
     prepareDurableGenAIContainer: true
-    keyVaultName: keyVault.outputs.keyVaultName
+    keyVaultName: keyVaultReferences.mode == 'freshVault' ? keyVault!.outputs.keyVaultName : null
     keyVaultReferences: keyVaultReferences
     eventHubNamespaceFqdn: eventHub.outputs.eventHubNamespaceFqdn
     eventHubNamespaceName: eventHub.outputs.eventHubNamespaceName
@@ -279,8 +280,11 @@ output logAnalyticsWorkspaceId string = appInsights.outputs.logAnalyticsWorkspac
 output logAnalyticsWorkspaceName string = appInsights.outputs.logAnalyticsWorkspaceName
 output appInsightsResourceId string = appInsights.outputs.appInsightsResourceId
 output appInsightsName string = appInsights.outputs.appInsightsName
-output keyVaultResourceId string = keyVault.outputs.keyVaultResourceId
-output keyVaultName string = keyVault.outputs.keyVaultName
+@description('Owned vault metadata is null in existing-reference mode; external vaults are not deployment-owned.')
+output keyVaultResourceId string? = keyVaultReferences.mode == 'freshVault' ? keyVault!.outputs.keyVaultResourceId : null
+output keyVaultName string? = keyVaultReferences.mode == 'freshVault' ? keyVault!.outputs.keyVaultName : null
+output keyVaultReferenceMode string = keyVaultReferences.mode
+output externalKeyVaultReferences object? = keyVaultReferences.mode == 'existing' ? keyVaultReferences : null
 output eventHubNamespaceResourceId string = eventHub.outputs.eventHubNamespaceResourceId
 output eventHubNamespaceName string = eventHub.outputs.eventHubNamespaceName
 output eventHubName string = eventHub.outputs.eventHubName

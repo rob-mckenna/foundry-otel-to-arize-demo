@@ -26,8 +26,12 @@ version URI/component ID outputs are exposed; no existing Arize value is copied.
 This first-allocation writer is **not** the repeat entrypoint. Metadata-only
 collision/ambiguity checks and a later execution lease are mandatory.
 [Manifest and safe provider results](../docs/current-state/issue147-existing-network-proposal.md#fresh-tracing-bootstrap--supported-server-side-automation-staged):
-Provider validate passed; ResourceIdOnly what-if has 36 Create / 1 Unsupported
-(future-principal index assignment). No deployment or secret operation executed;
+Revised Provider validate passed; revised ResourceIdOnly what-if exited 1 with
+no safely captured diagnostic code. Analysis stopped, no fallback. Derived
+projection: 33 Creates / one unresolved future-principal index assignment,
+NOT a successful revised what-if. Existing-reference mode omits the unused
+owned vault and vault PE (four PEs / six expected IP slots); freshVault default
+retains both (five PEs / seven expected slots). No deployment or secret operation executed;
 official workflow remains incomplete, not Validated.
 
 ## Three operations — never substitute one for another
@@ -67,7 +71,11 @@ this source work neither replays nor modifies its live state.
   zones plus registration-disabled VNet links; OR explicit external ownership.
 - `private-endpoints.bicep`: actual DNS zone groups, no static A records or IPs.
   Main targets Foundry **account** group `account` with all three Foundry zones,
-  and KV group `vault`. Function module creates host `blob`/`queue`/`table`
+  and KV group `vault` only in default `keyVaultReferences.mode=freshVault`.
+  Existing mode uses four external URI references and null owned-vault name/ID
+  outputs, explicit `keyVaultReferenceMode`, and URI-only
+  `externalKeyVaultReferences` metadata; no owned vault, vault PE or local reader.
+  Function module creates host `blob`/`queue`/`table`
   endpoints and DNS groups **before** creating the integrated Function.
 - KV: RBAC, soft delete, purge protection, PNA Disabled, ACL Deny/None.
   Host storage: TLS1.2/HTTPS, no public blobs/shared keys, PNA Disabled, ACL Deny/None.

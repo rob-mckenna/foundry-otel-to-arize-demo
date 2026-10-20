@@ -155,6 +155,44 @@ class PlanningEvidenceTests(unittest.TestCase):
         reserve = Decimal(evidence["conditionalPriced24hSubtotalUSD"]) + Decimal(evidence["conditionalFurther30dayReserveUSD"])
         self.assertIn(f"${reserve:.6f}", doc)
 
+    def test_selected_existing_reference_inventory_and_affected_cost_meters(self):
+        manifest = json.loads((DOCS / "issue147-first-allocation-manifest.json").read_text(encoding="utf-8"))
+        allocation = manifest["predictedFirstAllocation"]
+        paths = allocation["freshResourcePaths"]
+        self.assertFalse(any("/Microsoft.KeyVault/vaults/" in path for path in paths))
+        self.assertFalse(any("pe-kv-" in path for path in paths))
+        endpoints = [path for path in paths if "/privateEndpoints/" in path and "/privateDnsZoneGroups/" not in path]
+        self.assertEqual(len(endpoints), allocation["newPrivateEndpointCount"])
+        self.assertEqual(len(endpoints), 4)
+        self.assertEqual(allocation["expectedPrivateEndpointIpSlots"], 6)
+        self.assertEqual(allocation["newExternalSecretCount"], 1)
+        self.assertEqual(len(manifest["separateFutureIamLease"][0]["secretNames"]), 4)
+        self.assertNotIn("Microsoft.KeyVault/vaults/write", manifest["laterExecutorManagementActions"]["freshGroup"])
+        cost = manifest["conditionalCostAndLifetime"]
+        quantities = cost["selectedAffectedMeterQuantities"]
+        baseline = {row["meter"]: row for row in self.evidence["lineItems"]}
+        delta = sum(
+            (Decimal(str(quantity)) - Decimal(baseline[meter]["quantity"]))
+            * Decimal(str(self.evidence["meters"][meter]["retailPrice"]))
+            / Decimal(baseline[meter]["unitsPerRate"])
+            for meter, quantity in quantities.items()
+        )
+        selected = self.subtotal(1).quantize(Decimal(".000001")) + delta
+        self.assertEqual(selected, Decimal(cost["selectedRouteConditionalPricedSubtotalUSD"]))
+        self.assertIn(f"${selected:.6f} USD", self.cost_doc)
+        self.assertEqual(quantities, {"pe_hours": 100, "dns_zones": 0, "defender_kv": 0})
+        m = self.evidence["meters"]
+        tail = Decimal("235.0028") - 7 * Decimal(str(m["dns_zones"]["retailPrice"]))
+        tail -= 721 * Decimal(str(m["pe_hours"]["retailPrice"]))
+        tail -= 720 * Decimal(str(m["defender_kv"]["retailPrice"]))
+        self.assertEqual(tail, Decimal(cost["conditionalFurther30dayReserveUSD"]))
+        self.assertIn(f"${selected + tail:.6f} USD", self.cost_doc)
+        for path, digest in manifest["committedSourceBindings"].items():
+            # Git clean conversion is LF for these source artifacts; checkout
+            # bytes are bound independently and are never silently normalized.
+            data = (ROOT / path.replace("\\", "/")).read_bytes()
+            self.assertEqual(hashlib.sha256(data.replace(b"\r\n", b"\n")).hexdigest(), digest)
+
 
 if __name__ == "__main__":
     unittest.main()

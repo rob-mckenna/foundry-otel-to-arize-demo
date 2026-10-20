@@ -1,5 +1,16 @@
 # Issue 147 — official workflow reconciliation and residual gates
 
+**Independent composition revision (worker c0769ac8, 2026-10-20):** existing
+reference mode now omits unused owned vault/vault PE. Default freshVault and
+accepted secure-bootstrap/caller source are preserved. Four PEs / six expected
+IP slots; [revised manifest and evidence](issue147-existing-network-proposal.md).
+Revised Provider validate PASS 08:25:18Z; revised ResourceIdOnly what-if exit 1
+08:25:29Z, no safely captured diagnostic code. Provider analysis stopped without
+fallback/mutation. 33 Creates is a derived 36−3 projection, not live proof.
+Pinned workflow restarted through AddValidationSteps only; no RunValidation
+completion, no policy/allocation/runtime acceptance and NOT officially Validated.
+This supersedes the pre-revision graph counts below, not historical receipts.
+
 **2026-10-20 implementation followup (worker d1b017bf):** the new-component →
 existing-vault/new-secret bootstrap is now runnable ARM/Bicep source, **not a
 human-only custody gate**. The exact subscription wrapper passed Provider

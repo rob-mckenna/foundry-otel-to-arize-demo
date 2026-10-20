@@ -197,6 +197,43 @@ Subtotals retain precision in the JSON; USD figures here are display-rounded.
 | Arize destination ingestion/storage/retention/license/minimum | No public per-unit entitlement established for the destination workspace/contract. No paid API or invoice requested | **L: unresolved** |
 | Agent runtime/state, private runner, publisher/build platform, external access/support/license commitments | Historical v1 Responses/SDK contract is resolved, but fresh publication/private validation/immutable runner are not. Basic state ownership/residency needs explicit treatment; Standard would invalidate this inventory and require accepted redesign/repricing, not merely an assumed R value. No new compute/data service added or old VM started | **R: unresolved** |
 
+### Selected existing-reference route overlay — independent revision 2026-10-20
+
+The full freshVault/fresh-network ledger above and its historical scenarios
+remain unchanged. The selected #147 existing-network/**existing-reference**
+composition has **no new vault or vault PE**. This is an affected-meter overlay
+using the same public rates, not refreshed billing/entitlement evidence:
+
+| Affected meter | Baseline → selected new-allocation quantity | 24h delta USD |
+|---|---|---:|
+| PE charge-hours | 5 × 25 = 125 → **4 × 25 = 100** | −0.250000 |
+| New DNS-zone daily units | 14 → **0**; seven existing zones/links retained | −0.250000 |
+| Defender for KV new-node hours | 24 → **0**, since no new vault | −0.008160 |
+
+Selected conditional N=1 subtotal:
+**15.504880 − 0.250000 − 0.250000 − 0.008160 = $14.996720 USD**.
+Compared with the immediately prior existing-network route ($15.254880), the
+unused-vault correction removes **$0.258160**. The **10,000 KV operation**
+allowance remains $0.030000 on existing custody, including the required NEW
+App Insights routing secret/refresh; never remove the needed secret or its
+separately leased four-secret-scoped reader assignments. One million DNS queries
+and existing Private Link traffic allowances remain unchanged, not assumed free.
+No new-zone base fee or vault-node fee is allocated incrementally here; existing
+vault/PE/seven-zone security and retention costs continue as shared costs,
+not a claim of zero total cost or unchanged DNS records.
+
+For the same conditional further-30-day keep scenario, the prior $235.0028
+reserve removes $3.50 new-zone fee, $7.20 vault-PE hours, $0.01 PE rounding
+reserve and $0.2448 Defender KV node allowance: **$224.0480**; combined with
+the selected 24h subtotal **$239.044720 USD**. This is not a billing TTL,
+automatic teardown or all-in ceiling. Shared retained allocations, **unknown
+G/L/runtime/state/private-runner/build R**, actual entitlements, overages,
+allocation/retention time tail and tax/contract effects remain additional.
+Keep the accepted data/governance/security protections; no deletion or
+deactivation is authorized. Provider runtime/IP actuals remain unvalidated.
+Exact selected quantities and cost deltas are in the
+[first-allocation manifest](issue147-first-allocation-manifest.json).
+
 ### Conditional totals, not an approval request for missing discovery
 
 The JSON/test computes the numeric rows, **including the four conditional
