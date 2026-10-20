@@ -1,0 +1,2585 @@
+{
+  "schemaVersion": 1,
+  "issue": 148,
+  "mode": "READ_ONLY_METADATA_NO_AUTHORIZATION",
+  "startedUtc": "2026-10-20T01:07:46.0857534Z",
+  "subscriptionId": "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+  "resourceGroupId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg",
+  "resources": {
+    "startedUtc": "2026-10-20T01:07:46.0983221Z",
+    "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/resources?api-version=2021-04-01",
+    "query": "{nextLink:nextLink,items:value[].{id:id,type:type,kind:kind,location:location,managedBy:managedBy}}",
+    "data": {
+      "items": [
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.EventHub/namespaces/fotoa-demo-ehns-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.EventHub/namespaces"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.KeyVault/vaults"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.OperationalInsights/workspaces/fotoa-demo-law-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.OperationalInsights/workspaces"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2",
+          "kind": "StorageV2",
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Storage/storageAccounts"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Web/serverFarms/fotoa-demo-plan-eastus2",
+          "kind": "elastic",
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Web/serverFarms"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Web/sites/fotoa-demo-func-eastus2",
+          "kind": "functionapp,linux",
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Web/sites"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Insights/components/fotoa-demo-appi-eastus2",
+          "kind": "web",
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Insights/components"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/microsoft.alertsmanagement/smartDetectorAlertRules/Failure Anomalies - fotoa-demo-appi-eastus2",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "microsoft.alertsmanagement/smartDetectorAlertRules"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.EventGrid/systemTopics/fotoademosteastus2-0dc58804-6931-47f3-8d65-518d1cfae662",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.EventGrid/systemTopics"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.api.azureml.ms",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/virtualNetworks"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.table.core.windows.net",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.queue.core.windows.net",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-kv-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcsttable-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcstqueue-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcstblob-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-kv-eastus2.nic.557b977f-5345-4051-b911-45bbf886f1a5",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-kv-eastus2",
+          "type": "Microsoft.Network/networkInterfaces"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-funcsttable-eastus2.nic.9e843afe-47c5-48cb-bf7b-c7537888f667",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcsttable-eastus2",
+          "type": "Microsoft.Network/networkInterfaces"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-funcstblob-eastus2.nic.be30c038-8041-4086-8cbc-8f4de5fe38e1",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcstblob-eastus2",
+          "type": "Microsoft.Network/networkInterfaces"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-funcstqueue-eastus2.nic.8a27af63-6a66-4469-90b5-6d6cc92b404e",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcstqueue-eastus2",
+          "type": "Microsoft.Network/networkInterfaces"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.api.azureml.ms/virtualNetworkLinks/link-fotoa-demo-vnet-eastus2",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net/virtualNetworkLinks/link-fotoa-demo-vnet-eastus2",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.table.core.windows.net/virtualNetworkLinks/link-fotoa-demo-vnet-eastus2",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.queue.core.windows.net/virtualNetworkLinks/link-fotoa-demo-vnet-eastus2",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net/virtualNetworkLinks/link-fotoa-demo-vnet-eastus2",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-aihub-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-aihub-eastus2.nic.f992623e-9cc8-4bc5-ae48-8c5b618cf5e3",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-aihub-eastus2",
+          "type": "Microsoft.Network/networkInterfaces"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkSecurityGroups/fotoa-demo-vnet-eastus2-function-integration-nsg-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/networkSecurityGroups"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkSecurityGroups/fotoa-demo-vnet-eastus2-private-endpoints-nsg-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/networkSecurityGroups"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.EventHub/namespaces/fotoa-dev-ehns-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.EventHub/namespaces"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-dev-kv-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.KeyVault/vaults"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.OperationalInsights/workspaces/fotoa-dev-law-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.OperationalInsights/workspaces"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoadevsteastus2",
+          "kind": "StorageV2",
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Storage/storageAccounts"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Web/serverFarms/fotoa-dev-plan-eastus2",
+          "kind": "functionapp",
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Web/serverFarms"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Insights/components/fotoa-dev-appi-eastus2",
+          "kind": "web",
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Insights/components"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Web/sites/fotoa-dev-func-eastus2",
+          "kind": "functionapp,linux",
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Web/sites"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-dev-vnet-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/virtualNetworks"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-kv-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-aihub-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-dev-pe-kv-eastus2.nic.a53b9ad9-ad9c-4640-824b-e5cc35c30306",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-kv-eastus2",
+          "type": "Microsoft.Network/networkInterfaces"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-dev-pe-aihub-eastus2.nic.c1b8719d-2dcc-476e-a541-7dfd4a11bd43",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-aihub-eastus2",
+          "type": "Microsoft.Network/networkInterfaces"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net/virtualNetworkLinks/link-fotoa-dev-vnet-eastus2",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.api.azureml.ms/virtualNetworkLinks/link-fotoa-dev-vnet-eastus2",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/microsoft.alertsmanagement/smartDetectorAlertRules/Failure Anomalies - fotoa-dev-appi-eastus2",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "microsoft.alertsmanagement/smartDetectorAlertRules"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkSecurityGroups/fotoa-dev-vnet-eastus2-private-endpoints-nsg-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/networkSecurityGroups"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.EventGrid/systemTopics/fotoadevsteastus2-03d207a0-753e-4b87-8949-1af65457a7bf",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.EventGrid/systemTopics"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkSecurityGroups/fotoa-validation-nsg-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/networkSecurityGroups"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/bastionHosts/fotoa-validation-bastion-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/bastionHosts"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-validation-vm-eastus2VMNic",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/networkInterfaces"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Compute/virtualMachines/fotoa-validation-vm-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Compute/virtualMachines"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Compute/disks/fotoa-validation-vm-eastus2_disk1_0c7fac1ec1534584afb765f038feb50a",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Compute/virtualMachines/fotoa-validation-vm-eastus2",
+          "type": "Microsoft.Compute/disks"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Compute/virtualMachines/fotoa-validation-vm-eastus2/extensions/MDE.Linux",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Compute/virtualMachines/extensions"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.cognitiveservices.azure.com",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.openai.azure.com",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.services.ai.azure.com",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.CognitiveServices/accounts/fotoa-demo-foundry-eastus2",
+          "kind": "AIServices",
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.CognitiveServices/accounts"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.CognitiveServices/accounts/fotoa-demo-foundry-eastus2/projects/fotoa-demo-fproj-eastus2",
+          "kind": "AIServices",
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.CognitiveServices/accounts/projects"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.cognitiveservices.azure.com/virtualNetworkLinks/fotoa-demo-link-foundry-eastus2",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.services.ai.azure.com/virtualNetworkLinks/fotoa-demo-link-foundry-eastus2",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.openai.azure.com/virtualNetworkLinks/fotoa-demo-link-foundry-eastus2",
+          "kind": null,
+          "location": "global",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-foundry-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-foundry-eastus2.nic.22e64155-f7ce-4366-9e71-528c8c7a4260",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-foundry-eastus2",
+          "type": "Microsoft.Network/networkInterfaces"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademoevalstc81fda52",
+          "kind": "StorageV2",
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Storage/storageAccounts"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-evalblob-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-evalblob-eastus2.nic.ccb5f37c-aa0a-454e-8c8b-240b4ae36e1e",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-evalblob-eastus2",
+          "type": "Microsoft.Network/networkInterfaces"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.EventGrid/systemTopics/fotoademoevalstc81fda52-9cfd76fd-9d3f-4b33-bfb7-8d4015b28e26",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.EventGrid/systemTopics"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkSecurityGroups/fotoa-demo-nsg-wjump-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/networkSecurityGroups"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/publicIPAddresses/fotoa-demo-pip-wjump-egress-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/publicIPAddresses"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/natGateways/fotoa-demo-nat-wjump-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/natGateways"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-nic-wjump-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Network/networkInterfaces"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Compute/virtualMachines/fotoa-demo-wjump-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Compute/virtualMachines"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Compute/disks/fotoa-demo-osdisk-wjump-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Compute/virtualMachines/fotoa-demo-wjump-eastus2",
+          "type": "Microsoft.Compute/disks"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.DevTestLab/schedules/shutdown-computevm-fotoa-demo-wjump-eastus2",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.DevTestLab/schedules"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Compute/virtualMachines/fotoa-demo-wjump-eastus2/extensions/enablevmAccess",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Compute/virtualMachines/extensions"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Compute/virtualMachines/fotoa-demo-wjump-eastus2/extensions/MDE.Windows",
+          "kind": null,
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.Compute/virtualMachines/extensions"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.CognitiveServices/accounts/fotoa-demo-foundry-eastus2/projects/fotoa-demo-fproj-139test-eastus2",
+          "kind": "AIServices",
+          "location": "eastus2",
+          "managedBy": null,
+          "type": "Microsoft.CognitiveServices/accounts/projects"
+        }
+      ],
+      "nextLink": null
+    }
+  },
+  "endpoints": {
+    "startedUtc": "2026-10-20T01:07:51.2477760Z",
+    "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints?api-version=2023-11-01",
+    "query": "{nextLink:nextLink,items:value[].{id:id,type:type,managedBy:managedBy,state:properties.provisioningState,subnetId:properties.subnet.id,nics:properties.networkInterfaces[].id,connections:properties.privateLinkServiceConnections[].{id:id,target:properties.privateLinkServiceId,groups:properties.groupIds,status:properties.privateLinkServiceConnectionState.status},manual:properties.manualPrivateLinkServiceConnections[].{id:id,target:properties.privateLinkServiceId,groups:properties.groupIds,status:properties.privateLinkServiceConnectionState.status}}}",
+    "data": {
+      "items": [
+        {
+          "connections": [
+            {
+              "groups": [
+                "amlworkspace"
+              ],
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-aihub-eastus2/privateLinkServiceConnections/aihub-connection",
+              "status": "Disconnected",
+              "target": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.MachineLearningServices/workspaces/fotoa-demo-aihub-eastus2"
+            }
+          ],
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-aihub-eastus2",
+          "managedBy": null,
+          "manual": [],
+          "nics": [
+            "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-aihub-eastus2.nic.f992623e-9cc8-4bc5-ae48-8c5b618cf5e3"
+          ],
+          "state": "Succeeded",
+          "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints",
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "connections": [
+            {
+              "groups": [
+                "blob"
+              ],
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-evalblob-eastus2/privateLinkServiceConnections/fotoa-demo-pe-evalblob-eastus2-connection",
+              "status": "Approved",
+              "target": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademoevalstc81fda52"
+            }
+          ],
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-evalblob-eastus2",
+          "managedBy": null,
+          "manual": [],
+          "nics": [
+            "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-evalblob-eastus2.nic.ccb5f37c-aa0a-454e-8c8b-240b4ae36e1e"
+          ],
+          "state": "Succeeded",
+          "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints",
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "connections": [
+            {
+              "groups": [
+                "account"
+              ],
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-foundry-eastus2/privateLinkServiceConnections/fotoa-demo-pe-foundry-eastus2-connection",
+              "status": "Approved",
+              "target": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.CognitiveServices/accounts/fotoa-demo-foundry-eastus2"
+            }
+          ],
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-foundry-eastus2",
+          "managedBy": null,
+          "manual": [],
+          "nics": [
+            "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-foundry-eastus2.nic.22e64155-f7ce-4366-9e71-528c8c7a4260"
+          ],
+          "state": "Succeeded",
+          "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints",
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "connections": [
+            {
+              "groups": [
+                "blob"
+              ],
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcstblob-eastus2/privateLinkServiceConnections/funcstblob-connection",
+              "status": "Approved",
+              "target": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2"
+            }
+          ],
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcstblob-eastus2",
+          "managedBy": null,
+          "manual": [],
+          "nics": [
+            "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-funcstblob-eastus2.nic.be30c038-8041-4086-8cbc-8f4de5fe38e1"
+          ],
+          "state": "Succeeded",
+          "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints",
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "connections": [
+            {
+              "groups": [
+                "queue"
+              ],
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcstqueue-eastus2/privateLinkServiceConnections/funcstqueue-connection",
+              "status": "Approved",
+              "target": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2"
+            }
+          ],
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcstqueue-eastus2",
+          "managedBy": null,
+          "manual": [],
+          "nics": [
+            "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-funcstqueue-eastus2.nic.8a27af63-6a66-4469-90b5-6d6cc92b404e"
+          ],
+          "state": "Succeeded",
+          "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints",
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "connections": [
+            {
+              "groups": [
+                "table"
+              ],
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcsttable-eastus2/privateLinkServiceConnections/funcsttable-connection",
+              "status": "Approved",
+              "target": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2"
+            }
+          ],
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcsttable-eastus2",
+          "managedBy": null,
+          "manual": [],
+          "nics": [
+            "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-funcsttable-eastus2.nic.9e843afe-47c5-48cb-bf7b-c7537888f667"
+          ],
+          "state": "Succeeded",
+          "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints",
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "connections": [
+            {
+              "groups": [
+                "vault"
+              ],
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-kv-eastus2/privateLinkServiceConnections/kv-connection",
+              "status": "Approved",
+              "target": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2"
+            }
+          ],
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-kv-eastus2",
+          "managedBy": null,
+          "manual": [],
+          "nics": [
+            "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-kv-eastus2.nic.557b977f-5345-4051-b911-45bbf886f1a5"
+          ],
+          "state": "Succeeded",
+          "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints",
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "connections": [
+            {
+              "groups": [
+                "amlworkspace"
+              ],
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-aihub-eastus2/privateLinkServiceConnections/aihub-connection",
+              "status": "Disconnected",
+              "target": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.MachineLearningServices/workspaces/fotoa-dev-aihub-eastus2"
+            }
+          ],
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-aihub-eastus2",
+          "managedBy": null,
+          "manual": [],
+          "nics": [
+            "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-dev-pe-aihub-eastus2.nic.c1b8719d-2dcc-476e-a541-7dfd4a11bd43"
+          ],
+          "state": "Succeeded",
+          "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-dev-vnet-eastus2/subnets/private-endpoints",
+          "type": "Microsoft.Network/privateEndpoints"
+        },
+        {
+          "connections": [
+            {
+              "groups": [
+                "vault"
+              ],
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-kv-eastus2/privateLinkServiceConnections/kv-connection",
+              "status": "Approved",
+              "target": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-dev-kv-eastus2"
+            }
+          ],
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-kv-eastus2",
+          "managedBy": null,
+          "manual": [],
+          "nics": [
+            "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-dev-pe-kv-eastus2.nic.a53b9ad9-ad9c-4640-824b-e5cc35c30306"
+          ],
+          "state": "Succeeded",
+          "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-dev-vnet-eastus2/subnets/private-endpoints",
+          "type": "Microsoft.Network/privateEndpoints"
+        }
+      ],
+      "nextLink": null
+    }
+  },
+  "nics": {
+    "startedUtc": "2026-10-20T01:07:56.7160786Z",
+    "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces?api-version=2023-11-01",
+    "query": "{nextLink:nextLink,items:value[].{id:id,type:type,managedBy:managedBy,state:properties.provisioningState,privateEndpointId:properties.privateEndpoint.id,virtualMachineId:properties.virtualMachine.id,nsgId:properties.networkSecurityGroup.id,ipConfigurations:properties.ipConfigurations[].{id:id,privateIPAddress:properties.privateIPAddress,subnetId:properties.subnet.id,publicIPAddressId:properties.publicIPAddress.id,loadBalancerBackendAddressPools:properties.loadBalancerBackendAddressPools[].id,loadBalancerInboundNatRules:properties.loadBalancerInboundNatRules[].id,applicationGatewayBackendAddressPools:properties.applicationGatewayBackendAddressPools[].id,applicationSecurityGroups:properties.applicationSecurityGroups[].id}}}",
+    "data": {
+      "items": [
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-nic-wjump-eastus2",
+          "ipConfigurations": [
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-nic-wjump-eastus2/ipConfigurations/private",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.228",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/windows-jumpbox"
+            }
+          ],
+          "managedBy": null,
+          "nsgId": null,
+          "privateEndpointId": null,
+          "state": "Succeeded",
+          "type": "Microsoft.Network/networkInterfaces",
+          "virtualMachineId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Compute/virtualMachines/fotoa-demo-wjump-eastus2"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-aihub-eastus2.nic.f992623e-9cc8-4bc5-ae48-8c5b618cf5e3",
+          "ipConfigurations": [
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-aihub-eastus2.nic.f992623e-9cc8-4bc5-ae48-8c5b618cf5e3/ipConfigurations/privateEndpointIpConfig.a0185ee7-6b7b-4cb0-81e6-c9b30f034cda",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.6",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints"
+            },
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-aihub-eastus2.nic.f992623e-9cc8-4bc5-ae48-8c5b618cf5e3/ipConfigurations/privateEndpointIpConfig.3a682a08-c415-4280-a126-7601efcf444e",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.7",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints"
+            },
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-aihub-eastus2.nic.f992623e-9cc8-4bc5-ae48-8c5b618cf5e3/ipConfigurations/privateEndpointIpConfig.da713c64-7488-4f2b-8b1f-4eb5002d268a",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.8",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints"
+            },
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-aihub-eastus2.nic.f992623e-9cc8-4bc5-ae48-8c5b618cf5e3/ipConfigurations/privateEndpointIpConfig.b20a6d8e-c97d-4d31-ab7e-8b28a06a16c5",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.9",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints"
+            }
+          ],
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-aihub-eastus2",
+          "nsgId": null,
+          "privateEndpointId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-aihub-eastus2",
+          "state": "Succeeded",
+          "type": "Microsoft.Network/networkInterfaces",
+          "virtualMachineId": null
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-evalblob-eastus2.nic.ccb5f37c-aa0a-454e-8c8b-240b4ae36e1e",
+          "ipConfigurations": [
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-evalblob-eastus2.nic.ccb5f37c-aa0a-454e-8c8b-240b4ae36e1e/ipConfigurations/privateEndpointIpConfig.19628b55-f4fd-43a7-ae15-ac5d0d87547d",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.15",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints"
+            }
+          ],
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-evalblob-eastus2",
+          "nsgId": null,
+          "privateEndpointId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-evalblob-eastus2",
+          "state": "Succeeded",
+          "type": "Microsoft.Network/networkInterfaces",
+          "virtualMachineId": null
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-foundry-eastus2.nic.22e64155-f7ce-4366-9e71-528c8c7a4260",
+          "ipConfigurations": [
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-foundry-eastus2.nic.22e64155-f7ce-4366-9e71-528c8c7a4260/ipConfigurations/privateEndpointIpConfig.b8c547a2-c41b-4d98-b528-fe5ae6c7347a",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.12",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints"
+            },
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-foundry-eastus2.nic.22e64155-f7ce-4366-9e71-528c8c7a4260/ipConfigurations/privateEndpointIpConfig.ec8db70f-18d0-4c25-a299-aaeb3c060512",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.13",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints"
+            },
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-foundry-eastus2.nic.22e64155-f7ce-4366-9e71-528c8c7a4260/ipConfigurations/privateEndpointIpConfig.37198c61-c883-4de0-8550-a1fffa916c19",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.14",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints"
+            }
+          ],
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-foundry-eastus2",
+          "nsgId": null,
+          "privateEndpointId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-foundry-eastus2",
+          "state": "Succeeded",
+          "type": "Microsoft.Network/networkInterfaces",
+          "virtualMachineId": null
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-funcstblob-eastus2.nic.be30c038-8041-4086-8cbc-8f4de5fe38e1",
+          "ipConfigurations": [
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-funcstblob-eastus2.nic.be30c038-8041-4086-8cbc-8f4de5fe38e1/ipConfigurations/privateEndpointIpConfig.220bcc69-402f-49cd-af87-6ea827945c55",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.10",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints"
+            }
+          ],
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcstblob-eastus2",
+          "nsgId": null,
+          "privateEndpointId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcstblob-eastus2",
+          "state": "Succeeded",
+          "type": "Microsoft.Network/networkInterfaces",
+          "virtualMachineId": null
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-funcstqueue-eastus2.nic.8a27af63-6a66-4469-90b5-6d6cc92b404e",
+          "ipConfigurations": [
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-funcstqueue-eastus2.nic.8a27af63-6a66-4469-90b5-6d6cc92b404e/ipConfigurations/privateEndpointIpConfig.e62f627f-4a39-488b-9c91-36740d9352df",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.11",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints"
+            }
+          ],
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcstqueue-eastus2",
+          "nsgId": null,
+          "privateEndpointId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcstqueue-eastus2",
+          "state": "Succeeded",
+          "type": "Microsoft.Network/networkInterfaces",
+          "virtualMachineId": null
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-funcsttable-eastus2.nic.9e843afe-47c5-48cb-bf7b-c7537888f667",
+          "ipConfigurations": [
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-funcsttable-eastus2.nic.9e843afe-47c5-48cb-bf7b-c7537888f667/ipConfigurations/privateEndpointIpConfig.bb1633f3-200f-483d-8bb9-e3b76f461a16",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.5",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints"
+            }
+          ],
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcsttable-eastus2",
+          "nsgId": null,
+          "privateEndpointId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcsttable-eastus2",
+          "state": "Succeeded",
+          "type": "Microsoft.Network/networkInterfaces",
+          "virtualMachineId": null
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-kv-eastus2.nic.557b977f-5345-4051-b911-45bbf886f1a5",
+          "ipConfigurations": [
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-kv-eastus2.nic.557b977f-5345-4051-b911-45bbf886f1a5/ipConfigurations/privateEndpointIpConfig.0d35605f-d06e-4bf0-bec7-fb3cc323d267",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.4",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints"
+            }
+          ],
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-kv-eastus2",
+          "nsgId": null,
+          "privateEndpointId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-kv-eastus2",
+          "state": "Succeeded",
+          "type": "Microsoft.Network/networkInterfaces",
+          "virtualMachineId": null
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-dev-pe-aihub-eastus2.nic.c1b8719d-2dcc-476e-a541-7dfd4a11bd43",
+          "ipConfigurations": [
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-dev-pe-aihub-eastus2.nic.c1b8719d-2dcc-476e-a541-7dfd4a11bd43/ipConfigurations/privateEndpointIpConfig.52268149-a025-44fb-b989-c269f2ce7c50",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.5",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-dev-vnet-eastus2/subnets/private-endpoints"
+            },
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-dev-pe-aihub-eastus2.nic.c1b8719d-2dcc-476e-a541-7dfd4a11bd43/ipConfigurations/privateEndpointIpConfig.08555b2b-e7f4-4e3f-93c2-442d3abcfd96",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.6",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-dev-vnet-eastus2/subnets/private-endpoints"
+            },
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-dev-pe-aihub-eastus2.nic.c1b8719d-2dcc-476e-a541-7dfd4a11bd43/ipConfigurations/privateEndpointIpConfig.20b45da3-5e71-4a0d-b11f-ed1a33ef6829",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.7",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-dev-vnet-eastus2/subnets/private-endpoints"
+            },
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-dev-pe-aihub-eastus2.nic.c1b8719d-2dcc-476e-a541-7dfd4a11bd43/ipConfigurations/privateEndpointIpConfig.5ccc3feb-9a8e-45e1-ac0a-7a919f3932c8",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.8",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-dev-vnet-eastus2/subnets/private-endpoints"
+            }
+          ],
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-aihub-eastus2",
+          "nsgId": null,
+          "privateEndpointId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-aihub-eastus2",
+          "state": "Succeeded",
+          "type": "Microsoft.Network/networkInterfaces",
+          "virtualMachineId": null
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-dev-pe-kv-eastus2.nic.a53b9ad9-ad9c-4640-824b-e5cc35c30306",
+          "ipConfigurations": [
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-dev-pe-kv-eastus2.nic.a53b9ad9-ad9c-4640-824b-e5cc35c30306/ipConfigurations/privateEndpointIpConfig.dec7eca3-bc39-415d-accc-1dd0d1d8317c",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.4",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-dev-vnet-eastus2/subnets/private-endpoints"
+            }
+          ],
+          "managedBy": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-kv-eastus2",
+          "nsgId": null,
+          "privateEndpointId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-kv-eastus2",
+          "state": "Succeeded",
+          "type": "Microsoft.Network/networkInterfaces",
+          "virtualMachineId": null
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-validation-vm-eastus2VMNic",
+          "ipConfigurations": [
+            {
+              "applicationGatewayBackendAddressPools": null,
+              "applicationSecurityGroups": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-validation-vm-eastus2VMNic/ipConfigurations/ipconfigfotoa-validation-vm-eastus2",
+              "loadBalancerBackendAddressPools": null,
+              "loadBalancerInboundNatRules": null,
+              "privateIPAddress": "10.20.0.196",
+              "publicIPAddressId": null,
+              "subnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/validation-jumpbox"
+            }
+          ],
+          "managedBy": null,
+          "nsgId": null,
+          "privateEndpointId": null,
+          "state": "Succeeded",
+          "type": "Microsoft.Network/networkInterfaces",
+          "virtualMachineId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Compute/virtualMachines/fotoa-validation-vm-eastus2"
+        }
+      ],
+      "nextLink": null
+    }
+  },
+  "vnets": {
+    "startedUtc": "2026-10-20T01:08:01.2392030Z",
+    "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks?api-version=2023-11-01",
+    "query": "{nextLink:nextLink,items:value[].{id:id,state:properties.provisioningState,subnets:properties.subnets[].{id:id,nsgId:properties.networkSecurityGroup.id,routeTableId:properties.routeTable.id,natGatewayId:properties.natGateway.id,privateEndpoints:properties.privateEndpoints[].id,ipConfigurations:properties.ipConfigurations[].id,delegations:properties.delegations[].properties.serviceName}}}",
+    "data": {
+      "items": [
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2",
+          "state": "Succeeded",
+          "subnets": [
+            {
+              "delegations": [],
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints",
+              "ipConfigurations": [
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEMO-PE-AIHUB-EASTUS2.NIC.F992623E-9CC8-4BC5-AE48-8C5B618CF5E3/ipConfigurations/PRIVATEENDPOINTIPCONFIG.3A682A08-C415-4280-A126-7601EFCF444E",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEMO-PE-AIHUB-EASTUS2.NIC.F992623E-9CC8-4BC5-AE48-8C5B618CF5E3/ipConfigurations/PRIVATEENDPOINTIPCONFIG.A0185EE7-6B7B-4CB0-81E6-C9B30F034CDA",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEMO-PE-AIHUB-EASTUS2.NIC.F992623E-9CC8-4BC5-AE48-8C5B618CF5E3/ipConfigurations/PRIVATEENDPOINTIPCONFIG.B20A6D8E-C97D-4D31-AB7E-8B28A06A16C5",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEMO-PE-AIHUB-EASTUS2.NIC.F992623E-9CC8-4BC5-AE48-8C5B618CF5E3/ipConfigurations/PRIVATEENDPOINTIPCONFIG.DA713C64-7488-4F2B-8B1F-4EB5002D268A",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEMO-PE-EVALBLOB-EASTUS2.NIC.CCB5F37C-AA0A-454E-8C8B-240B4AE36E1E/ipConfigurations/PRIVATEENDPOINTIPCONFIG.19628B55-F4FD-43A7-AE15-AC5D0D87547D",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEMO-PE-FOUNDRY-EASTUS2.NIC.22E64155-F7CE-4366-9E71-528C8C7A4260/ipConfigurations/PRIVATEENDPOINTIPCONFIG.37198C61-C883-4DE0-8550-A1FFFA916C19",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEMO-PE-FOUNDRY-EASTUS2.NIC.22E64155-F7CE-4366-9E71-528C8C7A4260/ipConfigurations/PRIVATEENDPOINTIPCONFIG.B8C547A2-C41B-4D98-B528-FE5AE6C7347A",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEMO-PE-FOUNDRY-EASTUS2.NIC.22E64155-F7CE-4366-9E71-528C8C7A4260/ipConfigurations/PRIVATEENDPOINTIPCONFIG.EC8DB70F-18D0-4C25-A299-AAEB3C060512",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEMO-PE-FUNCSTBLOB-EASTUS2.NIC.BE30C038-8041-4086-8CBC-8F4DE5FE38E1/ipConfigurations/PRIVATEENDPOINTIPCONFIG.220BCC69-402F-49CD-AF87-6EA827945C55",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEMO-PE-FUNCSTQUEUE-EASTUS2.NIC.8A27AF63-6A66-4469-90B5-6D6CC92B404E/ipConfigurations/PRIVATEENDPOINTIPCONFIG.E62F627F-4A39-488B-9C91-36740D9352DF",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEMO-PE-FUNCSTTABLE-EASTUS2.NIC.9E843AFE-47C5-48CB-BF7B-C7537888F667/ipConfigurations/PRIVATEENDPOINTIPCONFIG.BB1633F3-200F-483D-8BB9-E3B76F461A16",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEMO-PE-KV-EASTUS2.NIC.557B977F-5345-4051-B911-45BBF886F1A5/ipConfigurations/PRIVATEENDPOINTIPCONFIG.0D35605F-D06E-4BF0-BEC7-FB3CC323D267"
+              ],
+              "natGatewayId": null,
+              "nsgId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkSecurityGroups/fotoa-demo-vnet-eastus2-private-endpoints-nsg-eastus2",
+              "privateEndpoints": [
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/privateEndpoints/FOTOA-DEMO-PE-AIHUB-EASTUS2",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/privateEndpoints/FOTOA-DEMO-PE-EVALBLOB-EASTUS2",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/privateEndpoints/FOTOA-DEMO-PE-FOUNDRY-EASTUS2",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/privateEndpoints/FOTOA-DEMO-PE-FUNCSTBLOB-EASTUS2",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/privateEndpoints/FOTOA-DEMO-PE-FUNCSTQUEUE-EASTUS2",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/privateEndpoints/FOTOA-DEMO-PE-FUNCSTTABLE-EASTUS2",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/privateEndpoints/FOTOA-DEMO-PE-KV-EASTUS2"
+              ],
+              "routeTableId": null
+            },
+            {
+              "delegations": [
+                "Microsoft.Web/serverFarms"
+              ],
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/function-integration",
+              "ipConfigurations": null,
+              "natGatewayId": null,
+              "nsgId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkSecurityGroups/fotoa-demo-vnet-eastus2-function-integration-nsg-eastus2",
+              "privateEndpoints": null,
+              "routeTableId": null
+            },
+            {
+              "delegations": [],
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/validation-jumpbox",
+              "ipConfigurations": [
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-VALIDATION-VM-EASTUS2VMNIC/ipConfigurations/IPCONFIGFOTOA-VALIDATION-VM-EASTUS2"
+              ],
+              "natGatewayId": null,
+              "nsgId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkSecurityGroups/fotoa-validation-nsg-eastus2",
+              "privateEndpoints": null,
+              "routeTableId": null
+            },
+            {
+              "delegations": [],
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/windows-jumpbox",
+              "ipConfigurations": [
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEMO-NIC-WJUMP-EASTUS2/ipConfigurations/PRIVATE"
+              ],
+              "natGatewayId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/natGateways/fotoa-demo-nat-wjump-eastus2",
+              "nsgId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkSecurityGroups/fotoa-demo-nsg-wjump-eastus2",
+              "privateEndpoints": null,
+              "routeTableId": null
+            }
+          ]
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-dev-vnet-eastus2",
+          "state": "Succeeded",
+          "subnets": [
+            {
+              "delegations": [],
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-dev-vnet-eastus2/subnets/private-endpoints",
+              "ipConfigurations": [
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEV-PE-AIHUB-EASTUS2.NIC.C1B8719D-2DCC-476E-A541-7DFD4A11BD43/ipConfigurations/PRIVATEENDPOINTIPCONFIG.08555B2B-E7F4-4E3F-93C2-442D3ABCFD96",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEV-PE-AIHUB-EASTUS2.NIC.C1B8719D-2DCC-476E-A541-7DFD4A11BD43/ipConfigurations/PRIVATEENDPOINTIPCONFIG.20B45DA3-5E71-4A0D-B11F-ED1A33EF6829",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEV-PE-AIHUB-EASTUS2.NIC.C1B8719D-2DCC-476E-A541-7DFD4A11BD43/ipConfigurations/PRIVATEENDPOINTIPCONFIG.52268149-A025-44FB-B989-C269F2CE7C50",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEV-PE-AIHUB-EASTUS2.NIC.C1B8719D-2DCC-476E-A541-7DFD4A11BD43/ipConfigurations/PRIVATEENDPOINTIPCONFIG.5CCC3FEB-9A8E-45E1-AC0A-7A919F3932C8",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/networkInterfaces/FOTOA-DEV-PE-KV-EASTUS2.NIC.A53B9AD9-AD9C-4640-824B-E5CC35C30306/ipConfigurations/PRIVATEENDPOINTIPCONFIG.DEC7ECA3-BC39-415D-ACCC-1DD0D1D8317C"
+              ],
+              "natGatewayId": null,
+              "nsgId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkSecurityGroups/fotoa-dev-vnet-eastus2-private-endpoints-nsg-eastus2",
+              "privateEndpoints": [
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/privateEndpoints/FOTOA-DEV-PE-AIHUB-EASTUS2",
+                "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Network/privateEndpoints/FOTOA-DEV-PE-KV-EASTUS2"
+              ],
+              "routeTableId": null
+            }
+          ]
+        }
+      ],
+      "nextLink": null
+    }
+  },
+  "dnsGroups": [
+    {
+      "startedUtc": "2026-10-20T01:08:06.4422873Z",
+      "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-aihub-eastus2/privateDnsZoneGroups?api-version=2023-11-01",
+      "query": "{nextLink:nextLink,items:value[].{id:id,state:properties.provisioningState,configs:properties.privateDnsZoneConfigs[].{id:properties.privateDnsZoneId,recordSets:properties.recordSets[].{name:recordSetName,type:recordType,ttl:ttl,ipAddresses:ipAddresses}}}}",
+      "data": {
+        "items": [
+          {
+            "configs": [
+              {
+                "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.api.azureml.ms",
+                "recordSets": []
+              }
+            ],
+            "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-aihub-eastus2/privateDnsZoneGroups/default",
+            "state": "Succeeded"
+          }
+        ],
+        "nextLink": null
+      }
+    },
+    {
+      "startedUtc": "2026-10-20T01:08:12.1609067Z",
+      "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-evalblob-eastus2/privateDnsZoneGroups?api-version=2023-11-01",
+      "query": "{nextLink:nextLink,items:value[].{id:id,state:properties.provisioningState,configs:properties.privateDnsZoneConfigs[].{id:properties.privateDnsZoneId,recordSets:properties.recordSets[].{name:recordSetName,type:recordType,ttl:ttl,ipAddresses:ipAddresses}}}}",
+      "data": {
+        "items": [
+          {
+            "configs": [
+              {
+                "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net",
+                "recordSets": [
+                  {
+                    "ipAddresses": [
+                      "10.20.0.15"
+                    ],
+                    "name": "fotoademoevalstc81fda52",
+                    "ttl": 10,
+                    "type": "A"
+                  }
+                ]
+              }
+            ],
+            "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-evalblob-eastus2/privateDnsZoneGroups/blob",
+            "state": "Succeeded"
+          }
+        ],
+        "nextLink": null
+      }
+    },
+    {
+      "startedUtc": "2026-10-20T01:08:19.2006336Z",
+      "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-foundry-eastus2/privateDnsZoneGroups?api-version=2023-11-01",
+      "query": "{nextLink:nextLink,items:value[].{id:id,state:properties.provisioningState,configs:properties.privateDnsZoneConfigs[].{id:properties.privateDnsZoneId,recordSets:properties.recordSets[].{name:recordSetName,type:recordType,ttl:ttl,ipAddresses:ipAddresses}}}}",
+      "data": {
+        "items": [
+          {
+            "configs": [
+              {
+                "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.services.ai.azure.com",
+                "recordSets": [
+                  {
+                    "ipAddresses": [
+                      "10.20.0.14"
+                    ],
+                    "name": "fotoa-demo-foundry-eastus2",
+                    "ttl": 10,
+                    "type": "A"
+                  }
+                ]
+              },
+              {
+                "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.openai.azure.com",
+                "recordSets": [
+                  {
+                    "ipAddresses": [
+                      "10.20.0.13"
+                    ],
+                    "name": "fotoa-demo-foundry-eastus2",
+                    "ttl": 10,
+                    "type": "A"
+                  }
+                ]
+              },
+              {
+                "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.cognitiveservices.azure.com",
+                "recordSets": [
+                  {
+                    "ipAddresses": [
+                      "10.20.0.12"
+                    ],
+                    "name": "fotoa-demo-foundry-eastus2",
+                    "ttl": 10,
+                    "type": "A"
+                  }
+                ]
+              }
+            ],
+            "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-foundry-eastus2/privateDnsZoneGroups/default",
+            "state": "Succeeded"
+          }
+        ],
+        "nextLink": null
+      }
+    },
+    {
+      "startedUtc": "2026-10-20T01:08:25.0271491Z",
+      "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcstblob-eastus2/privateDnsZoneGroups?api-version=2023-11-01",
+      "query": "{nextLink:nextLink,items:value[].{id:id,state:properties.provisioningState,configs:properties.privateDnsZoneConfigs[].{id:properties.privateDnsZoneId,recordSets:properties.recordSets[].{name:recordSetName,type:recordType,ttl:ttl,ipAddresses:ipAddresses}}}}",
+      "data": {
+        "items": [
+          {
+            "configs": [
+              {
+                "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net",
+                "recordSets": [
+                  {
+                    "ipAddresses": [
+                      "10.20.0.10"
+                    ],
+                    "name": "fotoademosteastus2",
+                    "ttl": 10,
+                    "type": "A"
+                  }
+                ]
+              }
+            ],
+            "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcstblob-eastus2/privateDnsZoneGroups/default",
+            "state": "Succeeded"
+          }
+        ],
+        "nextLink": null
+      }
+    },
+    {
+      "startedUtc": "2026-10-20T01:08:33.2423735Z",
+      "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcstqueue-eastus2/privateDnsZoneGroups?api-version=2023-11-01",
+      "query": "{nextLink:nextLink,items:value[].{id:id,state:properties.provisioningState,configs:properties.privateDnsZoneConfigs[].{id:properties.privateDnsZoneId,recordSets:properties.recordSets[].{name:recordSetName,type:recordType,ttl:ttl,ipAddresses:ipAddresses}}}}",
+      "data": {
+        "items": [
+          {
+            "configs": [
+              {
+                "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.queue.core.windows.net",
+                "recordSets": [
+                  {
+                    "ipAddresses": [
+                      "10.20.0.11"
+                    ],
+                    "name": "fotoademosteastus2",
+                    "ttl": 10,
+                    "type": "A"
+                  }
+                ]
+              }
+            ],
+            "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcstqueue-eastus2/privateDnsZoneGroups/default",
+            "state": "Succeeded"
+          }
+        ],
+        "nextLink": null
+      }
+    },
+    {
+      "startedUtc": "2026-10-20T01:08:43.2917211Z",
+      "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcsttable-eastus2/privateDnsZoneGroups?api-version=2023-11-01",
+      "query": "{nextLink:nextLink,items:value[].{id:id,state:properties.provisioningState,configs:properties.privateDnsZoneConfigs[].{id:properties.privateDnsZoneId,recordSets:properties.recordSets[].{name:recordSetName,type:recordType,ttl:ttl,ipAddresses:ipAddresses}}}}",
+      "data": {
+        "items": [
+          {
+            "configs": [
+              {
+                "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.table.core.windows.net",
+                "recordSets": [
+                  {
+                    "ipAddresses": [
+                      "10.20.0.5"
+                    ],
+                    "name": "fotoademosteastus2",
+                    "ttl": 10,
+                    "type": "A"
+                  }
+                ]
+              }
+            ],
+            "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-funcsttable-eastus2/privateDnsZoneGroups/default",
+            "state": "Succeeded"
+          }
+        ],
+        "nextLink": null
+      }
+    },
+    {
+      "startedUtc": "2026-10-20T01:08:47.9511087Z",
+      "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-kv-eastus2/privateDnsZoneGroups?api-version=2023-11-01",
+      "query": "{nextLink:nextLink,items:value[].{id:id,state:properties.provisioningState,configs:properties.privateDnsZoneConfigs[].{id:properties.privateDnsZoneId,recordSets:properties.recordSets[].{name:recordSetName,type:recordType,ttl:ttl,ipAddresses:ipAddresses}}}}",
+      "data": {
+        "items": [
+          {
+            "configs": [
+              {
+                "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net",
+                "recordSets": [
+                  {
+                    "ipAddresses": [
+                      "10.20.0.4"
+                    ],
+                    "name": "fotoa-demo-kv-eastus2",
+                    "ttl": 10,
+                    "type": "A"
+                  }
+                ]
+              }
+            ],
+            "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-kv-eastus2/privateDnsZoneGroups/default",
+            "state": "Succeeded"
+          }
+        ],
+        "nextLink": null
+      }
+    },
+    {
+      "startedUtc": "2026-10-20T01:08:55.1232547Z",
+      "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-aihub-eastus2/privateDnsZoneGroups?api-version=2023-11-01",
+      "query": "{nextLink:nextLink,items:value[].{id:id,state:properties.provisioningState,configs:properties.privateDnsZoneConfigs[].{id:properties.privateDnsZoneId,recordSets:properties.recordSets[].{name:recordSetName,type:recordType,ttl:ttl,ipAddresses:ipAddresses}}}}",
+      "data": {
+        "items": [
+          {
+            "configs": [
+              {
+                "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.api.azureml.ms",
+                "recordSets": []
+              }
+            ],
+            "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-aihub-eastus2/privateDnsZoneGroups/default",
+            "state": "Succeeded"
+          }
+        ],
+        "nextLink": null
+      }
+    },
+    {
+      "startedUtc": "2026-10-20T01:09:00.2629343Z",
+      "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-kv-eastus2/privateDnsZoneGroups?api-version=2023-11-01",
+      "query": "{nextLink:nextLink,items:value[].{id:id,state:properties.provisioningState,configs:properties.privateDnsZoneConfigs[].{id:properties.privateDnsZoneId,recordSets:properties.recordSets[].{name:recordSetName,type:recordType,ttl:ttl,ipAddresses:ipAddresses}}}}",
+      "data": {
+        "items": [
+          {
+            "configs": [
+              {
+                "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net",
+                "recordSets": [
+                  {
+                    "ipAddresses": [
+                      "10.20.0.4"
+                    ],
+                    "name": "fotoa-dev-kv-eastus2",
+                    "ttl": 10,
+                    "type": "A"
+                  }
+                ]
+              }
+            ],
+            "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-kv-eastus2/privateDnsZoneGroups/default",
+            "state": "Succeeded"
+          }
+        ],
+        "nextLink": null
+      }
+    }
+  ],
+  "zones": {
+    "startedUtc": "2026-10-20T01:09:06.8472582Z",
+    "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones?api-version=2020-06-01",
+    "query": "{nextLink:nextLink,items:value[].{id:id,type:type,recordSetCount:properties.numberOfRecordSets,linkCount:properties.numberOfVirtualNetworkLinks}}",
+    "data": {
+      "items": [
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.api.azureml.ms",
+          "linkCount": 2,
+          "recordSetCount": 1,
+          "type": "Microsoft.Network/privateDnsZones"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net",
+          "linkCount": 1,
+          "recordSetCount": 3,
+          "type": "Microsoft.Network/privateDnsZones"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.cognitiveservices.azure.com",
+          "linkCount": 1,
+          "recordSetCount": 2,
+          "type": "Microsoft.Network/privateDnsZones"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.openai.azure.com",
+          "linkCount": 1,
+          "recordSetCount": 2,
+          "type": "Microsoft.Network/privateDnsZones"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.queue.core.windows.net",
+          "linkCount": 1,
+          "recordSetCount": 2,
+          "type": "Microsoft.Network/privateDnsZones"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.services.ai.azure.com",
+          "linkCount": 1,
+          "recordSetCount": 2,
+          "type": "Microsoft.Network/privateDnsZones"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.table.core.windows.net",
+          "linkCount": 1,
+          "recordSetCount": 2,
+          "type": "Microsoft.Network/privateDnsZones"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net",
+          "linkCount": 2,
+          "recordSetCount": 3,
+          "type": "Microsoft.Network/privateDnsZones"
+        }
+      ],
+      "nextLink": null
+    }
+  },
+  "dns": [
+    {
+      "zoneId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.api.azureml.ms",
+      "records": {
+        "startedUtc": "2026-10-20T01:09:12.7456982Z",
+        "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.api.azureml.ms/ALL?api-version=2020-06-01",
+        "query": "{nextLink:nextLink,items:value[].{id:id,type:type,ttl:properties.ttl,aRecords:properties.aRecords[].ipv4Address,cnameRecord:properties.cnameRecord.cname}}",
+        "data": {
+          "items": [
+            {
+              "aRecords": null,
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.api.azureml.ms/SOA/@",
+              "ttl": 3600,
+              "type": "Microsoft.Network/privateDnsZones/SOA"
+            }
+          ],
+          "nextLink": null
+        }
+      },
+      "links": {
+        "startedUtc": "2026-10-20T01:09:23.3410266Z",
+        "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.api.azureml.ms/virtualNetworkLinks?api-version=2020-06-01",
+        "query": "{nextLink:nextLink,items:value[].{id:id,vnetId:properties.virtualNetwork.id,registrationEnabled:properties.registrationEnabled,state:properties.virtualNetworkLinkState}}",
+        "data": {
+          "items": [
+            {
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.api.azureml.ms/virtualNetworkLinks/link-fotoa-demo-vnet-eastus2",
+              "registrationEnabled": false,
+              "state": "Completed",
+              "vnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2"
+            },
+            {
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.api.azureml.ms/virtualNetworkLinks/link-fotoa-dev-vnet-eastus2",
+              "registrationEnabled": false,
+              "state": "Completed",
+              "vnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-dev-vnet-eastus2"
+            }
+          ],
+          "nextLink": null
+        }
+      }
+    },
+    {
+      "zoneId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net",
+      "records": {
+        "startedUtc": "2026-10-20T01:09:32.2133914Z",
+        "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net/ALL?api-version=2020-06-01",
+        "query": "{nextLink:nextLink,items:value[].{id:id,type:type,ttl:properties.ttl,aRecords:properties.aRecords[].ipv4Address,cnameRecord:properties.cnameRecord.cname}}",
+        "data": {
+          "items": [
+            {
+              "aRecords": null,
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net/SOA/@",
+              "ttl": 3600,
+              "type": "Microsoft.Network/privateDnsZones/SOA"
+            },
+            {
+              "aRecords": [
+                "10.20.0.15"
+              ],
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net/A/fotoademoevalstc81fda52",
+              "ttl": 10,
+              "type": "Microsoft.Network/privateDnsZones/A"
+            },
+            {
+              "aRecords": [
+                "10.20.0.10"
+              ],
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net/A/fotoademosteastus2",
+              "ttl": 10,
+              "type": "Microsoft.Network/privateDnsZones/A"
+            }
+          ],
+          "nextLink": null
+        }
+      },
+      "links": {
+        "startedUtc": "2026-10-20T01:09:38.4125390Z",
+        "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net/virtualNetworkLinks?api-version=2020-06-01",
+        "query": "{nextLink:nextLink,items:value[].{id:id,vnetId:properties.virtualNetwork.id,registrationEnabled:properties.registrationEnabled,state:properties.virtualNetworkLinkState}}",
+        "data": {
+          "items": [
+            {
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net/virtualNetworkLinks/link-fotoa-demo-vnet-eastus2",
+              "registrationEnabled": false,
+              "state": "Completed",
+              "vnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2"
+            }
+          ],
+          "nextLink": null
+        }
+      }
+    },
+    {
+      "zoneId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.cognitiveservices.azure.com",
+      "records": {
+        "startedUtc": "2026-10-20T01:09:46.4241976Z",
+        "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.cognitiveservices.azure.com/ALL?api-version=2020-06-01",
+        "query": "{nextLink:nextLink,items:value[].{id:id,type:type,ttl:properties.ttl,aRecords:properties.aRecords[].ipv4Address,cnameRecord:properties.cnameRecord.cname}}",
+        "data": {
+          "items": [
+            {
+              "aRecords": null,
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.cognitiveservices.azure.com/SOA/@",
+              "ttl": 3600,
+              "type": "Microsoft.Network/privateDnsZones/SOA"
+            },
+            {
+              "aRecords": [
+                "10.20.0.12"
+              ],
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.cognitiveservices.azure.com/A/fotoa-demo-foundry-eastus2",
+              "ttl": 10,
+              "type": "Microsoft.Network/privateDnsZones/A"
+            }
+          ],
+          "nextLink": null
+        }
+      },
+      "links": {
+        "startedUtc": "2026-10-20T01:09:54.6560445Z",
+        "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.cognitiveservices.azure.com/virtualNetworkLinks?api-version=2020-06-01",
+        "query": "{nextLink:nextLink,items:value[].{id:id,vnetId:properties.virtualNetwork.id,registrationEnabled:properties.registrationEnabled,state:properties.virtualNetworkLinkState}}",
+        "data": {
+          "items": [
+            {
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.cognitiveservices.azure.com/virtualNetworkLinks/fotoa-demo-link-foundry-eastus2",
+              "registrationEnabled": false,
+              "state": "Completed",
+              "vnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2"
+            }
+          ],
+          "nextLink": null
+        }
+      }
+    },
+    {
+      "zoneId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.openai.azure.com",
+      "records": {
+        "startedUtc": "2026-10-20T01:10:02.0322912Z",
+        "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.openai.azure.com/ALL?api-version=2020-06-01",
+        "query": "{nextLink:nextLink,items:value[].{id:id,type:type,ttl:properties.ttl,aRecords:properties.aRecords[].ipv4Address,cnameRecord:properties.cnameRecord.cname}}",
+        "data": {
+          "items": [
+            {
+              "aRecords": null,
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.openai.azure.com/SOA/@",
+              "ttl": 3600,
+              "type": "Microsoft.Network/privateDnsZones/SOA"
+            },
+            {
+              "aRecords": [
+                "10.20.0.13"
+              ],
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.openai.azure.com/A/fotoa-demo-foundry-eastus2",
+              "ttl": 10,
+              "type": "Microsoft.Network/privateDnsZones/A"
+            }
+          ],
+          "nextLink": null
+        }
+      },
+      "links": {
+        "startedUtc": "2026-10-20T01:10:12.7371731Z",
+        "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.openai.azure.com/virtualNetworkLinks?api-version=2020-06-01",
+        "query": "{nextLink:nextLink,items:value[].{id:id,vnetId:properties.virtualNetwork.id,registrationEnabled:properties.registrationEnabled,state:properties.virtualNetworkLinkState}}",
+        "data": {
+          "items": [
+            {
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.openai.azure.com/virtualNetworkLinks/fotoa-demo-link-foundry-eastus2",
+              "registrationEnabled": false,
+              "state": "Completed",
+              "vnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2"
+            }
+          ],
+          "nextLink": null
+        }
+      }
+    },
+    {
+      "zoneId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.queue.core.windows.net",
+      "records": {
+        "startedUtc": "2026-10-20T01:10:18.4452243Z",
+        "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.queue.core.windows.net/ALL?api-version=2020-06-01",
+        "query": "{nextLink:nextLink,items:value[].{id:id,type:type,ttl:properties.ttl,aRecords:properties.aRecords[].ipv4Address,cnameRecord:properties.cnameRecord.cname}}",
+        "data": {
+          "items": [
+            {
+              "aRecords": null,
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.queue.core.windows.net/SOA/@",
+              "ttl": 3600,
+              "type": "Microsoft.Network/privateDnsZones/SOA"
+            },
+            {
+              "aRecords": [
+                "10.20.0.11"
+              ],
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.queue.core.windows.net/A/fotoademosteastus2",
+              "ttl": 10,
+              "type": "Microsoft.Network/privateDnsZones/A"
+            }
+          ],
+          "nextLink": null
+        }
+      },
+      "links": {
+        "startedUtc": "2026-10-20T01:10:28.0038285Z",
+        "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.queue.core.windows.net/virtualNetworkLinks?api-version=2020-06-01",
+        "query": "{nextLink:nextLink,items:value[].{id:id,vnetId:properties.virtualNetwork.id,registrationEnabled:properties.registrationEnabled,state:properties.virtualNetworkLinkState}}",
+        "data": {
+          "items": [
+            {
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.queue.core.windows.net/virtualNetworkLinks/link-fotoa-demo-vnet-eastus2",
+              "registrationEnabled": false,
+              "state": "Completed",
+              "vnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2"
+            }
+          ],
+          "nextLink": null
+        }
+      }
+    },
+    {
+      "zoneId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.services.ai.azure.com",
+      "records": {
+        "startedUtc": "2026-10-20T01:10:36.8345686Z",
+        "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.services.ai.azure.com/ALL?api-version=2020-06-01",
+        "query": "{nextLink:nextLink,items:value[].{id:id,type:type,ttl:properties.ttl,aRecords:properties.aRecords[].ipv4Address,cnameRecord:properties.cnameRecord.cname}}",
+        "data": {
+          "items": [
+            {
+              "aRecords": null,
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.services.ai.azure.com/SOA/@",
+              "ttl": 3600,
+              "type": "Microsoft.Network/privateDnsZones/SOA"
+            },
+            {
+              "aRecords": [
+                "10.20.0.14"
+              ],
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.services.ai.azure.com/A/fotoa-demo-foundry-eastus2",
+              "ttl": 10,
+              "type": "Microsoft.Network/privateDnsZones/A"
+            }
+          ],
+          "nextLink": null
+        }
+      },
+      "links": {
+        "startedUtc": "2026-10-20T01:10:42.6986290Z",
+        "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.services.ai.azure.com/virtualNetworkLinks?api-version=2020-06-01",
+        "query": "{nextLink:nextLink,items:value[].{id:id,vnetId:properties.virtualNetwork.id,registrationEnabled:properties.registrationEnabled,state:properties.virtualNetworkLinkState}}",
+        "data": {
+          "items": [
+            {
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.services.ai.azure.com/virtualNetworkLinks/fotoa-demo-link-foundry-eastus2",
+              "registrationEnabled": false,
+              "state": "Completed",
+              "vnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2"
+            }
+          ],
+          "nextLink": null
+        }
+      }
+    },
+    {
+      "zoneId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.table.core.windows.net",
+      "records": {
+        "startedUtc": "2026-10-20T01:10:49.8064232Z",
+        "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.table.core.windows.net/ALL?api-version=2020-06-01",
+        "query": "{nextLink:nextLink,items:value[].{id:id,type:type,ttl:properties.ttl,aRecords:properties.aRecords[].ipv4Address,cnameRecord:properties.cnameRecord.cname}}",
+        "data": {
+          "items": [
+            {
+              "aRecords": null,
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.table.core.windows.net/SOA/@",
+              "ttl": 3600,
+              "type": "Microsoft.Network/privateDnsZones/SOA"
+            },
+            {
+              "aRecords": [
+                "10.20.0.5"
+              ],
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.table.core.windows.net/A/fotoademosteastus2",
+              "ttl": 10,
+              "type": "Microsoft.Network/privateDnsZones/A"
+            }
+          ],
+          "nextLink": null
+        }
+      },
+      "links": {
+        "startedUtc": "2026-10-20T01:10:55.4384246Z",
+        "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.table.core.windows.net/virtualNetworkLinks?api-version=2020-06-01",
+        "query": "{nextLink:nextLink,items:value[].{id:id,vnetId:properties.virtualNetwork.id,registrationEnabled:properties.registrationEnabled,state:properties.virtualNetworkLinkState}}",
+        "data": {
+          "items": [
+            {
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.table.core.windows.net/virtualNetworkLinks/link-fotoa-demo-vnet-eastus2",
+              "registrationEnabled": false,
+              "state": "Completed",
+              "vnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2"
+            }
+          ],
+          "nextLink": null
+        }
+      }
+    },
+    {
+      "zoneId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net",
+      "records": {
+        "startedUtc": "2026-10-20T01:11:01.0354041Z",
+        "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net/ALL?api-version=2020-06-01",
+        "query": "{nextLink:nextLink,items:value[].{id:id,type:type,ttl:properties.ttl,aRecords:properties.aRecords[].ipv4Address,cnameRecord:properties.cnameRecord.cname}}",
+        "data": {
+          "items": [
+            {
+              "aRecords": null,
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net/SOA/@",
+              "ttl": 3600,
+              "type": "Microsoft.Network/privateDnsZones/SOA"
+            },
+            {
+              "aRecords": [
+                "10.20.0.4"
+              ],
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net/A/fotoa-demo-kv-eastus2",
+              "ttl": 10,
+              "type": "Microsoft.Network/privateDnsZones/A"
+            },
+            {
+              "aRecords": [
+                "10.20.0.4"
+              ],
+              "cnameRecord": null,
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net/A/fotoa-dev-kv-eastus2",
+              "ttl": 10,
+              "type": "Microsoft.Network/privateDnsZones/A"
+            }
+          ],
+          "nextLink": null
+        }
+      },
+      "links": {
+        "startedUtc": "2026-10-20T01:11:06.2436592Z",
+        "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net/virtualNetworkLinks?api-version=2020-06-01",
+        "query": "{nextLink:nextLink,items:value[].{id:id,vnetId:properties.virtualNetwork.id,registrationEnabled:properties.registrationEnabled,state:properties.virtualNetworkLinkState}}",
+        "data": {
+          "items": [
+            {
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net/virtualNetworkLinks/link-fotoa-demo-vnet-eastus2",
+              "registrationEnabled": false,
+              "state": "Completed",
+              "vnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2"
+            },
+            {
+              "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net/virtualNetworkLinks/link-fotoa-dev-vnet-eastus2",
+              "registrationEnabled": false,
+              "state": "Completed",
+              "vnetId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-dev-vnet-eastus2"
+            }
+          ],
+          "nextLink": null
+        }
+      }
+    }
+  ],
+  "roles": {
+    "startedUtc": "2026-10-20T01:11:11.5469289Z",
+    "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Authorization/roleAssignments?api-version=2022-04-01",
+    "query": "{nextLink:nextLink,items:value[].{id:id,type:type,scope:properties.scope,principalId:properties.principalId,roleDefinitionId:properties.roleDefinitionId}}",
+    "data": {
+      "items": [
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2/providers/Microsoft.Authorization/roleAssignments/9881514f-8952-53b2-94cd-63fbb7ae35cb",
+          "principalId": "c2bd8fe0-3cd9-4548-b0bf-5f17e8f50ee6",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/4633458b-17de-408a-b874-0445c86b69e6",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.EventHub/namespaces/fotoa-demo-ehns-eastus2/providers/Microsoft.Authorization/roleAssignments/80a59f27-5a53-5eff-b5ed-0ccb8f664457",
+          "principalId": "34e9edde-18e4-4cca-b109-7364de41fa76",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/a638d3c7-ab3a-418d-83e6-5f17a39d4fde",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.EventHub/namespaces/fotoa-demo-ehns-eastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2/providers/Microsoft.Authorization/roleAssignments/7ea41a44-ae18-54bc-a91b-59a6365e7ad7",
+          "principalId": "34e9edde-18e4-4cca-b109-7364de41fa76",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/974c5e8b-45b9-4653-ba55-5f855dd0fb88",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2/providers/Microsoft.Authorization/roleAssignments/085c2d5b-080a-5612-a460-a017dc18d9fd",
+          "principalId": "34e9edde-18e4-4cca-b109-7364de41fa76",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2/providers/Microsoft.Authorization/roleAssignments/1b5d2b42-eed9-5221-bdd4-eea897a54624",
+          "principalId": "34e9edde-18e4-4cca-b109-7364de41fa76",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/4633458b-17de-408a-b874-0445c86b69e6",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2/providers/Microsoft.Authorization/roleAssignments/f0451e43-1ad8-5b66-b171-2e09b4d1bfa3",
+          "principalId": "34e9edde-18e4-4cca-b109-7364de41fa76",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2/providers/Microsoft.Authorization/roleAssignments/73cfef39-b9cd-451a-90e4-a1f1cefd8ab4",
+          "principalId": "870a7333-021b-4596-bd6a-39f8729c7eb7",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-dev-kv-eastus2/providers/Microsoft.Authorization/roleAssignments/b72f6eae-6ac5-5d4b-bd65-7798c41d3b1e",
+          "principalId": "031d58a3-0421-4ff1-abaf-1fe76d7c1491",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/4633458b-17de-408a-b874-0445c86b69e6",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-dev-kv-eastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-dev-kv-eastus2/providers/Microsoft.Authorization/roleAssignments/f53975f8-52fb-5047-89c6-94b31035b7f6",
+          "principalId": "84fc99cb-f96f-4715-81ab-7a40e17cdd89",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/4633458b-17de-408a-b874-0445c86b69e6",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-dev-kv-eastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoadevsteastus2/providers/Microsoft.Authorization/roleAssignments/6ff508ed-20e8-58c6-91e1-9457dd6b23da",
+          "principalId": "84fc99cb-f96f-4715-81ab-7a40e17cdd89",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoadevsteastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoadevsteastus2/providers/Microsoft.Authorization/roleAssignments/0a47f6e5-fa87-53db-bd67-4c6ebebeeaf3",
+          "principalId": "84fc99cb-f96f-4715-81ab-7a40e17cdd89",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoadevsteastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoadevsteastus2/providers/Microsoft.Authorization/roleAssignments/fb1824dd-d235-5d6b-9fca-5db9250883f3",
+          "principalId": "84fc99cb-f96f-4715-81ab-7a40e17cdd89",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/974c5e8b-45b9-4653-ba55-5f855dd0fb88",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoadevsteastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.EventHub/namespaces/fotoa-dev-ehns-eastus2/providers/Microsoft.Authorization/roleAssignments/5ea7a1e3-8e65-5fba-9c58-4c243d1356d6",
+          "principalId": "84fc99cb-f96f-4715-81ab-7a40e17cdd89",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/a638d3c7-ab3a-418d-83e6-5f17a39d4fde",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.EventHub/namespaces/fotoa-dev-ehns-eastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2/providers/Microsoft.Authorization/roleAssignments/d320392a-35a3-4f59-8a6d-ebed728fa6c4",
+          "principalId": "870a7333-021b-4596-bd6a-39f8729c7eb7",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/00482a5a-887f-4fb3-b363-3b7fe8e74483",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Authorization/roleAssignments/bd5d9641-9683-410f-8558-1bb2bf13c3f2",
+          "principalId": "8a0e3ab9-ceea-439d-91b0-62a64f60174d",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Compute/virtualMachines/FOTOA-VALIDATION-VM-EASTUS2/providers/Microsoft.Authorization/roleAssignments/789ff787-8b9e-4eb6-8978-871f19596f0a",
+          "principalId": "64c0b8ce-7e6c-4875-a2cb-82552efc0376",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/b86a8fe4-44ce-4948-aee5-eccb2c155cd7",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/FOTOA-DEMO-RG/providers/Microsoft.Compute/virtualMachines/FOTOA-VALIDATION-VM-EASTUS2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.EventHub/namespaces/fotoa-demo-ehns-eastus2/providers/Microsoft.Authorization/roleAssignments/27c683e5-b400-4b1e-9234-89e40fde2198",
+          "principalId": "64c0b8ce-7e6c-4875-a2cb-82552efc0376",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/2b629674-e913-4c01-ae53-ef4638d8f975",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.EventHub/namespaces/fotoa-demo-ehns-eastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2/providers/Microsoft.Authorization/roleAssignments/3a18fadf-ac21-4c97-a119-578b503a25c7",
+          "principalId": "64c0b8ce-7e6c-4875-a2cb-82552efc0376",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/4633458b-17de-408a-b874-0445c86b69e6",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2/providers/Microsoft.Authorization/roleAssignments/f131d63c-f2ac-4c27-a26d-272984beb7b7",
+          "principalId": "64c0b8ce-7e6c-4875-a2cb-82552efc0376",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/b86a8fe4-44ce-4948-aee5-eccb2c155cd7",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.CognitiveServices/accounts/fotoa-demo-foundry-eastus2/projects/fotoa-demo-fproj-eastus2/providers/Microsoft.Authorization/roleAssignments/d0fde3a2-ad6a-5c15-9a6b-cda98f114d87",
+          "principalId": "64c0b8ce-7e6c-4875-a2cb-82552efc0376",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/53ca6127-db72-4b80-b1b0-d745d6d5456d",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.CognitiveServices/accounts/fotoa-demo-foundry-eastus2/projects/fotoa-demo-fproj-eastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.CognitiveServices/accounts/fotoa-demo-foundry-eastus2/providers/Microsoft.Authorization/roleAssignments/1cdfd9ff-2214-5131-851c-e6f8386b5008",
+          "principalId": "650c8a38-543b-4a9b-b497-4d4f2f19c4d2",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/53ca6127-db72-4b80-b1b0-d745d6d5456d",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.CognitiveServices/accounts/fotoa-demo-foundry-eastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademoevalstc81fda52/providers/Microsoft.Authorization/roleAssignments/67c653b6-a94c-5e38-bea6-29fc5f341039",
+          "principalId": "650c8a38-543b-4a9b-b497-4d4f2f19c4d2",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademoevalstc81fda52",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Insights/components/fotoa-demo-appi-eastus2/providers/Microsoft.Authorization/roleAssignments/2435209a-e11a-5253-8337-73f0a5b26b33",
+          "principalId": "64c0b8ce-7e6c-4875-a2cb-82552efc0376",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/3913510d-42f4-4e42-8a64-420c390055eb",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Insights/components/fotoa-demo-appi-eastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2/providers/Microsoft.Authorization/roleAssignments/4379b4c6-f1fb-4e10-8070-21fbb5cc438f",
+          "principalId": "870a7333-021b-4596-bd6a-39f8729c7eb7",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/21090545-7ca7-4776-b22c-e363652d74d2",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2/providers/Microsoft.Authorization/roleAssignments/affd2a7d-7dee-4433-8475-352439a28b68",
+          "principalId": "870a7333-021b-4596-bd6a-39f8729c7eb7",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/4633458b-17de-408a-b874-0445c86b69e6",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2/blobServices/default/containers/genai-correlation/providers/Microsoft.Authorization/roleAssignments/c62dca6e-56bf-5821-b41d-9130ede91092",
+          "principalId": "34e9edde-18e4-4cca-b109-7364de41fa76",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/c0ddffa6-6772-585e-89e1-28c7b882ee37",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2/blobServices/default/containers/genai-correlation",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Authorization/roleAssignments/284c01ff-e8c9-437a-a296-b52cebdb5b7c",
+          "principalId": "870a7333-021b-4596-bd6a-39f8729c7eb7",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/18d7d88d-d35e-4fb5-a5c3-7773c20a72d9",
+          "scope": "/",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Authorization/roleAssignments/dbf2ed09-75d0-4375-a250-8b418b9f45ee",
+          "principalId": "870a7333-021b-4596-bd6a-39f8729c7eb7",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Authorization/roleAssignments/ad45ea3c-d9ec-4fd6-95d9-5a43c8679b13",
+          "principalId": "2e3435ab-4b64-4377-bd54-fa088befa86f",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/18d7d88d-d35e-4fb5-a5c3-7773c20a72d9",
+          "scope": "/",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Authorization/roleAssignments/c3570739-ef0a-4d33-bac4-03a4152a2519",
+          "principalId": "2e3435ab-4b64-4377-bd54-fa088befa86f",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/c6212380-354d-403c-b80e-bd6fcef0cfc5",
+          "principalId": "870a7333-021b-4596-bd6a-39f8729c7eb7",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/add7eba6-b2f6-4d1a-b64d-bb6e20e3721c",
+          "principalId": "2e3435ab-4b64-4377-bd54-fa088befa86f",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/f10726ab-89fe-484f-932b-32847e7045df",
+          "principalId": "4bad9789-3565-4292-92a0-90b45de63f72",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/3e32f547-e2df-4fc6-87a7-43064950c35e",
+          "principalId": "e0f87e73-18fa-456e-b8e2-dea9df29974d",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/f7c87a2c-8837-4811-a17b-e128a1128fd6",
+          "principalId": "922700f0-6bf4-4f6c-aa11-3f8b03d75881",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/0f641de8-0b88-4198-bdef-bd8b45ceba96",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/eff1f896-0fec-415e-bbdb-9da3991e4d93",
+          "principalId": "922700f0-6bf4-4f6c-aa11-3f8b03d75881",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/1e241071-0855-49ea-94dc-649edcd759de",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/ce7ca4e8-213e-4a3e-bec5-aed8df40a605",
+          "principalId": "d4b97735-cd50-49bf-926c-769df3cefa09",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/d5a2ae44-610b-4500-93be-660a0c5f5ca6",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/c81c52bd-246d-423b-81ce-92196261d163",
+          "principalId": "d4b97735-cd50-49bf-926c-769df3cefa09",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/5e93ba01-8f92-4c7a-b12a-801e3df23824",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/61237b1f-20df-fbb3-e5bf-a3fd94049f7c",
+          "principalId": "cd558709-50b3-4440-bb71-2d0a8414a59b",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/1e7ca9b1-60d1-4db8-a914-f2ca1ff27c40",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/a2318abd-fd89-4c8e-9275-d3895a43cdbe",
+          "principalId": "ffaac8be-703f-464a-bafc-bbd38aac5767",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/d24ecba3-c1f4-40fa-a7bb-4588a071e8fd",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/92196791-ea18-48c8-a86f-19b49c2b3af5",
+          "principalId": "96765407-d120-454f-8039-b9758a565f5a",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/2356a929-cb48-4c6b-ab33-4997fd6908f3",
+          "principalId": "b44a1b77-d6fa-4264-8bae-5c9d537e8327",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8480c0f0-4509-4229-9339-7c10018cb8c4",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/f4b4527d-433f-4870-8891-3079fb3bc9be",
+          "principalId": "b44a1b77-d6fa-4264-8bae-5c9d537e8327",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/d5a2ae44-610b-4500-93be-660a0c5f5ca6",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/40940d71-e782-4e45-9f3d-841a5c9849b4",
+          "principalId": "cd558709-50b3-4440-bb71-2d0a8414a59b",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/2a2b9908-6ea1-4ae2-8e65-a410df84e7d1",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/feab79e6-5558-4cea-9769-8aaec1bf512b",
+          "principalId": "5f3cb102-a94b-491a-b635-37e08c01e7ba",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/9980e02c-c2be-4d73-94e8-173b1dc7cf3c",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/0a41b219-1695-4566-acdd-a9b179b3d02b",
+          "principalId": "cd558709-50b3-4440-bb71-2d0a8414a59b",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/b8eda974-7b85-4f76-af95-65846b26df6d",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/9530bed2-e1ab-413b-b06f-3b6091552c76",
+          "principalId": "5f3cb102-a94b-491a-b635-37e08c01e7ba",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/f1a07417-d97a-45cb-824c-7a7467783830",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/38eaa887-1bfa-47c0-aab4-583012082ca7",
+          "principalId": "5f3cb102-a94b-491a-b635-37e08c01e7ba",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/144c8ada-216e-4187-85d6-9b05b496e6a3",
+          "principalId": "870a7333-021b-4596-bd6a-39f8729c7eb7",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/53ca6127-db72-4b80-b1b0-d745d6d5456d",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/4d6e1908-60ac-4c96-9319-026d9d88bb7d",
+          "principalId": "cd558709-50b3-4440-bb71-2d0a8414a59b",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/0b6ca2e8-2cdc-4bd6-b896-aa3d8c21fc35",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/1ecf41ce-f12e-4216-b8ae-058961daf729",
+          "principalId": "93013469-7059-409d-ba2a-9515bf662565",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/78103b52-1506-4995-b76a-299337fa03a4",
+          "principalId": "b44a1b77-d6fa-4264-8bae-5c9d537e8327",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/6f91a4f9-10ee-4b95-b8cd-96ee73c5968d",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/51f674fc-89ac-44b8-968d-20a38ae6d37e",
+          "principalId": "b44a1b77-d6fa-4264-8bae-5c9d537e8327",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/68ac31b4-936a-4046-a6d2-ba6f8a757bf6",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/ae43746d-c33e-47e5-8f04-baa3e7772594",
+          "principalId": "0c933a43-ccdc-4060-b867-8cfe5e6261bf",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/33fcfb78-fc37-4225-88df-40f790eed7d4",
+          "principalId": "ab7ce1e2-7f0e-4223-82da-ce2045991a1f",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/4442d3bc-2ee5-4352-80d7-9822bdaaa00c",
+          "principalId": "b585a792-988a-4d88-a594-18ba64d467e1",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/fb682a68-692f-4d62-834d-8e34851a14c7",
+          "principalId": "8b400d1b-4ff8-4c03-bbc6-c49c1b4379f2",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/915bf9c3-49d7-4320-aa44-da25acc4b3d0",
+          "principalId": "d4b97735-cd50-49bf-926c-769df3cefa09",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/c5c82243-e78e-43f9-8428-793bba85b28e",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleAssignments/89435ebf-04c6-4c93-ac71-6d735f47d031",
+          "principalId": "b44a1b77-d6fa-4264-8bae-5c9d537e8327",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/c5c82243-e78e-43f9-8428-793bba85b28e",
+          "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/a49c9425-dfd3-4161-aa7b-28d7bbb58bde",
+          "principalId": "e0f87e73-18fa-456e-b8e2-dea9df29974d",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/93b6b3f2-22d5-4275-b471-a90955874d35",
+          "principalId": "2e3435ab-4b64-4377-bd54-fa088befa86f",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/85dfadd2-db10-4ce7-90d5-37df94ecd705",
+          "principalId": "4bad9789-3565-4292-92a0-90b45de63f72",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/108bb667-72da-5620-8ead-8ddc9fdafdbd",
+          "principalId": "de990fb8-1e19-47b8-b78b-3cd9ceb9604c",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/7f3591d2-be5d-5db0-90a5-087079601cb4",
+          "principalId": "a0c2dc56-87c1-44ca-b5fd-4b5b297888cb",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/42747e75-1589-47db-8459-6b3344c7997c",
+          "principalId": "baae935c-1371-4e55-9362-30f11a4edb9f",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/4f19e02f-a38d-4517-94b1-2ae4bd85d2e2",
+          "principalId": "2e3435ab-4b64-4377-bd54-fa088befa86f",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/18d7d88d-d35e-4fb5-a5c3-7773c20a72d9",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/157b409f-efc5-52a0-b75b-366f968d12b8",
+          "principalId": "1d9c97d3-e09b-4cfe-a977-4fc2fd5974dd",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/91c39664-0cac-5a9a-963e-847ed2a4219d",
+          "principalId": "ca027d7c-227b-4b7e-a009-b2749a0f4dbc",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/d8a2ecd9-cafe-5ba1-8f4b-b21c1fc8f627",
+          "principalId": "d7d7aeae-2b92-400a-bf6f-c3321ebb3857",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/85d86e0c-07b5-5a6f-93e4-fe6ed58d500c",
+          "principalId": "c8710a93-9aaf-4f1e-88fc-d9a5905a186f",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/c9acd902-2ee1-5f2f-830f-03926c3e1784",
+          "principalId": "b178eea7-9035-40b6-adb1-2bd825eb203e",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/e45ee266-09bb-4d85-a591-e6ab22360a5a",
+          "principalId": "eab3d958-5097-4c94-b417-091a03f34f20",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/c3507abd-9875-4d7f-b7f4-60b0843128fc",
+          "principalId": "eab3d958-5097-4c94-b417-091a03f34f20",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/18d7d88d-d35e-4fb5-a5c3-7773c20a72d9",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/83c81a83-1214-5df9-bd9e-adf8f1331acf",
+          "principalId": "670f4955-41d7-400e-b9a6-9df8768ec0e5",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/2d0fe229-e440-50ea-acc7-a0518913f516",
+          "principalId": "481515ce-ab62-41a1-9412-d1e96047c481",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/f31ea06e-9697-52af-b2f5-84acded4ae2c",
+          "principalId": "5a6d073c-a9c6-476f-ab25-c1f354d1531a",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/a6c3cf2e-34d1-5df8-9d7b-fb63678740c1",
+          "principalId": "708302ad-79cd-484c-ad51-8a9d492c1909",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/6584fc13-b5b3-5470-a8fa-461ee81b0fc9",
+          "principalId": "1a83c605-b2f5-4887-8b16-a6b0f8a10d5f",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/7e06b4d5-59c7-542e-ae6e-32186917f35c",
+          "principalId": "b3fd7776-7d70-4250-bbb7-6fda7464f9dd",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/9be77a1d-811d-50a2-8346-70462d6ea70c",
+          "principalId": "6729142c-dee0-43c0-83f0-d7b502d939d9",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/d97a40f0-2a4d-5cad-867b-c503fb77ddae",
+          "principalId": "0b038af1-e159-474a-9307-b629b147b4b2",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/87b02799-661b-4fe8-9390-6c2e6948efee",
+          "principalId": "55b727f6-fb93-4c10-8377-c5c85eecd6ca",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/cd9eb3fd-c3b2-5e9a-81a7-c79991993839",
+          "principalId": "0be20993-5fb8-4a4b-ab3a-14bd9d5bc9a6",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/c924d4c4-810e-5f13-85bd-af3f1ffcfdd1",
+          "principalId": "ce5c35b7-a5cc-49d3-96f2-588ea622bf0d",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        },
+        {
+          "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/roleAssignments/484e0973-e901-589b-866e-ea2dfb5486c9",
+          "principalId": "6c9bc69d-1ee6-42fa-bd3e-63415ca9aab7",
+          "roleDefinitionId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+          "type": "Microsoft.Authorization/roleAssignments"
+        }
+      ],
+      "nextLink": null
+    }
+  },
+  "locks": {
+    "startedUtc": "2026-10-20T01:11:17.6356664Z",
+    "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Authorization/locks?api-version=2016-09-01",
+    "query": "{nextLink:nextLink,items:value[].{id:id,level:properties.level}}",
+    "data": {
+      "items": [],
+      "nextLink": null
+    }
+  },
+  "protectedChildren": [
+    {
+      "startedUtc": "2026-10-20T01:11:23.5156615Z",
+      "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.CognitiveServices/accounts/fotoa-demo-foundry-eastus2/projects/fotoa-demo-fproj-eastus2?api-version=2025-06-01",
+      "query": "{id:id,type:type,location:location,provisioningState:properties.provisioningState,principalId:identity.principalId}",
+      "data": {
+        "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.CognitiveServices/accounts/fotoa-demo-foundry-eastus2/projects/fotoa-demo-fproj-eastus2",
+        "location": "eastus2",
+        "principalId": "650c8a38-543b-4a9b-b497-4d4f2f19c4d2",
+        "provisioningState": "Succeeded",
+        "type": "Microsoft.CognitiveServices/accounts/projects"
+      }
+    },
+    {
+      "startedUtc": "2026-10-20T01:11:31.0438573Z",
+      "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.EventHub/namespaces/fotoa-demo-ehns-eastus2/eventhubs/telemetry/consumergroups/function-transform?api-version=2024-01-01",
+      "query": "{id:id,type:type,name:name}",
+      "data": {
+        "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.EventHub/namespaces/fotoa-demo-ehns-eastus2/eventhubs/telemetry/consumergroups/function-transform",
+        "name": "function-transform",
+        "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups"
+      }
+    },
+    {
+      "startedUtc": "2026-10-20T01:11:39.8491769Z",
+      "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2/blobServices/default/containers?api-version=2023-05-01",
+      "query": "{nextLink:nextLink,items:value[].{id:id,name:name,type:type}}",
+      "data": {
+        "items": [
+          {
+            "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2/blobServices/default/containers/azure-webjobs-eventhub",
+            "name": "azure-webjobs-eventhub",
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers"
+          },
+          {
+            "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2/blobServices/default/containers/azure-webjobs-hosts",
+            "name": "azure-webjobs-hosts",
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers"
+          },
+          {
+            "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2/blobServices/default/containers/azure-webjobs-secrets",
+            "name": "azure-webjobs-secrets",
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers"
+          },
+          {
+            "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Storage/storageAccounts/fotoademosteastus2/blobServices/default/containers/genai-correlation",
+            "name": "genai-correlation",
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers"
+          }
+        ],
+        "nextLink": null
+      }
+    },
+    {
+      "startedUtc": "2026-10-20T01:11:48.1792970Z",
+      "path": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Compute/virtualMachines/fotoa-validation-vm-eastus2/instanceView?api-version=2024-07-01",
+      "query": "{powerState:statuses[?starts_with(code, `PowerState/`)].code}",
+      "data": {
+        "powerState": [
+          "PowerState/deallocated"
+        ]
+      }
+    }
+  ],
+  "completedUtc": "2026-10-20T01:11:58.5908222Z"
+}

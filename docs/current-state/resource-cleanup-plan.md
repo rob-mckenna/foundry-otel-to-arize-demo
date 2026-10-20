@@ -61,6 +61,15 @@ replay, force/purge, explicit IAM/DNS cleanup or fresh deployment occurred.
 provider-owned NICs and other exclusive dependencies; those were not authorized
 by the four-workspace approval. Fresh deployment validation remains open in #147.
 
+**Retained-network preparation, 2026-10-20 01:07–01:11 UTC:** Infra's fresh
+[metadata review and exact-ID owner decision packet](issue148-retained-network-review.md)
+finds both retained classic hub PEs Disconnected, with reciprocal exact
+provider-owned NIC links and empty DNS zone groups. The smallest proposal is
+two explicit PE deletions and their two exact automatic NIC removals only;
+no additional DNS record, zone or IAM cleanup. All 48 network IDs still exist.
+This preparation is not deletion authority; #148 remains open pending separate
+owner confirmation and execution gates.
+
 Metadata-only local execution receipts are
 `.azure-sandbox\issue148-exact-workspace-retirement.json` and
 `.azure-sandbox\issue148-preservation-comparison.json`, followed by
