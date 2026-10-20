@@ -4,6 +4,65 @@
 Execution preflight: 2026-10-20 04:26–04:33 UTC. This is management-plane
 metadata evidence, not runtime/model/content validation or retirement completion.
 
+## Definitive continuation outcome and lease release
+
+The narrowly resumed review ended at **2026-10-20T04:49:29Z**:
+**DEFINITIVE TECHNICAL STOP; RELEASE148LEASE.** No further Azure operations
+will be performed by this executor. Issue #148 and PR #152 remain open.
+Both parent DELETE submission counts remain **zero**, including the earlier
+attempt. No new intent guard was created or consumed. No NIC or other
+automatic removal was initiated.
+
+The subsequent proceed approval SHA256
+`C971F23D46D9C7033102A2F503EABA83E0E08755ADE37E82C43FD888A8C1CC5E`
+was verified alongside the unchanged original exact approval and proposal.
+It did not change the deadline, targets, effects, or policy gate.
+
+Only three additional metadata reads were performed: the exact inherited
+`sys.mfa-delete` assignment, its definition, and CLI account identity-type
+projection. All exited **0**. The assignment still enforces `DenyAction`;
+the rule still depends on the current request's authentication claims;
+the account projection still reports `user`. Normal CLI JSON did not expose
+HTTP status, so receipts explicitly record it as **not captured**, not an
+invented HTTP success/denial. No authentication token, cache, secret, or
+sign-in payload was inspected.
+
+**Exact missing technical evidence:** a trusted, nonsecret attestation bound
+to the credential actually used for the outgoing ARM DELETE, establishing
+`authnmethodsreferences` contains `mfa` **or** `acrs` contains `p1`; alternatively,
+a supported nonmutating authorization evaluation of that same request,
+including this DenyAction policy. Policy metadata exposes the predicate, not
+its request-specific inputs. Account type and RBAC permission metadata cannot
+supply them. MFA registration or sign-in history alone would not bind them to
+the outgoing request. No permitted request-bound evaluator or attestation is
+available in this execution scope. This is not evidence Azure actually denied
+a DELETE, because none was sent.
+
+An authorized operator would need that request-bound evidence, or would need
+to execute separately through an already policy-compliant authenticated
+context. This executor cannot establish the condition without leaving the
+permitted scope; **no renewed owner consent or policy bypass is requested**.
+The incomplete official workflow remains at `AddValidationSteps`;
+`azure-deploy` was not invoked.
+
+New append-only local evidence is in
+`.azure-sandbox\policy-final-20261020-v2\`. Its final no-submission receipt SHA256:
+`20A08F9CCA75839843C13012003B11CA73C578C9025863EC6213EC08C5FCA0ED`.
+The [committed continuation receipt](evidence/issue148-retained-network-policy-final-20261020.json)
+summarizes the result. All **41 exact file-hash comparisons** of snapshotted
+prior evidence, approvals, proposal, and historical-manifest files were unchanged
+during this review. The old retirement manifest's root deployment-plan digest
+already differed before this executor; the current plan was not read or changed.
+An initial local manifest check stopped on that pre-existing mismatch before
+any Azure read; the separate continuation retained that observation rather
+than rewriting the old manifest.
+
+No fresh whole-estate after snapshot was collected: the policy gate stopped
+before mutation. The earlier non-atomic baseline and exact projection
+comparisons remain historical evidence only; this continuation does **not**
+claim current resource/DNS/IAM preservation from counts, HTTP 404 completion,
+or a successful deletion. No live runtime/content/telemetry validation ran.
+
 ## Approval and exact scope
 
 Owner approval was recorded at `2026-10-20T04:23:30.5498265Z` in root
