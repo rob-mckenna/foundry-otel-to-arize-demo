@@ -12,16 +12,57 @@ the synthetic demo and not authorized by this README.
 
 ```mermaid
 flowchart LR
-    A[Foundry Prompt Agent] -->|OpenTelemetry + OpenInference| B[Agent Application Insights]
-    B --> C[Agent Log Analytics Workspace]
-    C -->|Data export| D[Event Hub]
-    D --> E["Azure Function<br/>Transform / Map"]
-    E -->|OTLP| F[Arize]
-    E -->|Operational telemetry| H[Function-health Application Insights]
-    H --> I["Function-health Log Analytics Workspace<br/>No agent export"]
+    accTitle: Foundry agent telemetry to Arize
+    accDescr: Agent telemetry passes through Azure Monitor and Event Hub to the Azure Function for validation, per-span content correlation, mapping and OTLP export to Arize. Function-health telemetry goes to separate Azure Monitor resources with no agent export.
 
-    classDef current fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
-    class A,B,C,D,E,F,H,I current;
+    subgraph FOUNDRY["1. Microsoft Foundry"]
+        A("Prompt Agent<br/>OpenTelemetry + OpenInference")
+    end
+
+    subgraph MONITOR["2. Azure Monitor & transport"]
+        direction TB
+        B("Agent<br/>Application Insights")
+        C("Agent<br/>Log Analytics")
+        D("Event Hub")
+        B --> C -->|Data export| D
+    end
+
+    subgraph TRANSFORM["3. Transform & deliver"]
+        E("Azure Function<br/><br/>Validate & correlate<br/>Map & export")
+    end
+
+    subgraph ARIZE["4. Arize"]
+        F("Traces & spans<br/>LLM inputs, outputs & tokens")
+    end
+
+    subgraph HEALTH["Function health - Azure Monitor only"]
+        direction TB
+        H("Application Insights")
+        I("Log Analytics<br/>No agent export")
+        H --> I
+    end
+
+    A --> MONITOR
+    MONITOR -->|Event Hub batch| E
+    E -->|OTLP| F
+    E -->|Operational telemetry| HEALTH
+
+    classDef agent fill:#e8daef,stroke:#5c2d91,color:#000,stroke-width:2px;
+    classDef azure fill:#cfe4fa,stroke:#0078d4,color:#000,stroke-width:2px;
+    classDef function fill:#fff4ce,stroke:#c45100,color:#000,stroke-width:3px,font-size:18px,font-weight:bold;
+    classDef destination fill:#d3f3ef,stroke:#0c756f,color:#000,stroke-width:2px;
+    classDef health fill:#f3f2f1,stroke:#605e5c,color:#000,stroke-width:1px;
+    class A agent;
+    class B,C,D azure;
+    class E function;
+    class F destination;
+    class H,I health;
+
+    style FOUNDRY fill:#fff,stroke:#c8c6c4,color:#000
+    style MONITOR fill:#fff,stroke:#c8c6c4,color:#000
+    style TRANSFORM fill:#fff,stroke:#c45100,color:#000,stroke-width:2px
+    style ARIZE fill:#fff,stroke:#c8c6c4,color:#000
+    style HEALTH fill:#fff,stroke:#c8c6c4,color:#000
 ```
 
 Agent telemetry follows the solid-line pipeline to Arize. Function-health telemetry
