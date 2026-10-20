@@ -12,6 +12,8 @@ module custody 'modules/app-insights-secret.bicep' = {
     vaultName: 'fotoa-demo-kv-eastus2'
     secretName: 'fotoa147-appinsights-connection-string'
     componentResourceId: component.id
+    // Auditable first-allocation expiry: 2026-11-20T10:15:00Z.
+    expirationEpochSeconds: 1795169700
     environment: 'demo'
     ownerTag: 'infra-team'
     costCenterTag: 'demo-engineering'

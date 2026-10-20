@@ -1,5 +1,7 @@
 {
   "schemaVersion": 1,
+  "supersededBy": "issue147-policy-review-complete.json",
+  "historicalOnly": true,
   "status": "STOPPED_PLANNED_AUDIT_NONCOMPLIANCE_NOT_PROVIDER_DENIAL",
   "workerId": "be151a91-97b7-4d74-a132-0dc5cd8a90e9",
   "uniqueDescription": "⚙️ Infra: Finish bound policy validation",

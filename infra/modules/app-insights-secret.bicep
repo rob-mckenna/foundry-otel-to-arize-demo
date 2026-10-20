@@ -7,6 +7,10 @@ param secretName string
 @description('Exact source component binding, not its connection material.')
 param componentResourceId string
 
+@description('Required fixed expiration as Unix epoch seconds; supplied by the allocation owner.')
+@minValue(1)
+param expirationEpochSeconds int
+
 @secure()
 @minLength(1)
 param connectionString string
@@ -26,6 +30,7 @@ resource routingSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
     contentType: 'application/x-application-insights-connection-string'
     attributes: {
       enabled: true
+      exp: expirationEpochSeconds
     }
   }
 }

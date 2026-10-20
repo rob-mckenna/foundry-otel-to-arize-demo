@@ -1,5 +1,20 @@
 # Fresh modern foundation — readiness and acceptance packet (#147)
 
+**2026-10-20 Infra complete policy followup:** the one-time NEW routing secret
+now has fixed expiration **2026-11-20T10:15:00Z** (1795169700); the reusable
+secure sink requires a typed expiration with no default. All five pinned
+helper checks pass for revised bytes. The [complete classified review](issue147-policy-review-complete.json)
+covers 12 inherited assignments / 7 initiatives / 335 references / 323 unique
+definitions, with none unclassified. It finds **four planned Audit gaps**:
+resource diagnostic settings on the new Foundry account, Event Hub namespace
+and Function, plus the accepted container-local custom role. Two inherited
+DeployIfNotExists rules also route Foundry/Function diagnostics to an existing
+WestUS2 governance LAW, outside the accepted graph/cost envelope. These are
+consolidated policy/scope blockers, not provider Deny. Existing vault/VNet
+audit findings remain out of scope; conditional write-MFA is not an observed
+failure. **Approved PREPARATION / partial validation; NOT Validated.**
+No cloud mutations, secret operations, lease use, deployment or live acceptance.
+
 **2026-10-20 existing-network correction:** the
 [concrete fresh-application proposal](issue147-existing-network-proposal.md)
 supersedes the disconnected-new-VNet blocker and missing-name/profile gaps.

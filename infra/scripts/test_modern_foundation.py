@@ -475,6 +475,18 @@ class CompiledModernFoundationTests(unittest.TestCase):
         self.assertNotIn("listSecrets", json.dumps(bootstrap))
         self.assertNotIn("Microsoft.Authorization/", json.dumps(bootstrap))
 
+    def test_issue147_bootstrap_requires_fixed_expiration_without_clock_default(self):
+        bootstrap = compile_bicep("infra/issue147-app-insights-bootstrap.bicep")
+        custody = module(bootstrap, "issue147-new-routing-custody")
+        sink = custody["properties"]["template"]
+        expiration = sink["parameters"]["expirationEpochSeconds"]
+        self.assertEqual(expiration["type"], "int")
+        self.assertNotIn("defaultValue", expiration)
+        self.assertEqual(custody["properties"]["parameters"]["expirationEpochSeconds"]["value"], 1795169700)
+        secret, = resources(sink)
+        self.assertEqual(secret["properties"]["attributes"]["exp"], "[parameters('expirationEpochSeconds')]")
+        self.assertNotIn("utcNow", json.dumps(bootstrap))
+
     def test_issue147_subscription_wrapper_binds_exact_profile_and_bootstrap_after_foundation(self):
         wrapper = compile_bicep("infra/issue147-first-allocation.bicep")
         self.assertIn("subscriptionDeploymentTemplate", wrapper["$schema"])
