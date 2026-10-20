@@ -30,7 +30,7 @@ GenAI correlation decision. ADR-0004 governs modern foundation/retirement,
 not ancillary acceptance. This new number avoids rewriting either decision.
 
 The [reconciliation and operator packet](../current-state/private-storage-and-windows-jumpbox.md)
-records metadata, exact receipt bindings, costs in conflict and remaining gates.
+records metadata, exact receipt bindings, itemized costs/provenance and remaining gates.
 
 ## Decision
 
@@ -68,11 +68,28 @@ dataset, completed five-case upload, service-side route or evaluation.
 - **Observability considerations:** None to span IDs, parent/correlation IDs,
   tokens or telemetry mapping. Navigation/registration is not delivery proof.
   Preserve ambiguous sends, ledger/checkpoint/ACK/quarantine state without replay.
-- **Trade-offs accepted:** retained disk/NAT/storage incur persistent costs while
-  deallocated. The user-approved USD 53.42/month ceiling conflicts with a historical
-  receipt's USD 63.42 figure and additional Servers P2 claim; do not silently
-  promote that historical claim into new approval.
+- **Trade-offs documented, not newly accepted:** retained disk/NAT/storage incur
+  persistent costs while deallocated. Original $53.4184 rounds to the authorized
+  $53.42/month; historical $63.4184 adds a $10 **Storage Defender** allowance,
+  not Servers P2. Current 128-GiB Standard_LRS/HDD metadata contradicts historical
+  E10 SSD, lowering the disk planning line from $9.60 to $5.888. Public calculator
+  basis yields **$59.4884/month** (or $59.7064 using the historical $10 allowance),
+  before variables; this still exceeds $53.42. Public compute $0.188/hour plus
+  indicative P2 $0.02/node-hour gives $0.208/hour, not a verified contract charge.
+  Retail P2 $0.006849/workload-unit-hour has an **unknown per-VM multiplier**.
+  Closed-plan/receipt claims of expanded consent are secondary prose, not
+  independent primary authority. No higher ceiling or protection disablement
+  is recommended or authorized; actual invoice/protection scope remain unknown.
+- **Prerequisites discovered:** existing same-VNet Developer Bastion/NAT,
+  subnet NSG private TCP3389 allow then other-inbound deny, no VM public IP,
+  Approved Blob/Foundry PEs and linked DNS, project MI's account-scoped Blob
+  Contributor, private/keyless services, inherited VM P2 and configured storage
+  scanning. Windows VM has **no MI**; human identity is separate. Trusted Launch
+  and MDE extension provisioning are confirmed, not guest protection health.
+  Both NIC effective-view reads failed without a VM start; configured rules/routes
+  are not fresh effective-table or runtime-connectivity proof.
 - **Open questions:** affected-track agreement; exact operating window and maximum
-  running hours; named human custodian; current private access/routing acceptance;
-  reconciled cost authority; supported service-side pending-upload/BYOS contract
+  running hours; named human custodian/access; untested current runtime access;
+  primary cost authority within the original envelope, actual invoice/protection
+  scope and workload-unit conversion; supported service-side pending-upload/BYOS contract
   and safe disposition of unknown pending state. #138 stays open.
