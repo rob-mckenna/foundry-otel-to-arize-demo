@@ -14,6 +14,15 @@ The local Prompt Agent client is still a synthetic stub, not a live SDK backend.
 
 ## Three operations — never substitute one for another
 
+For #153 existing-Function health isolation, use only the additive
+[`pipeline-health-rollout.bicep`](pipeline-health-rollout.bicep) and the approval-gated
+[exact cutover/resource/cost manifest](../docs/current-state/pipeline-health-cutover.md).
+It creates a dedicated non-exported health LAW/component plus ARM-custodied KV
+secret, not a new foundation. The reusable Function module now composes this
+separate health sink; agent tracing and native export remain unchanged.
+No #153 live cutover is claimed. Old rollback identifiers, private runtime/package
+verification and external diagnostic no-feedback evidence remain prerequisites.
+
 | Operation | Entrypoint / ownership | Scope |
 |---|---|---|
 | Fresh | `main.bicep` | New, explicitly approved identities in a fresh RG. Owns foundation, private graph and pipeline state/export. Never apply to the mixed live RG. |

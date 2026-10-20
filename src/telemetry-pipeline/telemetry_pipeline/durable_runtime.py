@@ -13,12 +13,14 @@ from azure.storage.blob import BlobServiceClient
 from .durable import Correlator, Scope
 from .durable_store import AdmissionError, BlobLedger
 from .strict_sender import StrictSender
+from .source_policy import SourcePolicy
 
 CONTAINER = "genai-correlation"
 
 
 class DurableRuntime:
     def __init__(self):
+        policy = SourcePolicy.from_environment()
         required = (
             "DURABLE_ALLOWED_WORKSPACE_ID", "DURABLE_ALLOWED_COMPONENT_RESOURCE_ID",
             "DURABLE_ARIZE_PROJECT", "ARIZE_OTLP_ENDPOINT", "ARIZE_SPACE_ID",
@@ -72,7 +74,9 @@ class DurableRuntime:
                 uri, credential=credential, logging_enable=False,
                 connection_timeout=10, read_timeout=10, retry_total=2,
             ))
-            self.correlator = Correlator(BlobLedger(service.get_container_client(CONTAINER)), scope)
+            self.correlator = Correlator(
+                BlobLedger(service.get_container_client(CONTAINER)), scope, policy=policy,
+            )
         except (ValueError, AdmissionError, AzureError):
             self._stack.close()
             raise AdmissionError("durable_initialization_failure") from None

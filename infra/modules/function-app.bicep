@@ -32,8 +32,17 @@ param privateDnsZoneResourceIds privateDnsZoneIds
 @description('Immutable ZIP blob name under private function-packages in host storage. Upload separately; no SAS or remote-build fallback.')
 @minLength(1)
 param functionPackageBlobName string
-param appInsightsConnectionStringSecretName string = 'appinsights-connection-string'
-param extraKeyVaultReferenceAppSettings { settingName: string, secretName: string }[] = []
+param functionHealthConnectionStringSecretName string = 'function-health-connection-string'
+@minValue(30)
+@maxValue(90)
+param functionHealthRetentionInDays int = 30
+@minValue(1)
+@maxValue(10)
+param functionHealthDailyQuotaGb int = 1
+param extraKeyVaultReferenceAppSettings {
+  settingName: 'ARIZE_OTLP_ENDPOINT' | 'ARIZE_SPACE_ID' | 'ARIZE_API_KEY'
+  secretName: string
+}[] = []
 @description('Container preparation only; fresh main sets true. Never enables runtime/cutover.')
 param prepareDurableGenAIContainer bool = false
 
@@ -41,6 +50,22 @@ var storageAccountName = toLower(replace(buildResourceName(projectToken, environ
 var hostingPlanName = buildResourceName(projectToken, environment, 'plan', regionToken)
 var functionAppName = buildResourceName(projectToken, environment, resourceTypeTokens.functionApp, regionToken)
 var requiredTags = buildRequiredTags(environment, ownerTag, costCenterTag, 'synthetic')
+
+module functionHealth 'function-health.bicep' = {
+  name: 'function-health'
+  params: {
+    projectToken: projectToken
+    environment: environment
+    location: location
+    regionToken: regionToken
+    ownerTag: ownerTag
+    costCenterTag: costCenterTag
+    keyVaultName: keyVaultName
+    functionHealthConnectionStringSecretName: functionHealthConnectionStringSecretName
+    retentionInDays: functionHealthRetentionInDays
+    dailyQuotaGb: functionHealthDailyQuotaGb
+  }
+}
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: storageAccountName
@@ -147,8 +172,12 @@ var baseAppSettings = [
   { name: 'WEBSITE_RUN_FROM_PACKAGE_BLOB_MI_RESOURCE_ID', value: 'SystemAssigned' }
   {
     name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-    value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/${appInsightsConnectionStringSecretName}/)'
+    value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/${functionHealthConnectionStringSecretName}/)'
   }
+]
+var sourceExclusionAppSettings = [
+  { name: 'PIPELINE_EXCLUDED_SERVICE_NAMES', value: string([functionAppName]) }
+  { name: 'PIPELINE_EXCLUDED_COMPONENT_RESOURCE_IDS', value: string([functionHealth.outputs.healthComponentResourceId]) }
 ]
 var extraAppSettings = [for setting in extraKeyVaultReferenceAppSettings: {
   name: setting.settingName
@@ -174,7 +203,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
       ftpsState: 'Disabled'
       minTlsVersion: '1.2'
       scmMinTlsVersion: '1.2'
-      appSettings: concat(baseAppSettings, extraAppSettings)
+      appSettings: concat(baseAppSettings, sourceExclusionAppSettings, extraAppSettings)
     }
   }
   dependsOn: [
@@ -250,3 +279,5 @@ output hostingPlanResourceId string = hostingPlan.id
 output isPremiumHostingPlan bool = true
 output genAICorrelationContainerResourceId string = prepareDurableGenAIContainer ? genAICorrelationContainer!.id : ''
 output privateEndpointResourceIds array = storagePrivateEndpoints.outputs.privateEndpointResourceIds
+output functionHealthWorkspaceResourceId string = functionHealth.outputs.healthWorkspaceResourceId
+output functionHealthComponentResourceId string = functionHealth.outputs.healthComponentResourceId

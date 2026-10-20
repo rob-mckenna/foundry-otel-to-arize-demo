@@ -30,6 +30,18 @@ ambiguous-send quarantine, 24h orphan cleanup and initial 48h tombstone gate.
 `DURABLE_GENAI_ENABLED` defaults to false; source publication enables neither the
 runtime feature nor native content-table export.
 
+**#153 addition: exact pipeline-health source guard (offline-tested, not deployed).**
+`PIPELINE_EXCLUDED_SERVICE_NAMES` and `PIPELINE_EXCLUDED_COMPONENT_RESOURCE_IDS`
+accept JSON arrays of exact source identities, defaulting to `[]`; malformed values
+fail explicitly. Service roles are case-sensitive; component ARM IDs are
+case-insensitive. The shared guard covers legacy export, durable admission and
+queued unsent originals. Durable `excluded` entries are content-free 48-hour
+tombstones, not successful export acknowledgments; existing delivery quarantine
+is preserved. Genuine non-LLM spans and GenAI's existing 300-second join remain.
+See [guard behavior and limitations](../../docs/current-state/pipeline-health-guard.md)
+and the separate Infra cutover runbook before configuring the Function role and
+dedicated health component. Source isolation remains the primary remedy.
+
 This directory holds the Azure Function transform/mapping code and Event Hub consumer logic for the
 telemetry pipeline:
 
@@ -59,6 +71,8 @@ four detail docs (`/docs/telemetry/mapping/*.md`, issues #89–#92):
   Data Export `{"records": [...]}` envelope) into OTel SDK `ReadableSpan` objects and exports the
   whole batch in one `exporter.export()` call (per §4's whole-batch-checkpointing recommendation),
   flagging malformed individual records rather than failing the entire batch.
+- `source_policy.py` — exact source-role/component exclusions, independent of
+  operation name, span kind, mapper fallback service or trace membership.
 - `exporter.py` — the OTLP-to-Arize export path is injected via a factory/DI seam
   (`get_default_exporter()` / `build_arize_otlp_exporter()`), mirroring
   `src/prompt-agent/prompt_agent/telemetry.py`'s `_CountingSpanExporter` pattern. No live network

@@ -27,7 +27,7 @@ def _index_tags(key: str, value: dict) -> dict[str, str]:
     if match is None:
         return {}
     tags = {"scope": match[1]}
-    if value["state"] == "acknowledged":
+    if value["state"] in ("acknowledged", "excluded"):
         tags["due"] = _due_tag(value["expires"])
     elif value["state"] in ("pending", "retry", "sending"):
         tags["due"] = _due_tag(value["scan_after"])

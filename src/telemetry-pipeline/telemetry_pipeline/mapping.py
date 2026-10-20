@@ -479,6 +479,21 @@ _SPAN_COLUMN_ALIASES = {
 }
 
 
+def source_service_name(record: Mapping[str, Any]) -> str | None:
+    """Validate role aliases without inventing the mapper's fallback service."""
+    if not isinstance(record, Mapping):
+        raise MalformedRecordError("span record must be a JSON object")
+    for key in ("AppRoleName", "cloud_RoleName"):
+        if key in record and record[key] is not None and not isinstance(record[key], str):
+            raise MalformedRecordError(f"{key} must be a string")
+    if (
+        "AppRoleName" in record and "cloud_RoleName" in record
+        and record["AppRoleName"] != record["cloud_RoleName"]
+    ):
+        raise MalformedRecordError("conflicting 'AppRoleName' and 'cloud_RoleName' values")
+    return record.get("AppRoleName", record.get("cloud_RoleName"))
+
+
 def normalize_dependency_record(record: Mapping[str, Any]) -> dict[str, Any]:
     """Accept native LAW AppDependencies/AppRequests alongside legacy fixtures.
 
@@ -487,6 +502,7 @@ def normalize_dependency_record(record: Mapping[str, Any]) -> dict[str, Any]:
     """
     if not isinstance(record, Mapping):
         raise MalformedRecordError("span record must be a JSON object")
+    source_service_name(record)
     if "Type" in record and record["Type"] not in ("AppDependencies", "AppRequests"):
         raise MalformedRecordError("only AppDependencies and AppRequests records are supported")
     normalized = dict(record)
