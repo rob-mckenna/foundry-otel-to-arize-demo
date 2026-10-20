@@ -48,8 +48,10 @@ Observation initiated **2026-10-20T16:49:03.0245964Z**, querying
 - A **separate Success aggregate confirmed 3 successful timer executions**
   (`true`, result `0`, through **16:46:00Z**). The evidence does **not** establish
   that all 9 requests were successful.
-- The same final aggregate in the agent LAW returned **zero Function-role rows**
-  after resumption. Function **Running**; both **TelemetryTransform** and
+- The final role-filtered union of **AppRequests, AppDependencies and AppTraces**
+  in the agent LAW returned **zero Function-role rows** after resumption within
+  the query window; no other LAW tables were covered by that aggregate.
+  Function **Running**; both **TelemetryTransform** and
   **DurableGenAIOutbox** indexed.
 - Final route checks at **16:46:47Z**: health LAW `dataExports=[]`, LAW
   `diagnosticSettings=[]`, health AI `diagnosticSettings=[]`. Existing agent
@@ -58,8 +60,10 @@ Observation initiated **2026-10-20T16:49:03.0245964Z**, querying
   Health AI DCR-association API returned **UnsupportedResourceType**: this is
   **not** an empty-result/no-association proof for that component.
 
-This passes the **monitoring-only bounded passive observation**, not universal
-future no-feedback, whole-trace completeness or source-guard acceptance.
+This passes the **monitoring-only bounded passive observation**. Route metadata
+supports isolation beyond the observation, but neither it nor the three-table
+aggregate is an all-tables/universal future no-feedback proof, whole-trace
+completeness claim or source-guard acceptance.
 Historical queued self-spans may still drain. Issue #153 stays open and PR #154
 stays draft because broader source/backlog guard acceptance remains incomplete.
 

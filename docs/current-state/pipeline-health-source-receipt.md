@@ -67,7 +67,9 @@ Observation initiated **2026-10-20T16:49:03.0245964Z**; query cutoff
 - Separate Success aggregate: **3 successful timer executions**
   (`true`, result `0`, through **16:46:00Z**). Do **not** infer all 9 requests
   were successful from this evidence.
-- Same final agent-LAW aggregate: **zero Function-role rows** after resumption.
+- Final role-filtered agent-LAW union of **AppRequests, AppDependencies and
+  AppTraces**: **zero Function-role rows** after resumption within the query
+  window. This aggregate did not cover other LAW tables.
   Function **Running**, both **TelemetryTransform** and **DurableGenAIOutbox**
   indexed.
 - At **16:46:47Z**, health LAW `dataExports=[]`, LAW `diagnosticSettings=[]`,
@@ -76,8 +78,9 @@ Observation initiated **2026-10-20T16:49:03.0245964Z**; query cutoff
 - Earlier health LAW DCR associations `[]`, default DCR `null`. Health AI
   DCR-association API **UnsupportedResourceType** is **not** an empty-result proof.
 
-These observations pass the narrowed monitoring-only check within this window,
-not universal future no-feedback, whole-trace completeness, or deployment/
+These observations pass the narrowed monitoring-only check within this window.
+Route metadata supports isolation beyond the observation, not an all-tables/
+universal future no-feedback proof, whole-trace completeness, or deployment/
 acceptance of the source guard. Historical queued self-spans may still drain;
 no guard retirement claim is made. #153 remains open and #154 draft because
 broader source/backlog guard acceptance remains incomplete.
