@@ -42,7 +42,7 @@
     "infra\\modules\\function-fresh-vault-reader.bicep": "feb557ccef59140298f5039916dc16f99e89db7e44e22cebdb44fa90b778c61f",
     "infra\\scripts\\invoke-issue147-official-validation.ps1": "cdd5e0153f67b964efe1ad6d43e51c4d7d40b79137cdc59f4f617b846f0c464b",
     "infra\\scripts\\issue147-validation-adapter.py": "dfe070c6b0db3884bce77b20eabcb49971be124e5c1499891dd288ac96a3c1df",
-    "infra\\scripts\\test_issue147_validation_adapter.py": "ad1538f7515e8b97888894bddd6a654afc8f76e4f90fdf1c25b9e0101e975588",
+    "infra\\scripts\\test_issue147_validation_adapter.py": "6a8cbfec343299409f46958f0fbf19dbb9730d45d613d13aa820d9ce47b9e411",
     "infra\\scripts\\test_modern_foundation.py": "af1ebbaf8d98a71d8348148a4a1f6a52f585f872962e1cb720eb18c5122466ab",
     "infra\\scripts\\validate-naming.ps1": "b3ede038eea3e769fcb272151c5122316624d0f79a45852d298d99ab2867158e",
     ".azure\\main-existing-network.compiled.json": "21f0bce95eb689cea1398b60988592b7c0aabb9190f77221e8fb16cdc0399d43",
@@ -72,7 +72,7 @@
     "infra\\modules\\function-fresh-vault-reader.bicep": "36929db4d661f9971aa0ebbef515c425f822ea5109511b748adc16996ee6764a",
     "infra\\scripts\\invoke-issue147-official-validation.ps1": "5106b25131c577cd87c518a25fb7a4055d350f84e421d0c0aef69c316371283c",
     "infra\\scripts\\issue147-validation-adapter.py": "30fabd1b2669e4210d6dd260ad8d0e9759d7f077e1a10810d86f5462984d26f2",
-    "infra\\scripts\\test_issue147_validation_adapter.py": "4a0071277ec5aa0d138463676535570fc961870e14a2bebdccea6ac87e5e9ad4",
+    "infra\\scripts\\test_issue147_validation_adapter.py": "d1b71c6cb8d9db7245c8fc3dcbc41e329628d00a85b4039d495bf6d60b0d1961",
     "infra\\scripts\\test_modern_foundation.py": "9dcaea7af19c01d4de2ad7b9adb5c9939e5963c8f2b01cb3070dceef90fc8902",
     "infra\\scripts\\validate-naming.ps1": "4f58d935e9ea2549d9f61cbc8d7e3b20397f69faf3e62d197dcb370b94eff96e"
   },

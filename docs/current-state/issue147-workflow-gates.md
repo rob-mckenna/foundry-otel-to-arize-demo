@@ -1,5 +1,83 @@
 # Issue 147 — official workflow reconciliation and residual gates
 
+## Current evidence reconciliation — 2026-10-20
+
+**STOP: planned Azure Policy Audit noncompliance; NOT officially Validated.**
+The parent accepted the reader-scope fix and secure-bootstrap staging. This
+follow-up changes no Bicep, adapter, caller, profile, compiled template or ZIP.
+It corrects the one stale test-file checkout binding and its corresponding
+canonical Git-blob binding in the allocation manifest. All **32** artifact
+bindings and **12** canonical source bindings must match exact bytes; no newline
+normalization, circular self-hash or current-HEAD substitution is permitted.
+
+Actual runtime is **be151a91-97b7-4d74-a132-0dc5cd8a90e9**, unique description
+`⚙️ Infra: Finish bound policy validation`, verified with `list_agents scope=all`
+before edits. It is not retained runtime 28f99ce7. Neither locked composition
+author was consulted. Baseline is bfe18428046d9d8654322e7cd8a4716ae8b06e99.
+
+[Actual policy receipt](issue147-policy-review.json) records 30 successful
+explicit-subscription/repository-config metadata CLI calls, UTC timestamps,
+projected-definition/initiative hashes, the actual tenant-root ancestry,
+**12 assignments / 7 initiatives**, no applicable root/subscription/descendant
+exemptions, existing vault metadata, both subnets and seven DNS zones. Azure MCP
+was unavailable; CLI was the equivalent read-only transport, not an inventory
+substitute for checking the actual condition:
+
+- Inherited `Azure_Security_Baseline`, reference `secretsExpirationSet`,
+  definition **98728c90-32c7-4049-8429-847dc0f4fe37**, resolves to **Audit**.
+- Its predicate is Key Vault secret type and missing `attributes.expiresOn`.
+  The **new** `fotoa-demo-kv-eastus2/fotoa147-appinsights-connection-string`
+  source and active compiled sink contain `attributes.enabled` only, with no
+  ARM expiration `exp` (the data-plane expiration is `expiresOn`).
+- This predicts a concrete future **Audit violation**, not a resource-admission
+  Deny, current deployed compliance-state result, or secret-value inspection.
+  The pinned recipe requires policy violations resolved before completion.
+  No expiration choice, source change or exemption is authorized here.
+- `sys.mfa-delete` is **not applicable** to this no-delete/Create-only graph.
+  Separately, actual `sys.mfa-write` checks user/MFA request-context claims;
+  future allocation claims remain unproven, without inspecting tokens or auth
+  caches. The provider analysis PASS does not prove future write authorization.
+- SecurityControl tag inheritance has a false predicate: the existing group
+  has no tags and the fresh group's exact required tags omit SecurityControl.
+  The ML-data model allowlist targets a different provider type, not this
+  Cognitive Services DataZoneStandard deployment.
+
+Review stopped at this concrete planned violation. The remaining baseline and
+governance conditions were **not exhaustively evaluated**; there is no blanket
+compliance claim or invented management-scope access denial. Parent must resolve
+the new-secret expiration condition before policy review can finish; source and
+guards were not relaxed to force a pass.
+
+The normal `azure-validate` skill was invoked. The unmodified pinned workflow
+was run first **without** `CompletedStep` (it starts at None, not a resume);
+LoadPlan and AddValidationSteps were then completed against the existing recipe.
+Its last actual completed step is **AddValidationSteps**. **RunValidation was
+not advanced**, and the worktree plan remains Approved / partial validation,
+not Validated. Workflow SHA256 is
+`d8b7512cd91b4ec3620d6a48abc1f80179630bd26add65dc0400a34e42745ff9`;
+helper SHA256 is
+`ac49678e5941f2946d8b216370e30dbd8b3451cb15652f8042bb9fad77bcb9bb`.
+Unchanged five-check/build/provider receipts below are reused, not rerun.
+**33 Create / 0 Modify / 0 Delete / 1 Unsupported** remains analysis only;
+the unsupported container assignment needs the future Function principal,
+not an authority grant or preallocation.
+
+Follow-up commands from the issue worktree:
+
+- `python -B -m unittest discover -s infra\scripts -p test_issue147_validation_adapter.py -q`
+  — **PASS, 3 tests**.
+- `python -B -m unittest discover -s tests\readiness -p test_issue147_planning.py -q`
+  — **PASS, 6 tests**.
+- The receipt includes every successful metadata argv and exact UTC/result hash;
+  early malformed management-scope/filter transport probes were corrected, not
+  interpreted as policy denials. No failed provider analysis was bypassed.
+
+No cloud CUD, secret GET/list-values/write, permission change, VM/model action,
+conditional-lease execution or new workflow/helper was performed. QA owns
+**OPEN #147; PR151 stays unmerged**. This is an exact policy-condition handoff,
+**not readiness for allocation or another inferred execution authorization**.
+The historical sections below retain their original evidence and timestamps.
+
 **Independent evaluated-graph revision (worker 28f99ce7, 2026-10-20):**
 conditional fresh-reader module isolates the nullable owned-vault name from
 ARM existing-resource evaluation. Both previously rejected authors are locked
