@@ -146,9 +146,12 @@ Never advance a step just because it prints the next instruction.
 5. Record exact commands/results/timestamps/profile/source hashes in plan
    **Section 7: Validation Proof**, address errors, then and only then set
    `Validated` and acknowledge `UpdateStatus`.
-6. Do **not** invoke deploy merely because validation passes: this request is
-   preparation-only. Later explicit authorization plus parent's mutation lease
-   is required for `azure-deploy`, fresh deployment, repeat and private/E2E run.
+6. Do **not** invoke deploy merely because validation passes. The 2026-10-20
+   receipt permits the exact minimal fresh path only if full cost/runtime/
+   identity/private-runner/custody gates genuinely pass and the parent grants
+   the exclusive mutation lease. Those prerequisites are not met; no paid
+   `azure-deploy`, repeat or private/E2E run is authorized by missing evidence.
+   This is a technical stop, not a request for renewed routine scope consent.
 
 ### Known official-helper compatibility gate
 

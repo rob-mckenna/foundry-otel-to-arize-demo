@@ -8,7 +8,7 @@ not scope. No repeated routine boundary-choice request is needed. See
 lifetime, security metadata and exact contract/private-runner/custody exceptions.
 These technical gates remain, not a blanket Standard NO-GO or a new ADR decision.
 
-**Technical disposition: NOT READY FOR APPROVAL / live acceptance.**
+**Technical disposition: NOT READY FOR EXECUTION / live acceptance.**
 **2026-10-20 scope correction:** this is a fresh-readiness hold, **not a
 technical rejection of ADR-0004's no-tool/private-client-ingress foundation**.
 Standard's BYO/injection requirements apply only if fully isolated service
