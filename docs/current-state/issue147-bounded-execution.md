@@ -183,3 +183,66 @@ SHA-256, no SAS/shared-key/public-SCM fallback. Complete dependency lock,
 publisher/private runner identities and secure KV **reference** attestations
 must precede official prepare → validate → deploy. No credentials or raw bodies
 belong in acceptance proof.
+
+## 5. Final canonical private-runner bootstrap — 2026-10-20
+
+**Existing-runner non-inference readiness PASS; fresh foundation and native E2E
+acceptance remain NOT RUN. #147 stays OPEN, owned by QA; PR #151 unmerged.**
+This later, separately leased administrative slice supersedes earlier
+no-VM-start statements only for the exact existing Linux runner below.
+
+Final cycle 3 executor `59e5093d-6f0b-4196-ad19-6437d954736b` replaced
+`edb98808-1c0a-47c7-8131-8d7e1abe564a`; Squad QA retained ledger custody.
+Physical lease SHA256:
+`F40184EAB3FEA00807C326C56000A620108D7B3F5775F8740B4FFD08F900B7BC`.
+Safe immutable command/UTC/exit receipts are under repository-root
+`.azure-sandbox\issue147-executor-59e5093d-20261020`.
+
+| Operation / observed fact | Result |
+|---|---|
+| Exact ZIP/base64 round trip, member extraction and accepted Git blob comparison before START | PASS, canonical commit `5783af8c7dc3b7605d0c816a7d51fa212f4cf912` |
+| Actual executor wrapper tests | PASS, 3 cases: bootstrap failure finally restoration; ambiguous START never replayed; baseline denial never allocates |
+| Supported bounded `vm get-instance-view` polling and restoration smoke | PASS; dual direct/nested statuses projection |
+| Fresh VM/MI/OS, permissions, locks, extensions, NIC and policy metadata | PASS; Linux, expected MI, no public NIC, no locks or returned policy assignments |
+| ONE final START submission | 06:38:54.319914Z, CLI exit 0; RUNNING observed |
+| RunShellScript bootstrap | 06:39:28.604476Z–06:41:35.876189Z, CLI exit 0 **and guest completion marker observed** |
+| Guest source verification/import | Exact canonical hashes below; imported source from accepted checkout, real `.git` root; existing ledgers untouched |
+| Python/dependencies | Python 3.10.12; 53 resolved packages, wheel build/install and `pip check` PASS |
+| Offline help, dry-run, mocked caller smoke | PASS, zero live submissions; post-test OTel console-exporter closed-file warning retained, not hidden |
+| Private DNS / normal certificate-validated TLS | `10.20.0.14`, all resolved addresses private; TLSv1.3 |
+| Existing MI SDK `agents.get_version` metadata GET | HTTP 200, historical v1 prompt agent, zero tools; no inference |
+| Finally deallocation submitted | 06:41:35.876189Z, CLI exit 0 |
+| Independent final power / lease release | DEALLOCATED 06:42:34.267238Z; released 06:42:34.271212Z |
+| Second-process independent read | DEALLOCATED 06:43:10.862919Z |
+
+The actual final allocation interval was under four minutes. Restoration was
+required to begin by 06:59:54.319914Z and finish by 07:04:54.319914Z,
+both earlier than the lease's absolute 07:15Z limit. No cycle 4 is authorized.
+
+Observed guest artifact/environment SHA256 values:
+
+| Artifact | SHA256 |
+|---|---|
+| Transported ZIP | `8f2f51676d4e3e267e7cd703ab5363e6e1e4c9cb5356caeb3728f835f7649da0` |
+| Canonical LF module, also verified after actual import | `455b59932073895d0daeba5320fd06b01172b4295e90ac5cd372e0a3a6a603a7` |
+| Interpreter executable | `a2f33a6e006989270f4340528eb61f8f97366e00a5d1b602ac8672ea44fc56ae` |
+| Interpreter metadata | `7e78e26f896cae0dde67f45dfddc6035903e9b4f35096d4a3198ea2a09d3f377` |
+| Actual resolved dependency lock | `5135f3639712b67294701addbaed36c103287c0a245e0e5fd09d46ff1b80716a` |
+| Wheel hash manifest | `a5739f06e9b3b3f8ae60e97b9c16c0ea77c5c9b36d93a30788f09c905e68db90` |
+| Built prompt-agent wheel | `8fa335efe9c388376e0f4ba4c05a2bbea43bc5e83ee2c919178aa11dab72839a` |
+| Environment (lock + interpreter metadata + wheel manifest) | `1443f5bc8df6faa760278a1c0f09ddb3e86073ee7460a4b0fc9e1093229172f3` |
+
+The Windows CRLF hash was local provenance only, not the portable Linux binding.
+No guest normalization/hash relaxation occurred. See the caller README's
+command-scoped LF archive recipe. Prior cycle 2 emitted no actual guest digest;
+these newly observed hashes do not retroactively establish its guest digest.
+
+Remaining acceptance blockers are **not bootstrap failures**: fresh exact
+DataZoneStandard/capacity-1 model/provider/network/profile approval and deployment,
+fresh no-tool publication/readback and definition hash, approved once-only
+envelope and private artifact/custody handoff, G/L/managed-state cost terms,
+and native service → App Insights → Arize correlation/usage acceptance.
+The existing historical v1 references `fotoa-demo-gpt5mini-eastus2`
+(historical GlobalStandard/capacity 5), not the still-undeployed fresh target.
+No model/Responses/evaluation/registration/publication request, resource/grant,
+security/network/shutdown change, ledger reset or replay was performed.

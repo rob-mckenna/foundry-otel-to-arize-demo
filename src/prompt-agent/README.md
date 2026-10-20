@@ -47,6 +47,19 @@ Pinned opt-in dependencies are `azure-ai-projects==2.0.0`,
 The `test` extra includes these same pins so standard `.[test]` installs and CI
 exercise the mocked SDK contract tests without authentication.
 
+For an approved Windows-to-Linux source transfer, archive the accepted commit
+with command-scoped LF settings (do not change repository Git configuration):
+
+```powershell
+git -c core.autocrlf=false -c core.eol=lf archive --format=zip --output=approved-source.zip <accepted-commit> src/prompt-agent
+```
+
+Verify the ZIP transport hash and extracted module hash before building. Bind
+the portable module hash to the accepted Git blob bytes: a Windows CRLF checkout
+hash is local provenance, not the Linux release hash. Even `git archive` can
+apply Windows line-ending settings without these explicit overrides. Never
+normalize guest bytes or relax a mismatch; preserve existing caller ledgers.
+
 **Future live command, DO NOT run under this checkpoint:** use the same module
 command with the approved fresh private endpoint/name/version, fresh lowercase
 UUID and fresh nonsecret authorization reference, replace `--dry-run` with
