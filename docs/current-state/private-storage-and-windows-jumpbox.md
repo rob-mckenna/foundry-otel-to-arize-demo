@@ -1,8 +1,18 @@
 # Retained private evaluation storage and Windows access — #138
 
-**CURRENT-STATE ancillary resources; metadata reconciled 2026-10-19 Eastern.
+**CURRENT-STATE ancillary resources; metadata reconciled 2026-10-19 Eastern;
+owner direction updated 2026-10-20.
 ADR agreement, human navigation and registration/evaluation readiness are separate
-and incomplete. No deployment or running window is authorized by this document.**
+and incomplete. No deployment or running window is activated by this document.**
+
+**Current owner authority:** primary approval 2026-10-20T04:37:07.301Z authorizes
+moving forward with cost reconciliation and existing protected Windows/Developer
+Bastion access. The original $53.42 target is no longer binding; no numeric
+ceiling or unlimited budget is inferred. See the
+[dated cost/operator/window handoff](issue138-private-access-window.md) for the
+complete conditional model, actual human-evidence exception, candidate
+05:30–06:00 UTC / 01:30–02:00 EDT window and official lifecycle commands.
+The candidate is NOT activated; no start until all gates pass.
 
 Owner: Lead (Architect / Tech Lead), actual `squad:lead`.
 Related: [#138](https://github.com/rob-mckenna/foundry-otel-to-arize-demo/issues/138),
@@ -96,8 +106,9 @@ identity are distinct. Do not add a VM identity or new grants to “repair” th
 
 ## Cost reconciliation and bounded planning estimate
 
-**Authority remains USD53.42/month persistent + USD0.188/running VM hour** as
-recorded in #138's requester scope. Dollar figures below are public USD planning
+**Historical scope was USD53.42/month persistent + USD0.188/running VM hour**;
+new primary approval above supersedes that target without specifying a numeric
+ceiling. Dollar figures below are public USD planning
 illustrations, **not an invoice, spending cap, authorization increase or quote**.
 Use 730 allocated monthly hours, one retained OS disk, one new Blob PE and
 **assumed 1 GB Hot LRS**; actual Blob quantity was not read. Existing unrelated
@@ -127,7 +138,8 @@ revised $63.42 and additional P2 acceptance. `storage-resume-outcome.json` and
 execution narratives**, not independently verified requester consent. The
 existing #138 issue/comments contain the original $53.42 ceiling, not primary
 corroboration of either expansion. Preserve historical artifacts without adopting
-their “approved” field as current authority.
+their “approved” field as current authority. New authority comes from the separate
+2026-10-20 primary owner receipt, not those historical claims.
 
 ### Running-hour and variable charges
 
@@ -155,16 +167,17 @@ their “approved” field as current authority.
   additional protection/monitoring charges remain usage-dependent and unquantified.
   Do not interpret the 5000-GB scanning configuration as a dollar limit.
 
-**Original ceiling feasibility:** even the current lower HDD/calculator
+**Historical original-target feasibility (not today's approval gate):** even the current lower HDD/calculator
 persistent illustration exceeds $53.42 by **$6.0684/month** (or **$6.2864**
 using the $10 allowance), before any VM hours/variables. Compute alone exactly
 matches $0.188/hour, but retained P2's public indication adds $0.02/hour; its
 actual multiplier/contract is unresolved. Therefore **the retained configuration
 cannot be represented as fitting the original combined envelope**. Counting
 NAT/IPv4 at zero would hide $36.50/month, not establish savings. No resource
-removal, protection disablement or spending increase is recommended/authorized.
-First consolidate these facts with Lead; only primary authority could change
-the ceiling, and no such request is made by this reconciliation.
+removal or protection disablement is recommended/authorized. The new primary
+approval permits moving toward revised necessary cost; it does not make this
+partial subtotal a complete bound. The dated handoff exposes every missing term,
+scanning/storage/runtime/lifetime sensitivity and exact finite-bound exception.
 
 ### Public source/provenance and limitations
 
@@ -239,7 +252,7 @@ The old **3/3 inference budget remains CLOSED**.
 | Convention/architecture impact | No implementation, telemetry architecture or convention change; `.github/copilot-instructions.md` unchanged intentionally. |
 | Current/future separation | Ancillary retained assets only; direct OTLP remains conceptual. |
 | Track notification | Lead outcome comment provides Infra/Agent/QA handoffs and informs Telemetry that the bridge is unchanged; coordinator must route actual work. |
-| Exact delta, access, egress, costs, custody, identity | Infra configuration/cost findings above complete this bounded discovery. Effective NIC views failed without VM start; runtime, guest protection health, actual invoice/multipliers and named human access remain unverified. Human confirms custody/window; no grant/change permission inferred. |
+| Exact delta, access, egress, costs, custody, identity | Infra configuration/cost findings above plus dated handoff complete the conditional model. Effective NIC views failed without VM start; runtime, guest protection health, finite cost-bound inputs, invoice/multipliers and actual human access/availability remain unverified. No grant/change permission inferred. |
 | Provisioning versus navigation versus registration | Provisioning evidenced; historical prerequisites pass; human Windows/Entra/project navigation pending; registration failed; inference/evaluation not authorized or ready. |
 | Fresh probe authority/receipt | Historical authority consumed. Agent/QA identify pinned SDK/API/identity/source/receipt tuple and support-approved route before requesting any NEW bounded probe authority. |
 
@@ -248,32 +261,18 @@ prerequisites pass and private Blob/Foundry DNS/TLS pass; human login remains
 unverified. Its 38 focused tests PASS and provider/build/what-if results are dated
 reports, **not rerun or fresh Validated claims**.
 
-### Minimal consolidated parent request — not permission to run
+### Concrete current handoff — not a repeated general approval request
 
-1. **Window and cost:** approve a specific date/start/end, maximum VM running
-   hours, named operator, and deallocation owner. Today is after 19:00 Eastern:
-   **no start now**. Preserve 19:00 Eastern shutdown; any exception requires
-   explicit new approval. The itemized estimate above explains the historical
-   **$10 Storage Defender** delta and actual retained **HDD** correction;
-   **$59.49/month + indicative $0.208/hour**, before variables, does not fit the
-   original **$53.42 + $0.188/hour** envelope. Subscription invoice/protection
-   scope and workload-unit multiplier remain unverified. Neither historical
-   approval prose nor this ADR increases the ceiling; do not request a raised
-   budget based on unverified receipt claims or disable protection to force a fit.
-2. **Custody:** name the human authorized for Windows credential custody and
-   Foundry project sign-in. They privately retrieve the designated credential in
-   `fotoa-demo-kv-eastus2`; never paste it into chat, receipts or CLI arguments.
-   VM credentials and Entra/project permissions are separate. No agent extraction,
-   credential reset or role grant.
-3. **Routing:** retained Developer Bastion, NAT/NSG/private endpoint/DNS and
-   project MI assignment metadata are now confirmed as described above;
-   effective NIC views/current runtime access are not. No second NAT, paid Bastion,
-   public VM IP, Internet RDP or public service fallback. Only in a later approved window,
-   human uses existing Developer Bastion → retained Windows VM → Edge
-   `https://ai.azure.com` → authorized project. Record only navigation success/
-   failure and safe metadata; **no prompt, evaluation, registration or screenshot
-   containing content**. Finally deallocate, verify instance state and retain assets.
-4. **Probe identity decision:** Agent/QA and product support determine the
+1. Follow the [dated acceptance handoff](issue138-private-access-window.md).
+   Owner approval is persisted/hash-verified. Cost model, exact human identity/
+   custody/access/MFA exception, short UTC/Eastern window, official scoped
+   prepare/validate/deploy lifecycle and deallocation commands are explicit.
+   No actual human availability means no VM start. No invented dollar cap,
+   protection disablement, recreation or after-hours shutdown edit.
+2. Retained Developer Bastion/NAT/private services are the only access path.
+   Human, not AI, performs Windows/Entra/project navigation. Preserve all existing
+   controls; metadata/provisioning are not proof of human login or runtime success.
+3. **Probe identity decision, separate and not executable here:** Agent/QA and product support determine the
    documented Projects 2.0.0 BLOB_REFERENCE pending-upload/BYOS private-access
    contract and identity (human, bridge MI and project MI are not interchangeable).
    HTTP 403 does not justify account network injection, extra Blob/quota roles,
@@ -282,9 +281,10 @@ reports, **not rerun or fresh Validated claims**.
    calls and stop conditions before requesting a fresh one-shot probe.
    No new probe is requested for execution in this packet.
 
-Any later infrastructure change belongs to **Infra**, with a new worktree-local
-`.azure\deployment-plan.md` and official prepare → validate → deploy lifecycle;
-never overwrite/reuse root's closed plan. Repo-contained applicable official
-Azure skill references must be refreshed then; unavailable references block that
-step, not this documentation correction. No profile/reference escape is permitted.
-Keep #138 open until affected tracks and the operator supply the missing evidence.
+Any later infrastructure change belongs to **Infra**. A new worktree-local
+`.azure\deployment-plan.md` now records only the retained power/access lifecycle
+and blocked technical/human gates; never overwrite/reuse root's closed plan.
+Pinned repository-contained official references are hash-checked; no profile/
+reference escape or generic infrastructure redeployment is permitted.
+Keep #138 open until actual affected-track concurrence and missing technical/
+human evidence exist; do not ask for the same broad owner consent again.

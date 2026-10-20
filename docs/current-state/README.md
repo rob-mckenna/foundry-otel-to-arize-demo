@@ -58,7 +58,10 @@ The [reconciliation and operator packet](private-storage-and-windows-jumpbox.md)
 distinguishes existing keyless storage/private Windows resources from pending
 cross-track ADR agreement and human navigation. The historically approved single
 five-case registration attempt is **consumed (pending-upload HTTP 403)**, not
-reusable authority. No after-shutdown VM start or inference/evaluation is authorized.
+reusable authority. The [2026-10-20 cost/operator/window handoff](issue138-private-access-window.md)
+records actual owner approval, a complete conditional cost model and the exact
+human/MFA/custody exception. Its short UTC/Eastern candidate window is **not
+activated**; no VM start or inference/evaluation occurred.
 See [ADR-0005](../adr/0005-reconcile-retained-private-evaluation-and-browser-assets.md).
 
 ## Historical reference — not the active setup path
