@@ -5,6 +5,18 @@
 import { buildResourceName, buildRequiredTags, resourceTypeTokens } from 'naming.bicep'
 import { privateDnsZoneIds } from 'networking.bicep'
 
+@export()
+@discriminator('mode')
+type functionSecretReferences = {
+  mode: 'freshVault'
+} | {
+  mode: 'existing'
+  applicationInsightsSecretUri: string
+  arizeEndpointSecretUri: string
+  arizeSpaceIdSecretUri: string
+  arizeApiKeySecretUri: string
+}
+
 param projectToken string
 param environment string
 param location string
@@ -37,6 +49,8 @@ param privateDnsZoneResourceIds privateDnsZoneIds
 param functionPackageBlobName string
 param appInsightsConnectionStringSecretName string = 'appinsights-connection-string'
 param extraKeyVaultReferenceAppSettings { settingName: string, secretName: string }[] = []
+@description('Reference identifiers only. Existing custody needs separately authorized secret-scoped Secrets User grants for this NEW Function MI; this module never grants access on an external vault.')
+param keyVaultReferences functionSecretReferences = { mode: 'freshVault' }
 @description('Container preparation only; fresh main sets true. Never enables runtime/cutover.')
 param prepareDurableGenAIContainer bool = false
 
@@ -151,13 +165,20 @@ var baseAppSettings = [
   { name: 'WEBSITE_RUN_FROM_PACKAGE_BLOB_MI_RESOURCE_ID', value: 'SystemAssigned' }
   {
     name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-    value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/${appInsightsConnectionStringSecretName}/)'
+    value: keyVaultReferences.mode == 'existing'
+      ? '@Microsoft.KeyVault(SecretUri=${keyVaultReferences.applicationInsightsSecretUri})'
+      : '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/${appInsightsConnectionStringSecretName}/)'
   }
 ]
-var extraAppSettings = [for setting in extraKeyVaultReferenceAppSettings: {
+var localExtraAppSettings = [for setting in extraKeyVaultReferenceAppSettings: {
   name: setting.settingName
   value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/${setting.secretName}/)'
 }]
+var extraAppSettings = keyVaultReferences.mode == 'existing' ? [
+  { name: 'ARIZE_OTLP_ENDPOINT', value: '@Microsoft.KeyVault(SecretUri=${keyVaultReferences.arizeEndpointSecretUri})' }
+  { name: 'ARIZE_SPACE_ID', value: '@Microsoft.KeyVault(SecretUri=${keyVaultReferences.arizeSpaceIdSecretUri})' }
+  { name: 'ARIZE_API_KEY', value: '@Microsoft.KeyVault(SecretUri=${keyVaultReferences.arizeApiKeySecretUri})' }
+] : localExtraAppSettings
 resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   name: functionAppName
   location: location
@@ -223,7 +244,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
   name: keyVaultName
 }
 var keyVaultSecretsUserRoleId = '4633458b-17de-408a-b874-0445c86b69e6'
-resource keyVaultSecretsUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource keyVaultSecretsUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (keyVaultReferences.mode == 'freshVault') {
   name: guid(keyVault.id, functionApp.id, keyVaultSecretsUserRoleId)
   scope: keyVault
   properties: {

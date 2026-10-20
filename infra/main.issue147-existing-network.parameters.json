@@ -1,0 +1,62 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "projectToken": { "value": "fotoa147" },
+    "environment": { "value": "demo" },
+    "location": { "value": "eastus2" },
+    "regionToken": { "value": "eastus2" },
+    "ownerTag": { "value": "infra-team" },
+    "costCenterTag": { "value": "demo-engineering" },
+    "accountName": { "value": "fotoa147-demo-foundry-eastus2" },
+    "projectName": { "value": "fotoa147-demo-fproj-eastus2" },
+    "customSubDomainName": { "value": "fotoa147-demo-foundry-eastus2" },
+    "modelDeploymentName": { "value": "qa147-synthetic" },
+    "modelFormat": { "value": "OpenAI" },
+    "modelName": { "value": "gpt-5-mini" },
+    "modelVersion": { "value": "2025-08-07" },
+    "modelDeploymentSkuName": { "value": "DataZoneStandard" },
+    "modelDeploymentCapacity": { "value": 1 },
+    "modelVersionUpgradeOption": { "value": "NoAutoUpgrade" },
+    "modelDataResidencyApproval": {
+      "value": "Owner-approved US data-zone model processing; not East US 2-only inference or every-service residency."
+    },
+    "modelDeploymentApproved": { "value": true },
+    "network": {
+      "value": {
+        "mode": "existing",
+        "privateEndpointSubnetResourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints",
+        "functionIntegrationSubnetResourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/function-integration",
+        "dnsLinksManagedExternally": true,
+        "privateDnsZoneIds": {
+          "cognitiveServices": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.cognitiveservices.azure.com",
+          "openAI": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.openai.azure.com",
+          "servicesAI": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.services.ai.azure.com",
+          "vault": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net",
+          "blob": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net",
+          "queue": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.queue.core.windows.net",
+          "table": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.table.core.windows.net"
+        }
+      }
+    },
+    "functionPackageBlobName": {
+      "value": "telemetry-936946c8-b6ffdb3739e261f612a5b1f568f509365da88094a175a3efabc6aaf9c4f2b9ff.zip"
+    },
+    "functionPythonVersion": { "value": "3.11" },
+    "functionMaximumInstances": { "value": 1 },
+    "eventHubConsumerGroupName": { "value": "function-transform" },
+    "arizeProjectName": { "value": "fotoa-vm-diagnostic" },
+    "keyVaultReferences": {
+      "value": {
+        "mode": "existing",
+        "applicationInsightsSecretUri": "https://fotoa-demo-kv-eastus2.vault.azure.net/secrets/fotoa147-appinsights-connection-string/",
+        "arizeEndpointSecretUri": "https://fotoa-demo-kv-eastus2.vault.azure.net/secrets/arize-otlp-endpoint/",
+        "arizeSpaceIdSecretUri": "https://fotoa-demo-kv-eastus2.vault.azure.net/secrets/arize-space-id/",
+        "arizeApiKeySecretUri": "https://fotoa-demo-kv-eastus2.vault.azure.net/secrets/arize-api-key/"
+      }
+    },
+    "appInsightsConnectionName": { "value": "fotoa147-demo-appi-eastus2" },
+    "tracingAssociationMode": { "value": "preserveExisting" },
+    "appInsightsConnectionPropertiesReviewed": { "value": false }
+  }
+}

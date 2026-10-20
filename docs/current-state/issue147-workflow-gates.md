@@ -1,5 +1,15 @@
 # Issue 147 — official workflow reconciliation and residual gates
 
+**2026-10-20 concrete supported-route correction:** see
+[fresh application on existing networking](issue147-existing-network-proposal.md).
+The existing-network profile, deterministic connection name and existing-vault
+URI reference API now pass focused offline checks. The previous disconnected
+10.40 publishing-path assumption does not apply. Existing networking remains
+externally managed (no VNet/subnet/zone/link PUT). Native tracing's exact secure
+bootstrap, provider admission (including EP1 MPSJ), private runtime/egress,
+official validation, repeat and E2E remain separate unexecuted gates; no status
+receipt is advanced by source compilation.
+
 **2026-10-20 approved minimal followup:** [bounded source preflight](issue147-bounded-execution.md)
 records owner-selected Basic private client ingress/Microsoft-managed runtime,
 exact EP1 plan/app maximum **1**, 24h validation lifetime, finite operator

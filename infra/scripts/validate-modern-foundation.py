@@ -25,6 +25,7 @@ ZONES = {
 RESOURCE_PREFIX = r"/subscriptions/[0-9a-f-]{36}/resourceGroups/[^/]+/providers/"
 SUBNET = RESOURCE_PREFIX + r"Microsoft\.Network/virtualNetworks/[^/]+/subnets/[^/]+"
 VAULT = RESOURCE_PREFIX + r"Microsoft\.KeyVault/vaults/[a-z0-9-]+"
+SECRET_URI = r"https://[a-z](?![a-z0-9-]*--)[a-z0-9-]{1,22}[a-z0-9]\.vault\.azure\.net/secrets/[A-Za-z0-9-]{1,127}/(?:[a-f0-9]{32}/?)?"
 REQUIRED = (
     "projectToken", "environment", "location", "regionToken", "ownerTag", "costCenterTag",
     "accountName", "projectName", "customSubDomainName", "modelDeploymentName", "modelFormat",
@@ -120,6 +121,23 @@ def validate_profile(document: dict) -> dict:
                 raise ValueError(f"Incorrect private DNS zone ID: {key}")
     else:
         raise ValueError("network mode must be fresh or existing; no public mode")
+    references = values.get("keyVaultReferences", {"mode": "freshVault"})
+    if not isinstance(references, dict):
+        raise ValueError("keyVaultReferences must be a typed reference object")
+    if references.get("mode") == "freshVault":
+        if set(references) != {"mode"}:
+            raise ValueError("Fresh vault references accept no external fields")
+    elif references.get("mode") == "existing":
+        fields = {"applicationInsightsSecretUri", "arizeEndpointSecretUri",
+                  "arizeSpaceIdSecretUri", "arizeApiKeySecretUri"}
+        if set(references) != fields | {"mode"} or not all(
+                isinstance(references[k], str) and re.fullmatch(SECRET_URI, references[k], re.I)
+                for k in fields):
+            raise ValueError("Existing references require four exact Azure public-cloud Key Vault secret URIs; no values, queries or fragments")
+        if len({references[k].rstrip("/").lower() for k in fields}) != len(fields):
+            raise ValueError("Each destination and fresh component needs its distinct secret reference")
+    else:
+        raise ValueError("keyVaultReferences mode must be freshVault or existing")
     mode = values.get("tracingAssociationMode", "preserveExisting")
     if mode not in {"preserveExisting", "ApiKey"}:
         raise ValueError("Fresh tracing supports preserveExisting or separately approved ApiKey only")

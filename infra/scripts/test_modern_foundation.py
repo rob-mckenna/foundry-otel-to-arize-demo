@@ -140,6 +140,29 @@ class CompiledModernFoundationTests(unittest.TestCase):
         self.assertEqual(mapping["existing"]["properties"]["dnsLinksManagedExternally"]["allowedValues"], [True])
         self.assertIn("network').privateDnsZoneIds", self.network["outputs"]["privateDnsZoneResourceIds"]["value"])
 
+    def test_issue147_profile_is_complete_and_external_network_put_conditions_are_false(self):
+        profile = json.loads((ROOT / "infra/main.issue147-existing-network.parameters.json").read_text())
+        supplied = set(profile["parameters"])
+        self.assertFalse(supplied - set(self.main["parameters"]))
+        required = {k for k, v in self.main["parameters"].items() if "defaultValue" not in v}
+        self.assertFalse(required - supplied)
+        self.assertTrue(foundation.validate_profile(profile)["offlineProfileValid"])
+        values = {k: v["value"] for k, v in profile["parameters"].items()}
+        self.assertEqual(values["network"]["mode"], "existing")
+        self.assertTrue(values["network"]["dnsLinksManagedExternally"])
+        self.assertEqual(values["keyVaultReferences"]["mode"], "existing")
+        self.assertEqual(self.network["variables"]["fresh"], "[equals(parameters('network').mode, 'fresh')]")
+        for item in resources(self.network):
+            self.assertIn(item["type"], {
+                "Microsoft.Network/virtualNetworks", "Microsoft.Network/privateDnsZones",
+                "Microsoft.Network/privateDnsZones/virtualNetworkLinks"})
+            self.assertIn(item["condition"], {
+                "[equals(parameters('network').mode, 'fresh')]", "[variables('fresh')]"})
+            # Both exact compiled expressions evaluate false for this real profile.
+            self.assertFalse(values["network"]["mode"] == "fresh")
+        for t in all_templates(self.main):
+            self.assertFalse(resources(t, "Microsoft.Network/virtualNetworks/subnets"))
+
     def test_account_pe_three_zones_vault_and_storage_pe_groups(self):
         edges = module(self.main, "foundation-private-endpoints")
         targets = edges["properties"]["parameters"]["targets"]["value"]
@@ -224,6 +247,28 @@ class CompiledModernFoundationTests(unittest.TestCase):
             profile = json.loads((ROOT / "infra" / filename).read_text())
             self.assertEqual(profile["parameters"]["functionMaximumInstances"], {"value": 1})
 
+    def test_existing_secret_references_are_forwarded_without_external_vault_writes_or_grants(self):
+        call = module(self.main, "function-app-deployment")["properties"]["parameters"]
+        self.assertEqual(call["keyVaultReferences"]["value"], "[parameters('keyVaultReferences')]")
+        mapping = self.main["definitions"]["functionSecretReferences"]["discriminator"]["mapping"]
+        self.assertEqual(set(mapping), {"freshVault", "existing"})
+        self.assertEqual(set(mapping["existing"]["properties"]), {
+            "mode", "applicationInsightsSecretUri", "arizeEndpointSecretUri",
+            "arizeSpaceIdSecretUri", "arizeApiKeySecretUri"})
+        local_role = next(r for r in resources(self.function, "Microsoft.Authorization/roleAssignments")
+                          if "keyVault" in r.get("scope", ""))
+        self.assertEqual(local_role["condition"], "[equals(parameters('keyVaultReferences').mode, 'freshVault')]")
+        for field in ("arizeEndpointSecretUri", "arizeSpaceIdSecretUri", "arizeApiKeySecretUri"):
+            self.assertIn(field, self.function["variables"]["extraAppSettings"])
+        settings = {x["name"]: x["value"] for x in self.function["variables"]["baseAppSettings"]}
+        self.assertIn("applicationInsightsSecretUri", settings["APPLICATIONINSIGHTS_CONNECTION_STRING"])
+        access = compile_bicep("infra/existing-function-secret-access.bicep")
+        self.assertEqual({r["type"] for r in resources(access)}, {"Microsoft.Authorization/roleAssignments"})
+        role, = resources(access)
+        self.assertIn("Microsoft.KeyVault/vaults/secrets", role["scope"])
+        self.assertEqual(access["variables"]["secretsUserRoleId"], "4633458b-17de-408a-b874-0445c86b69e6")
+        self.assertEqual(role["properties"]["principalId"], "[parameters('functionPrincipalId')]")
+
     def test_host_rbac_and_single_fresh_durable_export_ownership(self):
         self.assertEqual(set(self.function["variables"]["storageRoleIds"]), {
             "ba92f5b4-2d11-453d-a403-e96b0029c9fe", "974c5e8b-45b9-4653-ba55-5f855dd0fb88",
@@ -305,6 +350,37 @@ def prepared_profile():
 
 
 class OfflineProfileTests(unittest.TestCase):
+    def test_existing_secret_uris_reject_values_missing_fields_and_uri_injection(self):
+        profile = prepared_profile()
+        fields = ("applicationInsightsSecretUri", "arizeEndpointSecretUri",
+                  "arizeSpaceIdSecretUri", "arizeApiKeySecretUri")
+        refs = {"mode": "existing", **{
+            key: f"https://sample-vault.vault.azure.net/secrets/test-{i}/"
+            for i, key in enumerate(fields)}}
+        profile["parameters"]["keyVaultReferences"] = {"value": refs}
+        self.assertTrue(foundation.validate_profile(profile)["offlineProfileValid"])
+        for bad in ("not-a-uri", "http://sample-vault.vault.azure.net/secrets/test/",
+                    "https://x.vault.azure.net/secrets/test/",
+                    "https://1vault.vault.azure.net/secrets/test/",
+                    "https://sample--vault.vault.azure.net/secrets/test/",
+                    "https://sample-vault.vault.azure.net.evil.test/secrets/test/",
+                    "https://sample-vault.vault.azure.net/secrets/test/?sig=invalid",
+                    "https://sample-vault.vault.azure.net/secrets/test/#fragment",
+                    "https://sample-vault.vault.azure.net/secrets/test/invalid-version"):
+            changed = copy.deepcopy(profile)
+            changed["parameters"]["keyVaultReferences"]["value"][fields[0]] = bad
+            with self.subTest(bad=bad), self.assertRaisesRegex(ValueError, "four exact"):
+                foundation.validate_profile(changed)
+        for field in fields:
+            changed = copy.deepcopy(profile)
+            del changed["parameters"]["keyVaultReferences"]["value"][field]
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                foundation.validate_profile(changed)
+        changed = copy.deepcopy(profile)
+        changed["parameters"]["keyVaultReferences"]["value"][fields[0]] = refs[fields[1]]
+        with self.assertRaisesRegex(ValueError, "distinct"):
+            foundation.validate_profile(changed)
+
     def test_unbounded_or_larger_ep1_profile_rejected_before_provider(self):
         for value in (0, -1, 2, 20, True, "1", None):
             profile = prepared_profile()

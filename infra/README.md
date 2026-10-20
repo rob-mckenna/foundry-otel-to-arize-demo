@@ -304,3 +304,20 @@ Read 2026-10-19, public documentation only:
 Provider schemas establish documented shapes, not tenant availability or runtime
 success. Agent publication/API/tools/state prerequisites remain **pending**;
 standard BYO requirements are a scoped architecture gate, never silently stubbed.
+# Issue 147 existing-network preparation profile
+
+`main.issue147-existing-network.parameters.json` is a complete **nonsecret,
+offline-validated foundation staging profile**, not an execution authorization
+or completed tracing profile. See
+[`issue147-existing-network-proposal.md`](../docs/current-state/issue147-existing-network-proposal.md)
+for exact subnet/DNS/capacity facts, immutable package custody, the new
+`keyVaultReferences` typed URI option, separately leased secret-scoped reader
+template, and the one fresh tracing bootstrap custody action.
+Existing mode never writes the supplied VNet/subnets/zones/links; new private
+endpoint DNS-zone groups still register the new application records.
+`freshVault` remains the backward-compatible secret-reference default.
+The prepared-profile gate rejects non-vault hosts, query/fragment injection,
+missing/duplicate references and malformed versions; run it before provider
+validation. Existing-vault mode grants **no** external access automatically.
+The fresh private vault/PE remains in the foundation graph without changing
+its security controls; this profile does not require populating it.

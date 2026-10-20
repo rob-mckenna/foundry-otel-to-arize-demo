@@ -1,5 +1,15 @@
 # Fresh modern foundation — readiness and acceptance packet (#147)
 
+**2026-10-20 existing-network correction:** the
+[concrete fresh-application proposal](issue147-existing-network-proposal.md)
+supersedes the disconnected-new-VNet blocker and missing-name/profile gaps.
+ADR-0004 explicitly supports reusing the existing network. The complete
+nonsecret profile and tested existing-secret URI contract are now implemented.
+This is **fresh application / existing networking**, not standalone full-fresh-
+network proof; QA must preserve that distinction in eventual acceptance.
+Fresh tracing still requires the exact new-component secure bootstrap described
+there; no fresh execution or closure is claimed.
+
 **2026-10-19 · QA owner (`squad:qa`) · BOUNDED OFFLINE CHECKS PASS;
 FRESH-READINESS HOLD / NOT READY FOR EXECUTION APPROVAL.
 PROVIDER / FRESH PRIVATE RUNTIME / REPEAT DEPLOYMENT / E2E NOT RUN.**

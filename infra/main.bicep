@@ -2,6 +2,7 @@
 // Source cleanup is not live retirement. Deployment/publication require approval.
 targetScope = 'resourceGroup'
 import { privateNetworkConfiguration } from 'modules/networking.bicep'
+import { functionSecretReferences } from 'modules/function-app.bicep'
 
 @minLength(2)
 @maxLength(10)
@@ -73,6 +74,8 @@ param arizeProjectName string
 param arizeEndpointSecretName string = 'arize-otlp-endpoint'
 param arizeSpaceIdSecretName string = 'arize-space-id'
 param arizeApiKeySecretName string = 'arize-api-key'
+@description('Existing secret URI references never copy secret values or grant an external-vault reader. Validate with validate-modern-foundation.py; authorize the new identity separately.')
+param keyVaultReferences functionSecretReferences = { mode: 'freshVault' }
 
 @description('No connection PUT by default. Fresh tracing completion requires separately approved ApiKey association and immutable vault reference; preserveExisting is NOT configured tracing.')
 @allowed(['preserveExisting', 'ApiKey'])
@@ -224,6 +227,7 @@ module functionApp 'modules/function-app.bicep' = {
     privateDnsZoneResourceIds: networking.outputs.privateDnsZoneResourceIds
     prepareDurableGenAIContainer: true
     keyVaultName: keyVault.outputs.keyVaultName
+    keyVaultReferences: keyVaultReferences
     eventHubNamespaceFqdn: eventHub.outputs.eventHubNamespaceFqdn
     eventHubNamespaceName: eventHub.outputs.eventHubNamespaceName
     eventHubName: eventHub.outputs.eventHubName
