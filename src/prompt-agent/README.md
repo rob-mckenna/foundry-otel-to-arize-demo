@@ -1,6 +1,7 @@
 # src/prompt-agent
 
-**Status: implemented offline synthetic scaffold; not a live Foundry SDK backend.**
+**Status: existing CLI is an offline synthetic scaffold. A separate once-only
+Foundry Responses caller is implemented and offline-tested, NOT live-accepted.**
 
 This directory holds the local synthetic Prompt Agent scaffold, instrumented with
 OpenTelemetry and OpenInference semantic conventions for LLM spans (model name, token usage,
@@ -16,6 +17,107 @@ as stubs or partial implementations in this directory.
 The CLI includes synthetic scenario responses, instrumentation and bounded retries.
 It always uses the stub client; setting endpoint or credential variables does not
 turn it into the independently deployed Foundry Prompt Agent.
+
+## Separate no-tool Foundry Responses caller (#147)
+
+`prompt-agent` and `python -m prompt_agent.main` remain unchanged/offline.
+`foundry-responses-once` / `python -m prompt_agent.foundry_responses` is a
+**different**, explicit live entrypoint. It never registers an agent, creates a
+conversation, chooses a model, falls back, streams, polls or retries.
+It uses the pinned SDK contract in
+[Agent prerequisites](../../docs/current-state/issue147-private-agent-prerequisites.md):
+project API **v1**, HTTPS POST `<project-endpoint>/openai/v1/responses`,
+exact `agent_reference` **name + numeric version**, no tools. ARM **2025-09-01**
+is a separate provisioning boundary.
+
+From the repository/worktree root, install in your approved environment:
+
+```powershell
+python -m pip install -e "src\prompt-agent[foundry,test]"
+python -m prompt_agent.foundry_responses --help
+python -m prompt_agent.foundry_responses --endpoint https://synthetic-account.services.ai.azure.com/api/projects/synthetic-project --agent-name synthetic-no-tool --agent-version 7 --run-id 7580d28b-7bdf-4ada-afdd-dcaea1ca0147 --authorization-reference synthetic-unapproved-example --executor-reference synthetic-private-runner-mi --dry-run
+python -B -m pytest -q -p no:cacheprovider src\prompt-agent\tests
+```
+
+The dry run is genuinely offline: no credential/client construction, ledger or
+network. These names/UUIDs are synthetic examples, **not live authorization**.
+Pinned opt-in dependencies are `azure-ai-projects==2.0.0`,
+`azure-identity==1.26.0`, `openai==2.26.0`, `azure-core[aio]==1.41.0`
+(async HTTP transport required). This is not a complete transitive wheel lock.
+The `test` extra includes these same pins so standard `.[test]` installs and CI
+exercise the mocked SDK contract tests without authentication.
+
+For an approved Windows-to-Linux source transfer, archive the accepted commit
+with command-scoped LF settings (do not change repository Git configuration):
+
+```powershell
+git -c core.autocrlf=false -c core.eol=lf archive --format=zip --output=approved-source.zip <accepted-commit> src/prompt-agent
+```
+
+Verify the ZIP transport hash and extracted module hash before building. Bind
+the portable module hash to the accepted Git blob bytes: a Windows CRLF checkout
+hash is local provenance, not the Linux release hash. Even `git archive` can
+apply Windows line-ending settings without these explicit overrides. Never
+normalize guest bytes or relax a mismatch; preserve existing caller ledgers.
+
+**Future live command, DO NOT run under this checkpoint:** use the same module
+command with the approved fresh private endpoint/name/version, fresh lowercase
+UUID and fresh nonsecret authorization reference, replace `--dry-run` with
+`--allow-live`, and optionally add `--managed-identity-client-id <approved-MI-client-UUID>`.
+`--executor-reference` must identify the approved private runner/MI custody
+attestation; it is bound into the intent, not independently verified by this CLI.
+Missing `--allow-live` exits 1 before authentication. Only
+`ManagedIdentityCredential` is used; no DefaultAzureCredential, CLI cache,
+dotenv, keys or automatic authentication fallback. Federated-token-file
+configuration is refused. The MI must already be authorized; this code grants
+nothing.
+
+**Once-only custody is mandatory:** `.foundry-live-receipts` at this source
+checkout's root holds exclusive immutable run-ID and authorization intents,
+fsynced **before** auth/submission, and a separate exclusive outcome. Reuse of
+either identifier, any existing receipt, incomplete write, crash/inflight intent,
+failed or ambiguous outcome is refused. No reset/delete/resume facility exists.
+Do not remove/move receipts, change checkout/host to evade a stop, or reuse the
+authorization elsewhere. Preserve the operator-owned durable ledger with the
+approved executor; this is a local filesystem guard, not a distributed/global
+idempotency service or a guarantee against administrator tampering, storage
+rollback or power-loss metadata loss. The supplied source checkout root is the
+trust boundary: only that root and its ledger directory are checked/pinned,
+never host ancestors. Reparse/symlink roots and ledger directories are rejected;
+Windows directory handles deny rename/deletion during execution; POSIX uses
+directory-relative exclusive creation. Existing files are never read or followed.
+Only one custodian/executor/checkout may hold a given authorization.
+
+The one built-in ASCII fixture is under 1 KiB and explicitly synthetic; no
+arbitrary input is accepted. `max_output_tokens=1024` includes reasoning;
+returned text is required and checked at ≤16 KiB but never logged/printed/stored.
+Actual input/output/total usage is mandatory, integer/nonnegative/additive and
+within 1,024 input/output tokens; missing/invalid usage is failure, not estimated
+zero. The approved published definition must separately establish the total
+input bound, exact model deployment and no tools; this caller does not attest it.
+
+All relevant client retries are zero, including MI HTTP retry policy.
+Connect/read/write/pool timeouts are 5/20/10/5 seconds for Responses,
+MI connect/read are 5/20 seconds, and the async auth/create/close operation has a
+60-second overall cancellation deadline. Timeout/auth/429/5xx/parse/usage/output/
+receipt failure exits 1, leaves an immutable intent and records **ambiguous**
+where writable: STOP, reconcile out-of-band, **never rerun**. An outcome write
+failure cannot turn a request into a reported success. Dependency logging and
+raw exception recording are suppressed during execution.
+
+The optional local OTel span is explicitly **CLIENT**, not a native Agent span.
+It preserves the current parent/trace context, adds `correlation.id`, sends W3C
+`traceparent` when available and `x-ms-client-request-id`, and records returned
+numeric usage/response ID only. No exporter is configured by this entrypoint.
+Header transmission is tested; native service propagation/ingestion and
+App Insights → LAW → Event Hub → Function → Arize acceptance remain unproven.
+There is no direct Arize/OTLP path.
+
+Live prerequisites remain QA's fresh exact-envelope approval, approved private
+runner/MI/DNS, provider/capacity gates, published no-tool version/readback and
+definition hash, immutable dependency/package custody, preserved ledger and
+cost/retained-state gates. Historical VM success and these mocks are **not**
+fresh live acceptance. #147 remains open; PR #151 remains unmerged.
 
 ## Requirements
 
@@ -90,8 +192,8 @@ caller identity. Foundation provisioning does not publish an agent version,
 restore agent/thread/file state or prove private agent runtime readiness.
 See [ADR-0004](../../docs/adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md)
 and the [infrastructure guide](../../infra/README.md) for the modern foundation
-and separate runtime prerequisites. This cleanup does not introduce a live SDK
-backend or an automatic public/authentication fallback.
+and separate runtime prerequisites. The separate once-only Responses entrypoint above is opt-in and not live-accepted;
+the offline CLI has no automatic public/authentication fallback.
 
 ## OpenTelemetry / Application Insights export (#26)
 

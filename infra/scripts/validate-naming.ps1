@@ -37,7 +37,9 @@ $moduleFiles = Get-ChildItem -Path $ModulesPath -Filter '*.bicep' -File |
   Where-Object {
     # Connections do not support tags and adoption must retain the exact manual name.
     # test_modern_foundry_tracing.py verifies its compiled resource inventory stays connection-only.
-    $_.Name -notin @('naming.bicep', 'modern-foundry-app-insights.bicep', 'durable-genai-state.bicep')
+    # Reader-only module retains the existing RBAC GUID and has no taggable writes.
+    # test_modern_foundation.py verifies its entire compiled inventory and GUID inputs.
+    $_.Name -notin @('naming.bicep', 'modern-foundry-app-insights.bicep', 'durable-genai-state.bicep', 'function-fresh-vault-reader.bicep')
   }
 
 if ($moduleFiles.Count -eq 0) {
@@ -48,9 +50,9 @@ if ($moduleFiles.Count -eq 0) {
 foreach ($file in $moduleFiles) {
   $content = Get-Content -Path $file.FullName -Raw
 
-  # Foundation/model names are explicit owner inputs, never normalized. Their
-  # tags still use the shared helper; compiled graph tests enforce both cases.
-  $explicitNames = $file.Name -in @('modern-foundry-foundation.bicep', 'modern-foundry-model.bicep')
+  # Foundation/model/custody names are explicit owner inputs, never normalized.
+  # Their tags use the shared helper; compiled tests enforce the scoped writes.
+  $explicitNames = $file.Name -in @('modern-foundry-foundation.bicep', 'modern-foundry-model.bicep', 'app-insights-secret.bicep')
   $usesNamingImport = $content -match "import\s*\{[^}]*buildRequiredTags[^}]*\}\s*from\s*'naming\.bicep'"
   $usesBuildResourceName = $content -match 'buildResourceName\('
   $usesBuildRequiredTags = $content -match 'buildRequiredTags\('

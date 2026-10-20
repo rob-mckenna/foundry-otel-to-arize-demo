@@ -1,0 +1,358 @@
+{
+  "schemaVersion": 1,
+  "status": "STAGED_IMPLEMENTATION_PARTIAL_VALIDATION_NOT_EXECUTION_AUTHORITY",
+  "issue": 147,
+  "qaOwnership": "OPEN / squad:qa; PR 151 unmerged",
+  "workerId": "28f99ce7-67d3-4007-b20f-4ccb304a3a66",
+  "baselineCommit": "a8d5338c3f0f2d8670bf6ab134dee71e8385563e",
+  "independentRevision": {
+    "runtimeIdentityAssertion": "list_agents scope=all unique description matched 28f99ce7-67d3-4007-b20f-4ccb304a3a66; asserted distinct from BOTH locked IDs before editing; .azure\\independent-vault-revision-identity.json",
+    "lockedCompositionAuthors": [
+      "47b39bff-7553-495e-a0da-117c5b757a62",
+      "c0769ac8-18a5-4872-8916-8d5326dc0c14"
+    ],
+    "lockedCompositionAuthorContributed": false,
+    "acceptedSecureBootstrapChanged": false,
+    "acceptedCallerChanged": false,
+    "parentReReview": "PENDING; not self-approved"
+  },
+  "subscriptionId": "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+  "location": "eastus2",
+  "route": "fresh application / existing network; NOT standalone fresh-network proof",
+  "scopeIds": {
+    "freshGroup": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2",
+    "existingGroup": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg",
+    "existingVault": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2",
+    "existingVnet": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2",
+    "runner": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Compute/virtualMachines/fotoa-validation-vm-eastus2"
+  },
+  "artifactBindings": {
+    "infra\\main.bicep": "34a6f2ac15096abdce705fcbb063273c93d188b33395444c404a5ec73df402b6",
+    "infra\\modules\\function-app.bicep": "021749c4520a0c19ed8443985647bbd288404de1939416476f21792e6c264cc0",
+    "infra\\main.issue147-existing-network.parameters.json": "b6ce3d1140ce492a00681571db72cac4f0048da590d1f81bf22957d4e8ff4781",
+    "infra\\issue147-first-allocation.bicep": "4bef4fc4ace7f3de5c54d13b42f48acb7b226bdb4af4fb086c601acdf3395e40",
+    "infra\\issue147-app-insights-bootstrap.bicep": "23582aebbaeb72bf68789eb79b032f83ea8f6e48a7f9ea94e8900c3eda5e4c36",
+    "infra\\modules\\app-insights-secret.bicep": "27d2e5c7e7251c6837df817b589820acc91b3675412fcb268ac0288d8ef21e81",
+    ".azure\\issue147-first-allocation.compiled.json": "fec048c7f33b64af50ad27e08083fbfefdd7b4fd8ff55b7892700e73d8b7f1be",
+    ".azure\\issue147-app-insights-bootstrap.compiled.json": "e6fda8f014d6aa3300a4148a77f8cced2038efee7309f0cf60d60d0c328fc723",
+    ".azure\\bootstrap-provider-validate.json": "465f5893af5effb5a0d59e529c26aeb412ea16338aca7323a8ac44ea0fdbb94f",
+    ".azure\\bootstrap-provider-what-if.json": "423962426914cad38c2a7b6c97f432101bc672942ab9d1f3f7517985dfa8f3c6",
+    ".azure\\composition-provider-validate.json": "4bb7e71e8d8a236491b37930ca80997328ed50db11483905d0dbd281881fe930",
+    ".azure\\composition-provider-what-if.json": "25ee02e217dff56e5a4ff1d1fbd1a9a5bb5fcff63c55f93456a86b8676a8eb3e",
+    "infra\\modules\\function-fresh-vault-reader.bicep": "feb557ccef59140298f5039916dc16f99e89db7e44e22cebdb44fa90b778c61f",
+    "infra\\scripts\\invoke-issue147-official-validation.ps1": "cdd5e0153f67b964efe1ad6d43e51c4d7d40b79137cdc59f4f617b846f0c464b",
+    "infra\\scripts\\issue147-validation-adapter.py": "dfe070c6b0db3884bce77b20eabcb49971be124e5c1499891dd288ac96a3c1df",
+    "infra\\scripts\\test_issue147_validation_adapter.py": "6a8cbfec343299409f46958f0fbf19dbb9730d45d613d13aa820d9ce47b9e411",
+    "infra\\scripts\\test_modern_foundation.py": "cb879bd8fc2028d521d92a901bb96ac6d9b126bf6594793e000588741552b7dc",
+    "infra\\scripts\\validate-naming.ps1": "b3ede038eea3e769fcb272151c5122316624d0f79a45852d298d99ab2867158e",
+    ".azure\\main-existing-network.compiled.json": "21f0bce95eb689cea1398b60988592b7c0aabb9190f77221e8fb16cdc0399d43",
+    ".azure\\independent-vault-revision-identity.json": "a8139055e1e3003acc2bac8a28dd074ed3e8fc89a9f2cee0d8cd5bf98bf06c2b",
+    ".azure\\fresh-default-equality-28f99ce7\\comparison.json": "0467b365907b96d5a274d2c0ce5c0a401090b97964a1542c39fa375a57546e98",
+    "docs\\current-state\\issue147-vault-graph-analysis.json": "c00c52d5c6368830fc53ff1fff383599495a9f456d8b4d95c41fb404a7680845",
+    ".azure\\vault-graph-analysis-28f99ce7-20261020-transport2\\1-cli.json": "4a45ad5097536d276de226fcbe7f7408b697b7c60f7002e82bf8263d31fd3080",
+    ".azure\\vault-graph-analysis-28f99ce7-20261020-transport2\\2-authentication.json": "9754768c4973af92f0c42e799c6aeebced17eaea866c88c1e37a6f5aa53f3ca3",
+    ".azure\\vault-graph-analysis-28f99ce7-20261020-transport2\\3-compile.json": "d20620841da450129c3318e76b84a217cf14cc7c5a3582d326a24d9b08388a96",
+    ".azure\\vault-graph-analysis-28f99ce7-20261020-transport2\\4-validate.json": "5aa1d78085f26ef4db54a8db33213d41f91928f7560aea2cf4932dbb76f311f9",
+    ".azure\\vault-graph-analysis-28f99ce7-20261020-transport2\\5-what-if.json": "aecdd6688765be8e31b7e9107967de228c1f9fc16770db4a27a94fd7391484b3",
+    ".azure\\vault-graph-final-28f99ce7-20261020\\1-cli.json": "70f9b9951364beb6c0d1227967f9333937a24e8c41fd1ff5d835802611260c5f",
+    ".azure\\vault-graph-final-28f99ce7-20261020\\2-authentication.json": "9fa37e5d81f5dfc89b7c7bbdb860860988a9a4cbd658f6e4088c83c9a8d2d764",
+    ".azure\\vault-graph-final-28f99ce7-20261020\\3-compile.json": "5f020a72f74b595d206020bdd8cab58ad91537157fc4f4f0354f8487eb1fea55",
+    ".azure\\vault-graph-final-28f99ce7-20261020\\4-validate.json": "9077732ac37faadf5c77317925100b1774c929556b8231f324bf76765a9de738",
+    ".azure\\vault-graph-final-28f99ce7-20261020\\5-what-if.json": "1fd87aec6236b5ec49646a4ce0f53d751cd054100ba8b144bf0d8128841fbf4c"
+  },
+  "hashPolicy": "artifactBindings are exact preparation-checkout/artifact bytes (Windows source CRLF). committedSourceBindings independently pin exact canonical Git blob bytes (LF). Verify the applicable exact-byte binding, never accept a mismatch or relax an execution guard.",
+  "compilerVersion": "0.47.16.16243",
+  "committedSourceBindings": {
+    "infra\\main.bicep": "b208738adfc7b9d98fe112dacd3ce4156bbc5113238a30df7a26b69e2ea46663",
+    "infra\\modules\\function-app.bicep": "d9c2c0acdafbf60f7de73ac166b6fe77144a7af18633e3300470a7e3b9da660a",
+    "infra\\main.issue147-existing-network.parameters.json": "887f053b4b90bb283ebf5328d274c55f9b2e5837dcae211c9aa5cf60b5ba0f99",
+    "infra\\issue147-first-allocation.bicep": "25f06b6488b29142fc3e94a9064b1b83aaab5bd18743e0b2fc5be1e533c5cac6",
+    "infra\\issue147-app-insights-bootstrap.bicep": "ab0873af21e12c88e5f69d5607e3f463e6b4e0d30ec8cb8e1e54f05e0e32b6a4",
+    "infra\\modules\\app-insights-secret.bicep": "476faf3080591ef9a6b12bcc415339aead954125499b097c00c336a0bc69bfb3",
+    "infra\\modules\\function-fresh-vault-reader.bicep": "36929db4d661f9971aa0ebbef515c425f822ea5109511b748adc16996ee6764a",
+    "infra\\scripts\\invoke-issue147-official-validation.ps1": "5106b25131c577cd87c518a25fb7a4055d350f84e421d0c0aef69c316371283c",
+    "infra\\scripts\\issue147-validation-adapter.py": "30fabd1b2669e4210d6dd260ad8d0e9759d7f077e1a10810d86f5462984d26f2",
+    "infra\\scripts\\test_issue147_validation_adapter.py": "d1b71c6cb8d9db7245c8fc3dcbc41e329628d00a85b4039d495bf6d60b0d1961",
+    "infra\\scripts\\test_modern_foundation.py": "3fe8de922808c29c84970f28807cbc2e6f20371e8c1b03c751327b2d97f2785a",
+    "infra\\scripts\\validate-naming.ps1": "4f58d935e9ea2549d9f61cbc8d7e3b20397f69faf3e62d197dcb370b94eff96e"
+  },
+  "functionPackage": {
+    "rebuildRequired": false,
+    "bytes": 8472610,
+    "sha256": "b6ffdb3739e261f612a5b1f568f509365da88094a175a3efabc6aaf9c4f2b9ff",
+    "blobUrl": "https://fotoa147demosteastus2.blob.core.windows.net/function-packages/telemetry-936946c8-b6ffdb3739e261f612a5b1f568f509365da88094a175a3efabc6aaf9c4f2b9ff.zip",
+    "fetchAuthentication": "Function SystemAssigned MI; no SAS, shared key or SCM upload",
+    "publicationNow": false
+  },
+  "secureBootstrap": {
+    "expirationEpochSeconds": 1795169700,
+    "expirationUtc": "2026-11-20T10:15:00Z",
+    "expirationContract": "Required typed int supplied by one-time bootstrap, no generic hardcoded date or clock default; new named routing secret only.",
+    "sourceComponentPathRelativeToFreshGroup": "providers/Microsoft.Insights/components/fotoa147-demo-appi-eastus2",
+    "sourceApiVersion": "2020-02-02",
+    "operation": "ARM server-side reference(component).ConnectionString -> securestring module parameter -> ARM vaults/secrets PUT",
+    "destinationPathRelativeToExistingGroup": "providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2/secrets/fotoa147-appinsights-connection-string",
+    "destinationApiVersion": "2023-07-01",
+    "newControlPlaneAction": "Microsoft.KeyVault/vaults/secrets/write",
+    "executorAdditionalActions": [
+      "Microsoft.Insights/components/read on ONLY the new component",
+      "Microsoft.Resources/deployments/read and write for the named custody nested deployment in existingGroup",
+      "Microsoft.KeyVault/vaults/read on existingVault; no vault write"
+    ],
+    "outputsOnly": [
+      "secretVersionUri",
+      "componentBindingResourceId"
+    ],
+    "actualVersion": null,
+    "valueProcessingInThisPreparation": false,
+    "oldArizeSecretReadOrCopy": false,
+    "vaultNetworkOrRbacChange": false,
+    "imperativeFallback": "Not needed; standard ARM provider contracts supported and analysis accepted",
+    "laterAdmission": "Fresh RG/component/secret absent; exact manifest/source/profile/compiled hashes bound by separate lease. Metadata only. Existing/non-Create/ambiguous secret -> STOP; no overwrite or ambiguous replay. Wrapper is first-allocation only.",
+    "laterTracing": "Use actual returned immutable secret version as secure ARM reference with existing narrow modern-foundry-tracing.bicep, ApiKey, private, NotRequired, NotApplicable, reviewed=true; vault deploy/action separately authorized; no plaintext.",
+    "nativeTracingAssociationCreatedNowOrByThisWrapper": false
+  },
+  "predictedFirstAllocation": {
+    "newGroupCount": 1,
+    "resourcePathConvention": "Append each path below to scopeIds.freshGroup. Deployment resources are Incremental orchestration, not new services.",
+    "freshResourcePaths": [
+      "providers/Microsoft.CognitiveServices/accounts/fotoa147-demo-foundry-eastus2",
+      "providers/Microsoft.CognitiveServices/accounts/fotoa147-demo-foundry-eastus2/projects/fotoa147-demo-fproj-eastus2",
+      "providers/Microsoft.CognitiveServices/accounts/fotoa147-demo-foundry-eastus2/deployments/qa147-synthetic",
+      "providers/Microsoft.Insights/components/fotoa147-demo-appi-eastus2",
+      "providers/Microsoft.OperationalInsights/workspaces/fotoa147-demo-law-eastus2",
+      "providers/Microsoft.OperationalInsights/workspaces/fotoa147-demo-law-eastus2/dataExports/telemetry-to-eventhub",
+      "providers/Microsoft.EventHub/namespaces/fotoa147-demo-ehns-eastus2",
+      "providers/Microsoft.EventHub/namespaces/fotoa147-demo-ehns-eastus2/eventhubs/telemetry",
+      "providers/Microsoft.EventHub/namespaces/fotoa147-demo-ehns-eastus2/eventhubs/telemetry/consumergroups/function-transform",
+      "providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2",
+      "providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2/blobServices/default/containers/function-packages",
+      "providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2/blobServices/default/containers/genai-correlation",
+      "providers/Microsoft.Web/serverfarms/fotoa147-demo-plan-eastus2",
+      "providers/Microsoft.Web/sites/fotoa147-demo-func-eastus2",
+      "providers/Microsoft.Web/sites/fotoa147-demo-func-eastus2/basicPublishingCredentialsPolicies/ftp",
+      "providers/Microsoft.Web/sites/fotoa147-demo-func-eastus2/basicPublishingCredentialsPolicies/scm",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-foundry-eastus2",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-foundry-eastus2/privateDnsZoneGroups/default",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-blob-eastus2",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-blob-eastus2/privateDnsZoneGroups/default",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-queue-eastus2",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-queue-eastus2/privateDnsZoneGroups/default",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-table-eastus2",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-table-eastus2/privateDnsZoneGroups/default",
+      "providers/Microsoft.Authorization/roleDefinitions/8d04f679-2412-5e17-a20e-5dcb2099c25a"
+    ],
+    "newExternalSecretCount": 1,
+    "newPrivateEndpointCount": 4,
+    "expectedPrivateEndpointIpSlots": 6,
+    "ipBudgetBasis": "Foundry account 3 required members + Blob/Queue/Table 3; provider actual allocation remains a runtime gate",
+    "vaultOwnership": {
+      "mode": "existing",
+      "ownedVaultName": null,
+      "ownedVaultResourceId": null,
+      "ownedVaultCount": 0,
+      "ownedVaultPrivateEndpointCount": 0,
+      "externalReferenceMetadata": "Four URI identifiers from unchanged profile; external custody is not owned by main",
+      "freshVaultDefault": "Unchanged: owned vault, vault PE/local reader, five PEs and seven expected IP slots"
+    },
+    "newVnetSubnetZoneLinkPutCount": 0,
+    "existingSubnetJoinActions": "Microsoft.Network/virtualNetworks/subnets/join/action on existing private-endpoints and function-integration only",
+    "existingDnsEffects": "Four PE zone-group PUTs register fresh service names in six of the seven supplied profile zones via join/action; existing vault zone/link remains required for external custody. Existing VNet links unchanged. No VNet/subnet/zone/link PUT, DNS redesign or custom record executor; record changes are expected.",
+    "function": "Linux Python 3.11 / EP1 capacity=1 / plan max=1 / app max=1 / minimum=1 / prewarmed target=1; both consumers disabled",
+    "model": "OpenAI / gpt-5-mini / 2025-08-07 / qa147-synthetic / DataZoneStandard / capacity 1 / NoAutoUpgrade",
+    "runtimeBoundary": "Basic private CLIENT INGRESS, Microsoft-managed runtime/state; not Standard/BYO isolation"
+  },
+  "sourceDefinedFirstAllocationRoles": [
+    {
+      "principal": "future new project system MI",
+      "role": "53ca6127-db72-4b80-b1b0-d745d6d5456d",
+      "scope": "new Foundry account"
+    },
+    {
+      "principal": "future new Function system MI",
+      "roles": [
+        "ba92f5b4-2d11-453d-a403-e96b0029c9fe",
+        "974c5e8b-45b9-4653-ba55-5f855dd0fb88",
+        "0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3",
+        "b7e6dc6d-f1e8-4753-8033-0f276bb0955b"
+      ],
+      "scope": "new storage account",
+      "purpose": "Blob Contributor / Queue Contributor / Table Contributor / Blob Owner host roles"
+    },
+    {
+      "principal": "future new Function system MI",
+      "role": "a638d3c7-ab3a-418d-83e6-5f17a39d4fde",
+      "scope": "new Event Hub namespace"
+    },
+    {
+      "principal": "future new Function system MI",
+      "roleDefinitionPath": "providers/Microsoft.Authorization/roleDefinitions/8d04f679-2412-5e17-a20e-5dcb2099c25a",
+      "roleDefinitionScope": "freshGroup",
+      "assignmentScope": "new storage blobServices/default/containers/genai-correlation ONLY",
+      "dataActions": [
+        "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags/write",
+        "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/filter/action"
+      ],
+      "whatIfStatus": "Unsupported: GUID requires future Function principal; no guessed identity"
+    }
+  ],
+  "laterExecutorManagementActions": {
+    "scope": "Only exact manifest resources, plus named nested deployments; not a grant request",
+    "subscription": [
+      "Microsoft.Resources/subscriptions/resourceGroups/write",
+      "Microsoft.Resources/deployments/read",
+      "Microsoft.Resources/deployments/write"
+    ],
+    "freshGroup": [
+      "Microsoft.Resources/deployments/read",
+      "Microsoft.Resources/deployments/write",
+      "Microsoft.CognitiveServices/accounts/write",
+      "Microsoft.CognitiveServices/accounts/projects/write",
+      "Microsoft.CognitiveServices/accounts/deployments/write",
+      "Microsoft.Insights/components/write",
+      "Microsoft.OperationalInsights/workspaces/write",
+      "Microsoft.OperationalInsights/workspaces/dataExports/write",
+      "Microsoft.EventHub/namespaces/write",
+      "Microsoft.EventHub/namespaces/eventhubs/write",
+      "Microsoft.EventHub/namespaces/eventhubs/consumergroups/write",
+      "Microsoft.Storage/storageAccounts/write",
+      "Microsoft.Storage/storageAccounts/blobServices/write",
+      "Microsoft.Storage/storageAccounts/blobServices/containers/write",
+      "Microsoft.Web/serverfarms/write",
+      "Microsoft.Web/sites/write",
+      "Microsoft.Web/sites/basicPublishingCredentialsPolicies/write",
+      "Microsoft.Network/privateEndpoints/write",
+      "Microsoft.Network/privateEndpoints/privateDnsZoneGroups/write",
+      "Microsoft.Authorization/roleDefinitions/write",
+      "Microsoft.Authorization/roleAssignments/write"
+    ],
+    "existingNetworkOnly": [
+      "Microsoft.Network/virtualNetworks/subnets/read and join/action on the two profile subnets",
+      "Microsoft.Network/privateDnsZones/read and join/action on the seven profile zones"
+    ],
+    "existingVaultOnly": [
+      "Microsoft.KeyVault/vaults/read",
+      "Microsoft.KeyVault/vaults/secrets/write on fotoa147-appinsights-connection-string ONLY",
+      "Microsoft.Resources/deployments/read and write on issue147-new-routing-custody ONLY"
+    ],
+    "excluded": "No existing vault/network resource PUT, broad new vault role, old secret value operation, listKeys/listSecrets, VM operation, model inference, agent publication, service registration or security/governance change"
+  },
+  "separateFutureIamLease": [
+    {
+      "principal": "actual provider-generated new Function system MI, never guessed",
+      "template": "infra\\existing-function-secret-access.bicep (not invoked by wrapper)",
+      "role": "4633458b-17de-408a-b874-0445c86b69e6",
+      "scopeConvention": "scopeIds.existingVault + /secrets/ + each name, four distinct secret-scoped assignments",
+      "secretNames": [
+        "arize-otlp-endpoint",
+        "arize-space-id",
+        "arize-api-key",
+        "fotoa147-appinsights-connection-string"
+      ],
+      "broadVaultRole": false
+    },
+    {
+      "principalId": "64c0b8ce-7e6c-4875-a2cb-82552efc0376",
+      "role": "ba92f5b4-2d11-453d-a403-e96b0029c9fe",
+      "scopePathRelativeToFreshGroup": "providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2/blobServices/default/containers/function-packages",
+      "purpose": "Existing private runner immutable no-overwrite package upload, separately leased"
+    },
+    {
+      "principalId": "64c0b8ce-7e6c-4875-a2cb-82552efc0376",
+      "role": "53ca6127-db72-4b80-b1b0-d745d6d5456d",
+      "scopePathRelativeToFreshGroup": "providers/Microsoft.CognitiveServices/accounts/fotoa147-demo-foundry-eastus2/projects/fotoa147-demo-fproj-eastus2",
+      "purpose": "Later separately leased publication/readback/native invocation"
+    }
+  ],
+  "analysisEvidence": {
+    "validateStartUtc": "2026-10-20T09:37:08.183724+00:00",
+    "validate": "Provider / exit 0 / Succeeded / error null",
+    "validateCorrelationId": "a6703089-00f4-4a63-8b35-7c76b3423563",
+    "whatIfStartUtc": "2026-10-20T09:37:17.238547+00:00",
+    "whatIf": "Provider / ResourceIdOnly / exit 0 / Succeeded / error null",
+    "whatIfCorrelationId": null,
+    "whatIfCorrelationIdNote": "Not returned in projected response",
+    "changeCounts": {
+      "Create": 33,
+      "Modify": 0,
+      "Delete": 0,
+      "Unsupported": 1,
+      "Ignore": 0,
+      "NoChange": 0
+    },
+    "secretChangeType": "Create",
+    "errorCodes": [],
+    "safeFailureDiagnostic": null,
+    "evidence": "docs\\current-state\\issue147-policy-review-complete.json",
+    "evidenceRawSha256": "4c3acb46c0b5085cd8f74ce60cb22ea5d2a43fa5a04da6d96be2c9e57da888c7",
+    "historicalGraphEvidence": "docs\\current-state\\issue147-vault-graph-analysis.json",
+    "currentExecutorId": "bb4984fe-0187-4f91-b0a6-f5057b0a0924",
+    "freshFiveCheckReceipts": ".azure\\expiration-final-bb4984fe",
+    "actualFiveCheckResults": {
+      "cli": "PASS / exit 0",
+      "authentication": "PASS / exit 0",
+      "compile": "PASS / exit 0",
+      "validate": "PASS / exit 0",
+      "what-if": "PASS / exit 0"
+    },
+    "officialWorkflowCompleted": false,
+    "officialWorkflowCompletedStep": "AddValidationSteps",
+    "officialHelperExecuted": true,
+    "officialHelperAdaptation": "Unmodified pinned helper through metadata-only five-check transport; every CLI process explicit subscription/repository config; Provider analysis against exact compiled subscription wrapper with unchanged embedded profile. No group validate against absent RG, registration/login/account-set or execution.",
+    "blocker": "Core five checks pass for revised expiration. Complete review: 12 assignments, 7 initiatives, 335 references / 323 unique definitions, zero unclassified. Four planned Audit gaps (three diagnosticSettings and one accepted least-privilege CustomRole) plus two inherited diagnostic DeployIfNotExists effects to existing WestUS2 governance LAW prevent the policy recipe passing. No exemption, role broadening or architecture expansion authorized. MFA and future-principal/private-link/provider admission remain dynamic, not observed Deny.",
+    "remainingTechnicalGates": [
+      "Dynamic container-local custom role assignment Unsupported in what-if",
+      "Actual EP1 MPSJ allocation/readback and DataZoneStandard capacity-1 admission/reservation, not guaranteed by analysis",
+      "Actual secure provisioning/version metadata and private Function KV resolution under later exact grants",
+      "Package publication/private runtime/egress, new native graph, repeat acceptance"
+    ],
+    "cloudResourceMutationExecuted": false,
+    "deploymentCreateExecuted": false,
+    "secretReadWriteExecuted": false,
+    "historicalFailedCompositionAttempt": {
+      "validateStartUtc": "2026-10-20T08:25:18.904874+00:00",
+      "whatIfStartUtc": "2026-10-20T08:25:29.434805+00:00",
+      "whatIf": "Provider / ResourceIdOnly / exit 1; STOPPED analysis, no retry/fallback",
+      "receipt": ".azure\\composition-provider-what-if.json",
+      "parentSafelyReproducedDiagnostic": "InvalidTemplate - Deployment template validation failed: The template resource keyVault ... Evaluation result of language expression [parameters('keyVaultName')] is type Null, expected type String.",
+      "supersededByCurrentActualProviderProof": true
+    },
+    "finalAdapterSourceBoundInEveryReceipt": true
+  },
+  "conditionalCostAndLifetime": {
+    "source": "docs\\current-state\\issue147-cost-estimate.md and issue147-planning-evidence.json; public 2026-10-19 USD rates, not refreshed",
+    "allocatedHours": 24,
+    "ep1AverageInstances": 1,
+    "ep1HourlyFormulaUSD": "0.16 + 3.5 * 0.0114 = 0.1999",
+    "ep1For24hUSD": "4.7976",
+    "sourceScenarioPricedSubtotalUSD": "15.504880",
+    "existingNetworkIncrementalZoneFeeAdjustmentUSD": "-0.250000",
+    "unusedVaultPrivateEndpoint24hAdjustmentUSD": "-0.250000",
+    "unusedVaultDefender24hAdjustmentUSD": "-0.008160",
+    "deltaFromPriorExistingNetworkRouteUSD": "-0.258160",
+    "selectedAffectedMeterQuantities": {
+      "pe_hours": 100,
+      "dns_zones": 0,
+      "defender_kv": 0
+    },
+    "selectedRouteConditionalPricedSubtotalUSD": "14.996720",
+    "conditionalFurther30dayReserveUSD": "224.0480",
+    "conditional24hPlusFurther30dayUSD": "239.044720",
+    "dnsTreatment": "No new zone/link base fee; existing seven-zone base cost continues as shared retained cost. Four new zone groups still register DNS records; prior 1M query allowance retained.",
+    "vaultTreatment": "No new vault node/PE. Existing custody and required NEW secret remain; 10k KV operations retained. Shared existing vault/PE/security/retention cost not claimed zero.",
+    "quantityEnvelope": "Selected route: EH 25 TU-hour buckets, 4 PEs x25 charge-hours, zero new DNS zone/vault nodes, 1GB ingestion/export, 1M EH events, 10GB blobs, 1GB queue/table, listed operation budgets, 10k KV operations incl new custody, 1M DNS queries, 10GB PE traffic each direction, 10GB internet/inter-region/scanned allowance, 1024 model input/output tokens conditionally; not enforced caps",
+    "fullLifetimeCostFormula": "14.996720 + shared retained DNS/vault/PE/security allocation if charged + G + L + Microsoft-managed state/private-runner/build R + volume overages + billable allocation/retention time tail + tax/contract effects",
+    "unknowns": "Actual G/L entitlements and usage, state/runner costs, conditional Defender/malware applicability and actual retirement time unknown; no all-in ceiling",
+    "post24h": "Keep unless separately authorized retirement; EP1/EH/PEs continue billing. Operator day-7/day-30 retention reviews. No auto-delete or guaranteed billing TTL.",
+    "executionApproved": false
+  },
+  "freshDefaultGraphComparison": {
+    "baseline": "a8d5338c3f0f2d8670bf6ab134dee71e8385563e",
+    "capturedUtc": "2026-10-20T08:46:37.432856+00:00",
+    "allOtherCompiledGraphEqual": true,
+    "allPublicOutputsEqual": true,
+    "freshReaderConditionEqual": true,
+    "freshReaderGuidInputsScopeRolePrincipalEqual": true,
+    "compiledTemplateSha256": "21f0bce95eb689cea1398b60988592b7c0aabb9190f77221e8fb16cdc0399d43"
+  }
+}

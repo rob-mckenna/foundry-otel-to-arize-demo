@@ -1,0 +1,1356 @@
+{
+  "schemaVersion": 1,
+  "supersededBy": "issue147-policy-review-complete.json",
+  "historicalOnly": true,
+  "status": "STOPPED_PLANNED_AUDIT_NONCOMPLIANCE_NOT_PROVIDER_DENIAL",
+  "workerId": "be151a91-97b7-4d74-a132-0dc5cd8a90e9",
+  "uniqueDescription": "⚙️ Infra: Finish bound policy validation",
+  "runtimeIdentitySource": "list_agents scope=all, observed before edits; this new runtime is NOT retained 28f99ce7",
+  "lockedAuthorsConsulted": false,
+  "baselineCommit": "bfe18428046d9d8654322e7cd8a4716ae8b06e99",
+  "startedUtc": "2026-10-20T09:22:13.259151+00:00",
+  "completedUtc": "2026-10-20T09:26:24.684421+00:00",
+  "transport": "Azure MCP unavailable; explicit-subscription Azure CLI equivalent read-only metadata; existing repository auth; no login/account set/registration/grants",
+  "azureConfigDirectory": "C:\\repos\\foundry-otel-to-arize-demo\\.azure-config",
+  "hashSemantics": "SHA256 of canonical JSON UTF-8 sorted keys, compact separators; hashes bind explicitly projected metadata, not raw HTTP bytes or full definitions. Source/compiled byte hashes separately specified.",
+  "hierarchy": {
+    "children": [
+      {
+        "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "type": "/subscriptions"
+      }
+    ],
+    "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+    "parent": null
+  },
+  "assignments": [
+    {
+      "definition": "/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8",
+      "enforcementMode": "Default",
+      "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policyAssignments/Azure_Security_Baseline",
+      "notScopes": null,
+      "overrides": null,
+      "parameters": {
+        "disableUnrestrictedNetworkToStorageAccountMonitoringEffect": {
+          "value": "Audit"
+        },
+        "fTPSOnlyShouldBeRequiredInYourAPIAppMonitoringEffect": {
+          "value": "Disabled"
+        },
+        "fTPSOnlyShouldBeRequiredInYourFunctionAppMonitoringEffect": {
+          "value": "Disabled"
+        },
+        "fTPSShouldBeRequiredInYourWebAppMonitoringEffect": {
+          "value": "Disabled"
+        },
+        "keysExpirationSetEffect": {
+          "value": "Audit"
+        },
+        "networkSecurityGroupsOnSubnetsMonitoringEffect": {
+          "value": "AuditIfNotExists"
+        },
+        "secretsExpirationSetEffect": {
+          "value": "Audit"
+        },
+        "vnetEnableDDoSProtectionMonitoringEffect": {
+          "value": "Disabled"
+        },
+        "windowsWebServersShouldBeConfiguredToUseSecureCommunicationProtocolsMinimumTLSVersion": {
+          "value": "1.2"
+        }
+      },
+      "resourceSelectors": null,
+      "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171"
+    },
+    {
+      "definition": "/providers/Microsoft.Authorization/policyDefinitions/f69cd8b8-9a6e-46b4-be84-244e8b127944",
+      "enforcementMode": "Default",
+      "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policyAssignments/sys.mfa-delete",
+      "notScopes": null,
+      "overrides": null,
+      "parameters": {
+        "effect": {
+          "value": "DenyAction"
+        }
+      },
+      "resourceSelectors": null,
+      "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171"
+    },
+    {
+      "definition": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policySetDefinitions/MCAPSGovAuditPolicies",
+      "enforcementMode": "Default",
+      "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policyAssignments/MCAPSGovAuditPolicies",
+      "notScopes": null,
+      "overrides": null,
+      "parameters": null,
+      "resourceSelectors": null,
+      "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171"
+    },
+    {
+      "definition": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policySetDefinitions/MCAPSGovDenyPolicies",
+      "enforcementMode": "Default",
+      "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policyAssignments/MCAPSGovDenyPolicies",
+      "notScopes": null,
+      "overrides": null,
+      "parameters": null,
+      "resourceSelectors": null,
+      "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171"
+    },
+    {
+      "definition": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policySetDefinitions/MCAPSGovDeployPolicies",
+      "enforcementMode": "Default",
+      "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policyAssignments/MCAPSGovDeployPolicies",
+      "notScopes": null,
+      "overrides": null,
+      "parameters": null,
+      "resourceSelectors": null,
+      "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171"
+    },
+    {
+      "definition": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policyDefinitions/73fad606-9c5b-4ebc-b964-ca4124364199",
+      "enforcementMode": "Default",
+      "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policyAssignments/c414b532e9ae4070b33cd457",
+      "notScopes": [],
+      "overrides": null,
+      "parameters": {},
+      "resourceSelectors": null,
+      "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171"
+    },
+    {
+      "definition": "/providers/Microsoft.Authorization/policyDefinitions/54f51f64-eaa5-44cf-8674-830bcfd14d21",
+      "enforcementMode": "Default",
+      "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policyAssignments/sys.mfa-write",
+      "notScopes": null,
+      "overrides": null,
+      "parameters": {
+        "effect": {
+          "value": "Deny"
+        }
+      },
+      "resourceSelectors": null,
+      "scope": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171"
+    },
+    {
+      "definition": "/providers/Microsoft.Authorization/policyDefinitions/12e5dd16-d201-47ff-849b-8454061c293d",
+      "enforcementMode": "Default",
+      "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/policyAssignments/1e6fbe7e9fba4c009cbb8b6d",
+      "notScopes": null,
+      "overrides": [],
+      "parameters": {
+        "allowedAssetIds": {
+          "value": [
+            "azureml://registries/azure-openai/models/gpt-4o/versions/2024-11-20",
+            "azureml://registries/azure-openai/models/text-embedding-ada-002/versions/2",
+            "azureml://registries/azure-openai/models/whisper/versions/001",
+            "azureml://registries/azure-openai/models/gpt-4/versions/turbo-2024-04-09",
+            "azureml://registries/azure-openai/models/gpt-5-mini/versions/2025-08-07"
+          ]
+        },
+        "effect": {
+          "value": "Deny"
+        }
+      },
+      "resourceSelectors": [],
+      "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2"
+    },
+    {
+      "definition": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+      "enforcementMode": "Default",
+      "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/policyAssignments/9e0cb9a186324eda9dec1142",
+      "notScopes": [],
+      "overrides": [],
+      "parameters": {
+        "tagName": {
+          "value": "SecurityControl"
+        }
+      },
+      "resourceSelectors": [],
+      "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2"
+    },
+    {
+      "definition": "/providers/Microsoft.Authorization/policySetDefinitions/c1529623-9fc2-45bc-b84b-b14cd0b7484e",
+      "enforcementMode": "Default",
+      "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/policyAssignments/SqlVmAndArcSqlServersProtection",
+      "notScopes": null,
+      "overrides": null,
+      "parameters": null,
+      "resourceSelectors": null,
+      "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2"
+    },
+    {
+      "definition": "/providers/Microsoft.Authorization/policySetDefinitions/e77fc0b3-f7e9-4c58-bc13-cb753ed8e46e",
+      "enforcementMode": "Default",
+      "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/policyAssignments/OpenSourceRelationalDatabasesProtectionSecurityCenter",
+      "notScopes": null,
+      "overrides": null,
+      "parameters": null,
+      "resourceSelectors": null,
+      "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2"
+    },
+    {
+      "definition": "/providers/Microsoft.Authorization/policySetDefinitions/9cb3cc7a-b39b-4b82-bc89-e5a5d9ff7b97",
+      "enforcementMode": "Default",
+      "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/policyAssignments/DataProtectionSecurityCenter",
+      "notScopes": null,
+      "overrides": null,
+      "parameters": null,
+      "resourceSelectors": null,
+      "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2"
+    }
+  ],
+  "initiativeSummaries": [
+    {
+      "id": "/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8",
+      "assignmentId": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policyAssignments/Azure_Security_Baseline",
+      "definitionCanonicalJsonSha256": "8d4e181e4b91b2a59ab129da38f15b8f0cc7fb7c8e2a7ac1c630036a9546e35d",
+      "definitionReferenceCount": 216,
+      "secretExpirationReference": [
+        {
+          "definitionVersion": "1.*.*",
+          "groupNames": [
+            "Azure_Security_Benchmark_v3.0_DP-6"
+          ],
+          "parameters": {
+            "effect": {
+              "value": "[parameters('secretsExpirationSetEffect')]"
+            }
+          },
+          "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/98728c90-32c7-4049-8429-847dc0f4fe37",
+          "policyDefinitionReferenceId": "secretsExpirationSet"
+        }
+      ]
+    },
+    {
+      "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policySetDefinitions/MCAPSGovAuditPolicies",
+      "assignmentId": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policyAssignments/MCAPSGovAuditPolicies",
+      "definitionCanonicalJsonSha256": "04ce5de751387d31f72c2e2f1aaf6d86677da15f21c265d42e3e0fa4f47d4e11",
+      "definitionReferenceCount": 44,
+      "secretExpirationReference": []
+    },
+    {
+      "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policySetDefinitions/MCAPSGovDenyPolicies",
+      "assignmentId": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policyAssignments/MCAPSGovDenyPolicies",
+      "definitionCanonicalJsonSha256": "e45de4587a7ee5686d60eacbc220e70f927dba553ae18565694b78bffda44441",
+      "definitionReferenceCount": 11,
+      "secretExpirationReference": []
+    },
+    {
+      "id": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policySetDefinitions/MCAPSGovDeployPolicies",
+      "assignmentId": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policyAssignments/MCAPSGovDeployPolicies",
+      "definitionCanonicalJsonSha256": "ee078bbc1d6968a2aff227a21d1f9f60098922a8306f8c817411977d4266a5a6",
+      "definitionReferenceCount": 48,
+      "secretExpirationReference": []
+    },
+    {
+      "id": "/providers/Microsoft.Authorization/policySetDefinitions/c1529623-9fc2-45bc-b84b-b14cd0b7484e",
+      "assignmentId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/policyAssignments/SqlVmAndArcSqlServersProtection",
+      "definitionCanonicalJsonSha256": "52d3807d95c8954e5f5007933ad60e5d2a1da8f8d217c0ee34dbfbe36a6748fb",
+      "definitionReferenceCount": 3,
+      "secretExpirationReference": []
+    },
+    {
+      "id": "/providers/Microsoft.Authorization/policySetDefinitions/e77fc0b3-f7e9-4c58-bc13-cb753ed8e46e",
+      "assignmentId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/policyAssignments/OpenSourceRelationalDatabasesProtectionSecurityCenter",
+      "definitionCanonicalJsonSha256": "4cd32c01d7837a719432983ed73b860e971bcc6dab6f47406de746e0aea3ba20",
+      "definitionReferenceCount": 5,
+      "secretExpirationReference": []
+    },
+    {
+      "id": "/providers/Microsoft.Authorization/policySetDefinitions/9cb3cc7a-b39b-4b82-bc89-e5a5d9ff7b97",
+      "assignmentId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/providers/Microsoft.Authorization/policyAssignments/DataProtectionSecurityCenter",
+      "definitionCanonicalJsonSha256": "7d3a5760a7b8c93007cc54063785221f96afdee9facd3438c52400f77c2f1737",
+      "definitionReferenceCount": 3,
+      "secretExpirationReference": []
+    }
+  ],
+  "reviewedDefinitions": [
+    {
+      "id": "/providers/Microsoft.Authorization/policyDefinitions/98728c90-32c7-4049-8429-847dc0f4fe37",
+      "mode": "Microsoft.KeyVault.Data",
+      "parameters": {
+        "effect": {
+          "allowedValues": [
+            "Audit",
+            "Deny",
+            "Disabled"
+          ],
+          "defaultValue": "Audit",
+          "metadata": {
+            "description": "'Audit' allows a non-compliant resource to be created, but flags it as non-compliant. 'Deny' blocks the resource creation. 'Disable' turns off the policy.",
+            "displayName": "Effect"
+          },
+          "type": "String"
+        }
+      },
+      "policyRule": {
+        "if": {
+          "allOf": [
+            {
+              "equals": "Microsoft.KeyVault.Data/vaults/secrets",
+              "field": "type"
+            },
+            {
+              "exists": false,
+              "field": "Microsoft.KeyVault.Data/vaults/secrets/attributes.expiresOn"
+            }
+          ]
+        },
+        "then": {
+          "effect": "[parameters('effect')]"
+        }
+      },
+      "definitionCanonicalJsonSha256": "dcdc4859a239219acd0351eaa4841d2ee0fd42be52f8a0235c7bcdfe831d60eb"
+    },
+    {
+      "id": "/providers/Microsoft.Authorization/policyDefinitions/12e5dd16-d201-47ff-849b-8454061c293d",
+      "mode": "Microsoft.MachineLearningServices.v2.Data",
+      "parameters": {
+        "allowedAssetIds": {
+          "defaultValue": [],
+          "metadata": {
+            "description": "List of AssetIds of Models that are allowed to be deployed. This can include partial assetIds to allow all Models under a given scope.",
+            "displayName": "Allowed Asset Ids"
+          },
+          "type": "Array"
+        },
+        "allowedPublishers": {
+          "defaultValue": [],
+          "metadata": {
+            "description": "List of Publishers whose Models are allowed to be deployed.",
+            "displayName": "Allowed Model Publishers"
+          },
+          "type": "Array"
+        },
+        "effect": {
+          "allowedValues": [
+            "Audit",
+            "Deny",
+            "Disabled"
+          ],
+          "defaultValue": "Audit",
+          "metadata": {
+            "description": "Enable or disable the execution of the policy.",
+            "displayName": "Effect"
+          },
+          "type": "String"
+        }
+      },
+      "policyRule": {
+        "if": {
+          "allOf": [
+            {
+              "equals": "Microsoft.MachineLearningServices.v2.Data/workspaces/deployments",
+              "field": "type"
+            },
+            {
+              "exists": true,
+              "field": "Microsoft.MachineLearningServices.v2.Data/workspaces/deployments/model.registryName"
+            },
+            {
+              "allOf": [
+                {
+                  "field": "Microsoft.MachineLearningServices.v2.Data/workspaces/deployments/model.publisher",
+                  "notin": "[parameters('allowedPublishers')]"
+                },
+                {
+                  "count": {
+                    "name": "allowedAssetId",
+                    "value": "[parameters('allowedAssetIds')]",
+                    "where": {
+                      "contains": "[current('allowedAssetId')]",
+                      "field": "Microsoft.MachineLearningServices.v2.Data/workspaces/deployments/model.assetId"
+                    }
+                  },
+                  "equals": 0
+                }
+              ]
+            }
+          ]
+        },
+        "then": {
+          "effect": "[parameters('effect')]"
+        }
+      },
+      "definitionCanonicalJsonSha256": "54edeb4385b2f13aafbcc7441a8730416ffc85fff0636b9bdd303ed7b708e8fc"
+    },
+    {
+      "id": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+      "mode": "Indexed",
+      "parameters": {
+        "tagName": {
+          "metadata": {
+            "description": "Name of the tag, such as 'environment'",
+            "displayName": "Tag Name"
+          },
+          "type": "String"
+        }
+      },
+      "policyRule": {
+        "if": {
+          "allOf": [
+            {
+              "field": "[concat('tags[', parameters('tagName'), ']')]",
+              "notEquals": "[resourceGroup().tags[parameters('tagName')]]"
+            },
+            {
+              "notEquals": "",
+              "value": "[resourceGroup().tags[parameters('tagName')]]"
+            }
+          ]
+        },
+        "then": {
+          "details": {
+            "operations": [
+              {
+                "field": "[concat('tags[', parameters('tagName'), ']')]",
+                "operation": "addOrReplace",
+                "value": "[resourceGroup().tags[parameters('tagName')]]"
+              }
+            ],
+            "roleDefinitionIds": [
+              "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+            ]
+          },
+          "effect": "modify"
+        }
+      },
+      "definitionCanonicalJsonSha256": "d4ab8e085727576bb1bf8b526817b38e130a4ed97397a42cd87d738b0bf3a561"
+    },
+    {
+      "id": "/providers/Microsoft.Authorization/policyDefinitions/f69cd8b8-9a6e-46b4-be84-244e8b127944",
+      "mode": "All",
+      "parameters": {
+        "effect": {
+          "allowedValues": [
+            "AuditAction",
+            "DenyAction",
+            "Disabled"
+          ],
+          "defaultValue": "AuditAction",
+          "metadata": {
+            "description": "The desired effect of the policy",
+            "displayName": "Effect"
+          },
+          "type": "String"
+        }
+      },
+      "policyRule": {
+        "if": {
+          "allOf": [
+            {
+              "equals": true,
+              "value": "[contains(requestContext().identity, 'idtyp')]"
+            },
+            {
+              "equals": "user",
+              "value": "[requestContext().identity.idtyp]"
+            },
+            {
+              "notIn": "[split(tryGet(requestContext().identity, 'http://schemas.microsoft.com/claims/authnmethodsreferences'), ',')]",
+              "value": "mfa"
+            },
+            {
+              "notIn": "[split(requestContext().identity.acrs, ',')]",
+              "value": "p1"
+            }
+          ]
+        },
+        "then": {
+          "details": {
+            "actionNames": [
+              "delete"
+            ]
+          },
+          "effect": "[parameters('effect')]"
+        }
+      },
+      "definitionCanonicalJsonSha256": "6420af2663a30507272c8a19074a804da35dd5dd04dd4c944794826e16a6c25c"
+    },
+    {
+      "id": "/providers/Microsoft.Authorization/policyDefinitions/54f51f64-eaa5-44cf-8674-830bcfd14d21",
+      "mode": "All",
+      "parameters": {
+        "effect": {
+          "allowedValues": [
+            "Audit",
+            "Deny",
+            "Disabled"
+          ],
+          "defaultValue": "Audit",
+          "metadata": {
+            "description": "The desired effect of the policy",
+            "displayName": "Effect"
+          },
+          "type": "String"
+        }
+      },
+      "policyRule": {
+        "if": {
+          "allOf": [
+            {
+              "equals": true,
+              "value": "[contains(requestContext().identity, 'idtyp')]"
+            },
+            {
+              "equals": "user",
+              "value": "[requestContext().identity.idtyp]"
+            },
+            {
+              "notIn": "[split(tryGet(requestContext().identity, 'http://schemas.microsoft.com/claims/authnmethodsreferences'), ',')]",
+              "value": "mfa"
+            },
+            {
+              "notIn": "[split(requestContext().identity.acrs, ',')]",
+              "value": "p1"
+            }
+          ]
+        },
+        "then": {
+          "effect": "[parameters('effect')]"
+        }
+      },
+      "definitionCanonicalJsonSha256": "6c0080a0596a4723b3688641f931d9abd54f1476b3d0df7fa8bbfcf8b8367759"
+    }
+  ],
+  "exemptionsByScope": {
+    "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171": [],
+    "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2": []
+  },
+  "existingGroupMetadata": {
+    "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg",
+    "location": "eastus2",
+    "tags": null
+  },
+  "freshGroupExists": false,
+  "vaultMetadata": {
+    "enablePurgeProtection": true,
+    "enableRbacAuthorization": true,
+    "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2",
+    "networkDefaultAction": "Deny",
+    "publicNetworkAccess": "Disabled",
+    "tags": {
+      "costCenter": "demo-engineering",
+      "dataClassification": "synthetic",
+      "environment": "demo",
+      "owner": "infra-team",
+      "project": "foundry-otel-to-arize-demo"
+    }
+  },
+  "existingNetworkMetadata": [
+    {
+      "delegations": [],
+      "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints",
+      "privateEndpointNetworkPolicies": "Disabled",
+      "privateLinkServiceNetworkPolicies": "Enabled",
+      "provisioningState": "Succeeded"
+    },
+    {
+      "delegations": [
+        "Microsoft.Web/serverFarms"
+      ],
+      "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/function-integration",
+      "privateEndpointNetworkPolicies": "Disabled",
+      "privateLinkServiceNetworkPolicies": "Enabled",
+      "provisioningState": "Succeeded"
+    },
+    {
+      "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.cognitiveservices.azure.com",
+      "provisioningState": "Succeeded",
+      "tags": {
+        "costCenter": "demo-engineering",
+        "dataClassification": "synthetic",
+        "environment": "demo",
+        "owner": "infra-team",
+        "project": "foundry-otel-to-arize-demo"
+      }
+    },
+    {
+      "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.openai.azure.com",
+      "provisioningState": "Succeeded",
+      "tags": {
+        "costCenter": "demo-engineering",
+        "dataClassification": "synthetic",
+        "environment": "demo",
+        "owner": "infra-team",
+        "project": "foundry-otel-to-arize-demo"
+      }
+    },
+    {
+      "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.services.ai.azure.com",
+      "provisioningState": "Succeeded",
+      "tags": {
+        "costCenter": "demo-engineering",
+        "dataClassification": "synthetic",
+        "environment": "demo",
+        "owner": "infra-team",
+        "project": "foundry-otel-to-arize-demo"
+      }
+    },
+    {
+      "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net",
+      "provisioningState": "Succeeded",
+      "tags": {
+        "costCenter": "demo-engineering",
+        "dataClassification": "synthetic",
+        "environment": "demo",
+        "owner": "infra-team",
+        "project": "foundry-otel-to-arize-demo"
+      }
+    },
+    {
+      "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net",
+      "provisioningState": "Succeeded",
+      "tags": {
+        "costCenter": "demo-engineering",
+        "dataClassification": "synthetic",
+        "environment": "demo",
+        "owner": "infra-team",
+        "project": "foundry-otel-to-arize-demo"
+      }
+    },
+    {
+      "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.queue.core.windows.net",
+      "provisioningState": "Succeeded",
+      "tags": {
+        "costCenter": "demo-engineering",
+        "dataClassification": "synthetic",
+        "environment": "demo",
+        "owner": "infra-team",
+        "project": "foundry-otel-to-arize-demo"
+      }
+    },
+    {
+      "id": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.table.core.windows.net",
+      "provisioningState": "Succeeded",
+      "tags": {
+        "costCenter": "demo-engineering",
+        "dataClassification": "synthetic",
+        "environment": "demo",
+        "owner": "infra-team",
+        "project": "foundry-otel-to-arize-demo"
+      }
+    }
+  ],
+  "stoppingFinding": {
+    "assignmentId": "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171/providers/Microsoft.Authorization/policyAssignments/Azure_Security_Baseline",
+    "initiativeId": "/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8",
+    "definitionReferenceId": "secretsExpirationSet",
+    "definitionId": "/providers/Microsoft.Authorization/policyDefinitions/98728c90-32c7-4049-8429-847dc0f4fe37",
+    "effectiveEffect": "Audit",
+    "effectiveParameterResolution": "assignment.secretsExpirationSetEffect=Audit -> initiative reference.effect -> definition.parameters.effect",
+    "scope": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2/secrets/fotoa147-appinsights-connection-string",
+    "policyMode": "Microsoft.KeyVault.Data",
+    "condition": "type == Microsoft.KeyVault.Data/vaults/secrets AND attributes.expiresOn does not exist",
+    "plannedConditionResult": true,
+    "source": "infra\\modules\\app-insights-secret.bicep routingSecret.properties.attributes; only enabled:true, no exp; exact compiled nested resource also lacks exp",
+    "result": "PLANNED_NONCOMPLIANT_AUDIT; future secret contents would be audited without expiration. This is not an actual deployed policy-state record or a Deny/admission failure.",
+    "admissionBlocking": false,
+    "officialCompletionBlocking": true,
+    "reason": "Pinned recipe requires policy violations resolved and all checks pass. No source redesign, expiry choice, policy change or exemption authorized in this evidence-only task.",
+    "missingConditionForCompliance": "Approved finite expiration metadata on the NEW secret (ARM attributes.exp maps to data-plane attributes.expiresOn), or an actual applicable existing exemption. Neither present.",
+    "notScopesSelectorsOverrides": "Baseline assignment has no exclusion/selectors/overrides; no exemptions returned at applicable root or subscription/descendant scopes.",
+    "remediationNotExecuted": "Parent must decide approved new-secret expiry/source change separately; no existing secret read, overwrite, policy/exemption/grant change."
+  },
+  "otherReviewedConditions": [
+    {
+      "definitionId": "12e5dd16-d201-47ff-849b-8454061c293d",
+      "effect": "Deny",
+      "result": "NOT_APPLICABLE",
+      "reason": "Policy targets Microsoft.MachineLearningServices.v2.Data/workspaces/deployments with registryName; graph has Microsoft.CognitiveServices/accounts/deployments, OpenAI gpt-5-mini/2025-08-07 DataZoneStandard capacity=1. AllowedAssetIds also lists that synthetic model/version, but different provider type is decisive."
+    },
+    {
+      "definitionId": "cd3aa116-8754-49c9-a813-ad46512ece54",
+      "effect": "Modify",
+      "result": "CONDITION_FALSE",
+      "reason": "TagName SecurityControl; existing target RG has tags:null, fresh wrapper required tags omit SecurityControl; rule requires nonempty resourceGroup SecurityControl. It does not inject tags into current graph. Future RG tag changes must be reevaluated."
+    },
+    {
+      "definitionId": "f69cd8b8-9a6e-46b4-be84-244e8b127944",
+      "assignmentName": "sys.mfa-delete",
+      "effect": "DenyAction",
+      "result": "NOT_APPLICABLE",
+      "reason": "ActionNames only delete; no deletes in task or approved Create-only graph. No fictional MFA gate for CREATE derived from this delete policy."
+    },
+    {
+      "definitionId": "54f51f64-eaa5-44cf-8674-830bcfd14d21",
+      "assignmentName": "sys.mfa-write",
+      "effect": "Deny",
+      "result": "REQUEST_CONTEXT_DEPENDENT_NOT_PROVEN_FOR_FUTURE_ALLOCATION",
+      "reason": "Actual predicate requires idtyp=user and absence of both mfa and acrs p1. No token/auth cache inspected; provider validate/what-if PASS is evidence about those analysis requests only, not future allocation identity claims. No claim that future request is denied or compliant."
+    }
+  ],
+  "graphReview": {
+    "compiledWrapperSha256": "cb84caf3722cafe17fbf8929b7d6ec5c85aaf1945c54776f34b01edbfd59104f",
+    "profileSha256": "b6ce3d1140ce492a00681571db72cac4f0048da590d1f81bf22957d4e8ff4781",
+    "newSecretSourceSha256": "d0d27e0364ab862127550e3b4d39680d5ed44028ca7007a1ca4ad05893c9eac5",
+    "existingNetworkPutCount": 0,
+    "existingNetworkEffects": "Two subnet joins and four new private endpoint DNS-zone-group PUTs; fresh names in six existing zones, no existing VNet/subnet/zone/link PUT. External vault and seven zone references metadata only. No stored secret values read.",
+    "sourceRoles": "Reviewed frozen manifest sourceDefinedFirstAllocationRoles/laterExecutorManagementActions: project MI at new account, Function host data roles at new storage, Event Hub receiver at new namespace, blob-index actions container only; four external secret-level future reader grants remain separate, not created. Secure sink is new-name-only vaults/secrets/write; no vault/network PUT.",
+    "unsupportedProviderItem": "Future Function principal needed for container-local custom index assignment GUID; no principal preallocated, no assignment authority inferred. Existing 33 Create/0 Modify/0 Delete/1 Unsupported provider receipt retained."
+  },
+  "reviewCompleteness": "STOPPED at concrete planned new-secret Audit violation. Other 215 baseline references and governance initiative children not exhaustively evaluated; no blanket compliance result, no skipped completion. No access denial fabricated.",
+  "officialWorkflow": {
+    "pin": "d8b7512cd91b4ec3620d6a48abc1f80179630bd26add65dc0400a34e42745ff9",
+    "helperPin": "ac49678e5941f2946d8b216370e30dbd8b3451cb15652f8042bb9fad77bcb9bb",
+    "lastCompletedStep": "AddValidationSteps",
+    "planStatus": "Approved PREPARATION / partial validation; NOT Validated",
+    "reusedFiveCheckProof": "docs\\current-state\\issue147-vault-graph-analysis.json and .azure\\vault-graph-final-28f99ce7-20261020; unchanged compiled/profile/source transport bytes; no needless rerun"
+  },
+  "commands": [
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "assignment",
+        "list",
+        "--scope",
+        "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+        "--query",
+        "[].{id:id,scope:scope,definition:policyDefinitionId,parameters:parameters,notScopes:notScopes,enforcementMode:enforcementMode,resourceSelectors:resourceSelectors,overrides:overrides}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:22:13.259151+00:00",
+      "completedUtc": "2026-10-20T09:22:20.425475+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "16596ce7f03e619ff5f89cf6175ba082f4d593c0c22f6856fe30f6627c9f5579"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "assignment",
+        "list",
+        "--disable-scope-strict-match",
+        "--query",
+        "[].{id:id,scope:scope,definition:policyDefinitionId,parameters:parameters,notScopes:notScopes,enforcementMode:enforcementMode,resourceSelectors:resourceSelectors,overrides:overrides}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:22:20.425475+00:00",
+      "completedUtc": "2026-10-20T09:22:29.071465+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "aaf2c45162645e4ea9aae36b348ca2d540c9f0a015b2801fdec13b0e57112476"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "exemption",
+        "list",
+        "--scope",
+        "/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+        "--query",
+        "[].{id:id,assignment:policyAssignmentId,expiresOn:expiresOn,category:exemptionCategory,definitionReferenceIds:policyDefinitionReferenceIds}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:22:29.073478+00:00",
+      "completedUtc": "2026-10-20T09:22:37.266053+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "exemption",
+        "list",
+        "--scope",
+        "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--query",
+        "[].{id:id,assignment:policyAssignmentId,expiresOn:expiresOn,category:exemptionCategory,definitionReferenceIds:policyDefinitionReferenceIds}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:22:37.266053+00:00",
+      "completedUtc": "2026-10-20T09:22:42.489574+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "rest",
+        "--method",
+        "get",
+        "--url",
+        "https://management.azure.com/providers/Microsoft.Management/managementGroups/e500988a-f788-4f81-b1ba-e3ad7cd66171",
+        "--url-parameters",
+        "api-version=2020-05-01",
+        "$expand=children",
+        "$recurse=true",
+        "--query",
+        "{id:id,parent:properties.details.parent,children:properties.children[].{id:id,type:type}}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:22:42.489574+00:00",
+      "completedUtc": "2026-10-20T09:22:46.316481+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "19197f6200117d44107ecdd3b6e33a37ab3bb1ab9386cfc41b84d267c3eccc43"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "set-definition",
+        "show",
+        "--name",
+        "1f3afdf9-d0c9-4c3d-847f-89da613e70a8",
+        "--query",
+        "{id:id,parameters:parameters,policyDefinitions:policyDefinitions}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:22:46.316481+00:00",
+      "completedUtc": "2026-10-20T09:22:51.871858+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "8d4e181e4b91b2a59ab129da38f15b8f0cc7fb7c8e2a7ac1c630036a9546e35d"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "set-definition",
+        "show",
+        "--name",
+        "MCAPSGovAuditPolicies",
+        "--management-group",
+        "e500988a-f788-4f81-b1ba-e3ad7cd66171",
+        "--query",
+        "{id:id,parameters:parameters,policyDefinitions:policyDefinitions}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:22:51.888475+00:00",
+      "completedUtc": "2026-10-20T09:22:57.364792+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "04ce5de751387d31f72c2e2f1aaf6d86677da15f21c265d42e3e0fa4f47d4e11"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "set-definition",
+        "show",
+        "--name",
+        "MCAPSGovDenyPolicies",
+        "--management-group",
+        "e500988a-f788-4f81-b1ba-e3ad7cd66171",
+        "--query",
+        "{id:id,parameters:parameters,policyDefinitions:policyDefinitions}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:22:57.376249+00:00",
+      "completedUtc": "2026-10-20T09:23:02.805112+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "e45de4587a7ee5686d60eacbc220e70f927dba553ae18565694b78bffda44441"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "set-definition",
+        "show",
+        "--name",
+        "MCAPSGovDeployPolicies",
+        "--management-group",
+        "e500988a-f788-4f81-b1ba-e3ad7cd66171",
+        "--query",
+        "{id:id,parameters:parameters,policyDefinitions:policyDefinitions}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:23:02.805112+00:00",
+      "completedUtc": "2026-10-20T09:23:07.992609+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "ee078bbc1d6968a2aff227a21d1f9f60098922a8306f8c817411977d4266a5a6"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "set-definition",
+        "show",
+        "--name",
+        "c1529623-9fc2-45bc-b84b-b14cd0b7484e",
+        "--query",
+        "{id:id,parameters:parameters,policyDefinitions:policyDefinitions}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:23:07.992609+00:00",
+      "completedUtc": "2026-10-20T09:23:12.845707+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "52d3807d95c8954e5f5007933ad60e5d2a1da8f8d217c0ee34dbfbe36a6748fb"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "set-definition",
+        "show",
+        "--name",
+        "e77fc0b3-f7e9-4c58-bc13-cb753ed8e46e",
+        "--query",
+        "{id:id,parameters:parameters,policyDefinitions:policyDefinitions}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:23:12.845707+00:00",
+      "completedUtc": "2026-10-20T09:23:19.033736+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "4cd32c01d7837a719432983ed73b860e971bcc6dab6f47406de746e0aea3ba20"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "set-definition",
+        "show",
+        "--name",
+        "9cb3cc7a-b39b-4b82-bc89-e5a5d9ff7b97",
+        "--query",
+        "{id:id,parameters:parameters,policyDefinitions:policyDefinitions}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:23:19.033736+00:00",
+      "completedUtc": "2026-10-20T09:23:23.788552+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "7d3a5760a7b8c93007cc54063785221f96afdee9facd3438c52400f77c2f1737"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "definition",
+        "show",
+        "--name",
+        "98728c90-32c7-4049-8429-847dc0f4fe37",
+        "--query",
+        "{id:id,mode:mode,parameters:parameters,policyRule:policyRule}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:23:23.788552+00:00",
+      "completedUtc": "2026-10-20T09:23:29.751846+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "dcdc4859a239219acd0351eaa4841d2ee0fd42be52f8a0235c7bcdfe831d60eb"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "definition",
+        "show",
+        "--name",
+        "12e5dd16-d201-47ff-849b-8454061c293d",
+        "--query",
+        "{id:id,mode:mode,parameters:parameters,policyRule:policyRule}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:23:29.751846+00:00",
+      "completedUtc": "2026-10-20T09:23:36.100824+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "54edeb4385b2f13aafbcc7441a8730416ffc85fff0636b9bdd303ed7b708e8fc"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "definition",
+        "show",
+        "--name",
+        "cd3aa116-8754-49c9-a813-ad46512ece54",
+        "--query",
+        "{id:id,mode:mode,parameters:parameters,policyRule:policyRule}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:23:36.100824+00:00",
+      "completedUtc": "2026-10-20T09:23:42.406273+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "d4ab8e085727576bb1bf8b526817b38e130a4ed97397a42cd87d738b0bf3a561"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "definition",
+        "show",
+        "--name",
+        "f69cd8b8-9a6e-46b4-be84-244e8b127944",
+        "--query",
+        "{id:id,mode:mode,parameters:parameters,policyRule:policyRule}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:23:42.406273+00:00",
+      "completedUtc": "2026-10-20T09:23:47.527285+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "6420af2663a30507272c8a19074a804da35dd5dd04dd4c944794826e16a6c25c"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "definition",
+        "show",
+        "--name",
+        "54f51f64-eaa5-44cf-8674-830bcfd14d21",
+        "--query",
+        "{id:id,mode:mode,parameters:parameters,policyRule:policyRule}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:23:47.527285+00:00",
+      "completedUtc": "2026-10-20T09:23:52.763464+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "6c0080a0596a4723b3688641f931d9abd54f1476b3d0df7fa8bbfcf8b8367759"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "group",
+        "show",
+        "--name",
+        "fotoa-demo-rg",
+        "--query",
+        "{id:id,tags:tags,location:location}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:23:52.763464+00:00",
+      "completedUtc": "2026-10-20T09:23:57.144811+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "8522ff5254765a1f9e4277cb69c1a6e9e8767dbda2fb1f634e384cb676848ba5"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "group",
+        "exists",
+        "--name",
+        "fotoa-demo-rg147-eastus2",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:23:57.144811+00:00",
+      "completedUtc": "2026-10-20T09:24:01.596704+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "keyvault",
+        "show",
+        "--name",
+        "fotoa-demo-kv-eastus2",
+        "--resource-group",
+        "fotoa-demo-rg",
+        "--query",
+        "{id:id,tags:tags,publicNetworkAccess:properties.publicNetworkAccess,enableRbacAuthorization:properties.enableRbacAuthorization,networkDefaultAction:properties.networkAcls.defaultAction,enablePurgeProtection:properties.enablePurgeProtection}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:24:01.596704+00:00",
+      "completedUtc": "2026-10-20T09:24:05.816054+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "a701429623cc6f47ec5b2cd3875cb3b66533dbdd4530e360233b524e3e20a319"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "network",
+        "vnet",
+        "subnet",
+        "show",
+        "--ids",
+        "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/private-endpoints",
+        "--query",
+        "{id:id,delegations:delegations[].serviceName,privateEndpointNetworkPolicies:privateEndpointNetworkPolicies,privateLinkServiceNetworkPolicies:privateLinkServiceNetworkPolicies,provisioningState:provisioningState}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:24:05.821282+00:00",
+      "completedUtc": "2026-10-20T09:24:11.374272+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "e86607ea15fe069640ffb0efbaa7c58274ac147793f8554eede87deceb42fe0c"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "network",
+        "vnet",
+        "subnet",
+        "show",
+        "--ids",
+        "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2/subnets/function-integration",
+        "--query",
+        "{id:id,delegations:delegations[].serviceName,privateEndpointNetworkPolicies:privateEndpointNetworkPolicies,privateLinkServiceNetworkPolicies:privateLinkServiceNetworkPolicies,provisioningState:provisioningState}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:24:11.374272+00:00",
+      "completedUtc": "2026-10-20T09:24:16.653673+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "d8a71ba212a6b300d58298d014a61b0f5a6a9bf21a6dfe6c3fa0618b582cba9d"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "network",
+        "private-dns",
+        "zone",
+        "show",
+        "--ids",
+        "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.cognitiveservices.azure.com",
+        "--query",
+        "{id:id,tags:tags,provisioningState:provisioningState}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:24:16.653673+00:00",
+      "completedUtc": "2026-10-20T09:24:22.430107+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "520b98594b85883b907f89fe6cb5c9669e9e9790afda3b78813a5d1eb9c2d5ab"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "network",
+        "private-dns",
+        "zone",
+        "show",
+        "--ids",
+        "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.openai.azure.com",
+        "--query",
+        "{id:id,tags:tags,provisioningState:provisioningState}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:24:22.430107+00:00",
+      "completedUtc": "2026-10-20T09:24:30.338983+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "ad356e65430a7290e55c9c2d39e62d2507fbdbb443b4b5d6eb7c3adb98a40a6a"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "network",
+        "private-dns",
+        "zone",
+        "show",
+        "--ids",
+        "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.services.ai.azure.com",
+        "--query",
+        "{id:id,tags:tags,provisioningState:provisioningState}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:24:30.338983+00:00",
+      "completedUtc": "2026-10-20T09:24:36.518949+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "c728a907137c7aeb317c1b6ffc1eeb10b2c1471d37b31d227490d0049f21d49e"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "network",
+        "private-dns",
+        "zone",
+        "show",
+        "--ids",
+        "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net",
+        "--query",
+        "{id:id,tags:tags,provisioningState:provisioningState}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:24:36.518949+00:00",
+      "completedUtc": "2026-10-20T09:24:42.197958+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "efe514c79951a2c390203ac652e91b10abae2f9551386cc27969faacd0af5a89"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "network",
+        "private-dns",
+        "zone",
+        "show",
+        "--ids",
+        "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net",
+        "--query",
+        "{id:id,tags:tags,provisioningState:provisioningState}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:24:42.198556+00:00",
+      "completedUtc": "2026-10-20T09:24:47.342313+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "f99a36535ece65da5783c7018d1748574ca73b408cadbe3cbcf77b716e287b75"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "network",
+        "private-dns",
+        "zone",
+        "show",
+        "--ids",
+        "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.queue.core.windows.net",
+        "--query",
+        "{id:id,tags:tags,provisioningState:provisioningState}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:24:47.342313+00:00",
+      "completedUtc": "2026-10-20T09:24:52.748563+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "af3dd8a8a0ad35e0753eb236d0313fe6f9f6e7688c0974e531bc09275beb12e2"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "network",
+        "private-dns",
+        "zone",
+        "show",
+        "--ids",
+        "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateDnsZones/privatelink.table.core.windows.net",
+        "--query",
+        "{id:id,tags:tags,provisioningState:provisioningState}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "startedUtc": "2026-10-20T09:24:52.748563+00:00",
+      "completedUtc": "2026-10-20T09:24:58.505353+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "ed895d33d5264cb986c9ae26beb2cef8e8a4cf71ac1fa938142a201d694a3d1c"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "policy",
+        "exemption",
+        "list",
+        "--disable-scope-strict-match",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json",
+        "--query",
+        "[].{id:id,assignment:policyAssignmentId,expiresOn:expiresOn,category:exemptionCategory,definitionReferenceIds:policyDefinitionReferenceIds}"
+      ],
+      "startedUtc": "2026-10-20T09:26:19.099159+00:00",
+      "completedUtc": "2026-10-20T09:26:24.684421+00:00",
+      "exitCode": 0,
+      "projectedResultCanonicalJsonSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  ],
+  "safety": "Zero cloud CUD, deployment create, secret GET/list-values/write, inference, VM start, IAM/policy/exemption changes, registration or conditional lease execution.",
+  "exemptionsSubscriptionAndDescendants": [],
+  "compiledSecretConditionProof": [
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "attributeNames": [
+        "enabled"
+      ],
+      "hasExpiration": false
+    }
+  ]
+}

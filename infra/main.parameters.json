@@ -29,6 +29,7 @@
       }
     },
     "functionPackageBlobName": { "value": "REPLACE_ME_IMMUTABLE_PACKAGE.zip" },
+    "functionMaximumInstances": { "value": 1 },
     "arizeProjectName": { "value": "REPLACE_ME_ARIZE_PROJECT" },
     "appInsightsConnectionName": { "value": "REPLACE_ME_CONNECTION" },
     "tracingAssociationMode": { "value": "preserveExisting" },

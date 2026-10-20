@@ -1,0 +1,83 @@
+{
+  "status": "SOURCE_PREFLIGHT_ONLY_EXECUTION_BLOCKED",
+  "owner": "QA",
+  "sourceBaseline": "ce0ac26e1b1232834402f46e5a222ae8a602885e",
+  "approvalSha256": "c971f23d46d9c7033102a2f503eaba83e0e08755ade37e82c43fd888a8c1cc5e",
+  "scope": "No-tool Basic private client ingress; Microsoft-managed runtime/state; US-zone model processing only",
+  "model": {
+    "format": "OpenAI",
+    "name": "gpt-5-mini",
+    "version": "2025-08-07",
+    "location": "eastus2",
+    "sku": "DataZoneStandard",
+    "capacity": 1,
+    "upgrade": "NoAutoUpgrade",
+    "providerAccepted": false
+  },
+  "function": {
+    "sku": "EP1",
+    "planCapacity": 1,
+    "planMaximumElasticWorkerCount": 1,
+    "appFunctionAppScaleLimit": 1,
+    "minimumElasticInstanceCount": 1,
+    "preWarmedInstanceCount": 1,
+    "providerAccepted": false,
+    "monetaryCap": false
+  },
+  "lifetime": {
+    "validationHoursFromFirstBillableAllocation": 24,
+    "retentionReviewDaysAfterValidation": 7,
+    "dispositionDeadlineDaysAfterValidation": 30,
+    "automaticDeletionAuthorized": false,
+    "existingDataDeletionAuthorized": false,
+    "enforcedResourceTtl": false
+  },
+  "allInclusiveTotalUSD": null,
+  "numericSpendingCeilingUSD": null,
+  "conditionalPriced24hSubtotalUSD": "15.504880",
+  "conditionalFurther30dayReserveUSD": "235.0028",
+  "cloudMutations": 0,
+  "modelRequests": 0,
+  "cloudMutationLeaseAcquired": false,
+  "officialValidationCompleted": false,
+  "officialWorkflowCommit": "a480d4c73380e6dd77c9e1553f6523620c724edf",
+  "securityMetadata": {
+    "startUtc": "2026-10-20T05:09:18.8769322Z",
+    "endUtc": "2026-10-20T05:09:32.0186456Z",
+    "operation": "az security pricing list projected metadata GET",
+    "subscription": "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+    "exitCode": 0,
+    "receiptSha256": "b9660805d36521e20f3b7e42ca493623749101af92e681a52329d5a901bd1aaf",
+    "plans": [
+      {"name": "AppServices", "tier": "Standard", "subPlan": null},
+      {"name": "StorageAccounts", "tier": "Standard", "subPlan": "DefenderForStorageV2", "enabledExtensions": ["OnUploadMalwareScanning", "SensitiveDataDiscovery"]},
+      {"name": "KeyVaults", "tier": "Standard", "subPlan": "PerKeyVault"},
+      {"name": "Arm", "tier": "Standard", "subPlan": "PerSubscription"},
+      {"name": "CloudPosture", "tier": "Standard", "subPlan": null},
+      {"name": "AI", "tier": "Standard", "subPlan": null, "enabledExtensions": ["AIPromptEvidence", "AIPromptSharingWithPurview"], "disabledExtensions": ["AIModelScanner"]}
+    ],
+    "billingEntitlementVerified": false
+  },
+  "publicProof": [
+    {
+      "file": "functions-premium-plan.html",
+      "source": "https://learn.microsoft.com/en-us/azure/azure-functions/functions-premium-plan",
+      "sha256": "d6156a0638072bc8db6779e4297dcf50014ff2e89308ecbe10de98f148e85cc7"
+    },
+    {
+      "file": "serverfarms-2023-12-01.html",
+      "source": "https://learn.microsoft.com/en-us/azure/templates/microsoft.web/2023-12-01/serverfarms",
+      "sha256": "e1ef47d9cae6da8becf123ce09dad3ca7284c0eeb0b5bba4fdaa2b57a4a2c439"
+    },
+    {
+      "file": "sites-2023-12-01.html",
+      "source": "https://learn.microsoft.com/en-us/azure/templates/microsoft.web/2023-12-01/sites",
+      "sha256": "1bcb509e74f09e1f824bed295ad51ae7fe8e1a4943d149eac3d82ec428a2495b"
+    },
+    {
+      "file": "azure-cli-custom.py",
+      "source": "https://raw.githubusercontent.com/Azure/azure-cli/9f94e6ba60714a817efd09744dea81105eba2bf6/src/azure-cli/azure/cli/command_modules/appservice/custom.py",
+      "sha256": "4abe92093b823fbaa3b20e8526a66c2339d2f1f529b4e65abad500381988e80b"
+    }
+  ]
+}

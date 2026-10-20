@@ -12,6 +12,35 @@ provider/policy acceptance, quota, DNS reachability, private agent runtime/state
 agent-version publication or Arize receipt. All remain separately approved gates.
 The local Prompt Agent client is still a synthetic stub, not a live SDK backend.
 
+For the next **fresh** environment, use the [QA readiness and acceptance packet
+(#147)](../docs/current-state/fresh-foundation-acceptance.md): exact offline results,
+owner decision choices, public cost basis and gated provider/private/repeat/E2E
+handoffs. It does not authorize cloud execution or certify private agent readiness.
+
+**#147 staged existing-network first allocation:** the exact nonsecret profile
+is embedded by `issue147-first-allocation.bicep` (subscription scope, exact fresh
+RG). After foundation creation, `issue147-app-insights-bootstrap.bicep` uses an
+ARM server-side new-component reference and securestring module parameter to
+write only the new routing secret in the existing custody vault. Only immutable
+version URI/component ID outputs are exposed; no existing Arize value is copied.
+This first-allocation writer is **not** the repeat entrypoint. Metadata-only
+collision/ambiguity checks and a later execution lease are mandatory.
+[Manifest and safe provider results](../docs/current-state/issue147-existing-network-proposal.md#fresh-tracing-bootstrap--supported-server-side-automation-staged):
+Independent evaluated-graph fix passed Provider validate and ResourceIdOnly
+what-if at 08:53Z on 2026-10-20: **33 Create / 0 Modify / 0 Delete /
+1 Unsupported** future-principal index assignment. All five actual pinned-helper
+checks ran through the narrow metadata-only compatibility adapter. The owned
+vault reader is isolated in a conditional nested module: a null owned-vault
+name never enters ARM's evaluated existing-resource graph. Default freshVault
+RBAC GUID inputs, role, scope, principal and all public outputs are unchanged.
+Existing-reference mode omits the unused
+owned vault and vault PE (four PEs / six expected IP slots); freshVault default
+retains both (five PEs / seven expected slots). No deployment or secret operation executed;
+official policy/workflow and allocation/runtime acceptance remain incomplete,
+not Validated. Run the pinned helper safely (new immutable receipt directory
+per analysis) with `scripts\invoke-issue147-official-validation.ps1`; exact
+commands and projected receipts are bound in the selected-route manifest.
+
 ## Three operations — never substitute one for another
 
 | Operation | Entrypoint / ownership | Scope |
@@ -49,11 +78,22 @@ this source work neither replays nor modifies its live state.
   zones plus registration-disabled VNet links; OR explicit external ownership.
 - `private-endpoints.bicep`: actual DNS zone groups, no static A records or IPs.
   Main targets Foundry **account** group `account` with all three Foundry zones,
-  and KV group `vault`. Function module creates host `blob`/`queue`/`table`
+  and KV group `vault` only in default `keyVaultReferences.mode=freshVault`.
+  Existing mode uses four external URI references and null owned-vault name/ID
+  outputs, explicit `keyVaultReferenceMode`, and URI-only
+  `externalKeyVaultReferences` metadata; no owned vault, vault PE or local reader.
+  Function module creates host `blob`/`queue`/`table`
   endpoints and DNS groups **before** creating the integrated Function.
 - KV: RBAC, soft delete, purge protection, PNA Disabled, ACL Deny/None.
   Host storage: TLS1.2/HTTPS, no public blobs/shared keys, PNA Disabled, ACL Deny/None.
-- Function: Linux Python 3.11 default, **Premium EP1** (one instance), system MI,
+- Function: Linux Python 3.11 default, **Premium EP1**, capacity/minimum 1,
+  explicit plan `maximumElasticWorkerCount=1` and app `functionAppScaleLimit=1`
+  via `functionMaximumInstances` (only 1 allowed). Always-ready
+  `minimumElasticInstanceCount=1`, prewarmed target `preWarmedInstanceCount=1`;
+  the prewarmed buffer stays inside the app maximum, not one extra worker.
+  Provider acceptance/readback is still required; no automatic larger fallback.
+  These are scale controls, not a monetary cap or deallocation after a test.
+  System MI,
   outbound VNet integration with route-all, PNA Disabled, TLS1.2, FTP/SCM basic
   publishing disabled. This timer/EH worker has no public HTTP ingress requirement.
 - Function retains Blob/Queue/Table Data Contributor, EH Data Receiver and KV
@@ -106,6 +146,7 @@ Required top-level selections:
 | Model | `modelDeploymentName`, `modelFormat`, `modelName`, **`modelVersion`**, `modelDeploymentSkuName`, positive **`modelDeploymentCapacity`**, **`modelVersionUpgradeOption`**; optional `raiPolicyName` |
 | Deployment gates | `modelDeploymentApproved=true` attests owner approval of exact tuple, availability/quota/cost; **`modelDataResidencyApproval`** records processing/residency approval, not a provider setting |
 | Function publication | `functionPackageBlobName`: owner-selected immutable ZIP blob name under `function-packages`; separately upload a built package, never a SAS/connection string |
+| Function scale | Explicit `functionMaximumInstances=1` in prepared profiles; plan/app ceiling with one always-ready instance and prewarmed target 1. See [proof, lifetime and operator retention plan](../docs/current-state/issue147-bounded-execution.md). |
 | Destination | `arizeProjectName`; operator-populated private-vault secret names `arizeEndpointSecretName`, `arizeSpaceIdSecretName`, `arizeApiKeySecretName` |
 | Tracing | `appInsightsConnectionName`; `tracingAssociationMode=preserveExisting` by default, explicitly approved `ApiKey` only for fresh main |
 
@@ -291,3 +332,20 @@ Read 2026-10-19, public documentation only:
 Provider schemas establish documented shapes, not tenant availability or runtime
 success. Agent publication/API/tools/state prerequisites remain **pending**;
 standard BYO requirements are a scoped architecture gate, never silently stubbed.
+# Issue 147 existing-network preparation profile
+
+`main.issue147-existing-network.parameters.json` is a complete **nonsecret,
+offline-validated foundation staging profile**, not an execution authorization
+or completed tracing profile. See
+[`issue147-existing-network-proposal.md`](../docs/current-state/issue147-existing-network-proposal.md)
+for exact subnet/DNS/capacity facts, immutable package custody, the new
+`keyVaultReferences` typed URI option, separately leased secret-scoped reader
+template, and the one fresh tracing bootstrap custody action.
+Existing mode never writes the supplied VNet/subnets/zones/links; new private
+endpoint DNS-zone groups still register the new application records.
+`freshVault` remains the backward-compatible secret-reference default.
+The prepared-profile gate rejects non-vault hosts, query/fragment injection,
+missing/duplicate references and malformed versions; run it before provider
+validation. Existing-vault mode grants **no** external access automatically.
+The fresh private vault/PE remains in the foundation graph without changing
+its security controls; this profile does not require populating it.

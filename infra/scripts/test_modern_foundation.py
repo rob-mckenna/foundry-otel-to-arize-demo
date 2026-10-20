@@ -6,9 +6,11 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import unittest
+import uuid
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = importlib.util.spec_from_file_location("foundation", Path(__file__).with_name("validate-modern-foundation.py"))
@@ -46,6 +48,60 @@ def all_templates(template):
     yield template
     for resource in resources(template, "Microsoft.Resources/deployments"):
         yield from all_templates(resource["properties"]["template"])
+
+
+def evaluate_vault_expression(expression, parameters, references):
+    """Evaluate the compiled ARM subset used by vault selection, with lazy if."""
+    def evaluate(text):
+        text = text.strip()
+        if text.startswith("'") and text.endswith("'"):
+            return text[1:-1]
+        match = re.match(r"(\w+)\(", text)
+        if not match:
+            raise AssertionError(f"Unsupported ARM expression: {text}")
+        depth, quoted, start, args = 1, False, match.end(), []
+        for index in range(start, len(text)):
+            char = text[index]
+            if char == "'":
+                quoted = not quoted
+            if quoted:
+                continue
+            if char == "(":
+                depth += 1
+            elif char == ")":
+                depth -= 1
+                if depth == 0:
+                    if text[start:index].strip():
+                        args.append(text[start:index])
+                    break
+            elif char == "," and depth == 1:
+                args.append(text[start:index])
+                start = index + 1
+        name = match[1]
+        if name == "if":
+            value = evaluate(args[1] if evaluate(args[0]) else args[2])
+        elif name == "reference":
+            value = references[evaluate(args[0])]
+        elif name == "parameters":
+            value = parameters[evaluate(args[0])]
+        else:
+            values = [evaluate(arg) for arg in args]
+            operations = {
+                "equals": lambda a, b: a == b,
+                "null": lambda: None,
+                "createArray": lambda *items: list(items),
+                "createObject": lambda *items: dict(zip(items[::2], items[1::2])),
+                "concat": lambda *items: sum(items, []),
+                "resourceId": lambda kind, name: f"/subscriptions/synthetic/resourceGroups/synthetic/providers/{kind}/{name}",
+                "subscriptionResourceId": lambda kind, name: f"/subscriptions/synthetic/providers/{kind}/{name}",
+                "guid": lambda *items: str(uuid.uuid5(uuid.UUID("11fb06fb-712d-4ddd-98c7-e71bbd588830"), "-".join(items))),
+                "variables": lambda name: references["variables"][name],
+            }
+            value = operations[name](*values)
+        for property_name in text[index + 1:].split(".")[1:]:
+            value = value[property_name]
+        return value
+    return evaluate(expression.removeprefix("[").removesuffix("]"))
 
 
 class CompiledModernFoundationTests(unittest.TestCase):
@@ -140,12 +196,35 @@ class CompiledModernFoundationTests(unittest.TestCase):
         self.assertEqual(mapping["existing"]["properties"]["dnsLinksManagedExternally"]["allowedValues"], [True])
         self.assertIn("network').privateDnsZoneIds", self.network["outputs"]["privateDnsZoneResourceIds"]["value"])
 
+    def test_issue147_profile_is_complete_and_external_network_put_conditions_are_false(self):
+        profile = json.loads((ROOT / "infra/main.issue147-existing-network.parameters.json").read_text())
+        supplied = set(profile["parameters"])
+        self.assertFalse(supplied - set(self.main["parameters"]))
+        required = {k for k, v in self.main["parameters"].items() if "defaultValue" not in v}
+        self.assertFalse(required - supplied)
+        self.assertTrue(foundation.validate_profile(profile)["offlineProfileValid"])
+        values = {k: v["value"] for k, v in profile["parameters"].items()}
+        self.assertEqual(values["network"]["mode"], "existing")
+        self.assertTrue(values["network"]["dnsLinksManagedExternally"])
+        self.assertEqual(values["keyVaultReferences"]["mode"], "existing")
+        self.assertEqual(self.network["variables"]["fresh"], "[equals(parameters('network').mode, 'fresh')]")
+        for item in resources(self.network):
+            self.assertIn(item["type"], {
+                "Microsoft.Network/virtualNetworks", "Microsoft.Network/privateDnsZones",
+                "Microsoft.Network/privateDnsZones/virtualNetworkLinks"})
+            self.assertIn(item["condition"], {
+                "[equals(parameters('network').mode, 'fresh')]", "[variables('fresh')]"})
+            # Both exact compiled expressions evaluate false for this real profile.
+            self.assertFalse(values["network"]["mode"] == "fresh")
+        for t in all_templates(self.main):
+            self.assertFalse(resources(t, "Microsoft.Network/virtualNetworks/subnets"))
+
     def test_account_pe_three_zones_vault_and_storage_pe_groups(self):
         edges = module(self.main, "foundation-private-endpoints")
-        targets = edges["properties"]["parameters"]["targets"]["value"]
+        targets = self.selected_vault_graph("freshVault")["targets"]
         account, vault = targets
         self.assertEqual(account["groupId"], "account")
-        self.assertIn("foundryAccountResourceId", account["targetResourceId"])
+        self.assertEqual(account["targetResourceId"], "new-foundry")
         self.assertEqual(len(account["privateDnsZoneResourceIds"]), 3)
         self.assertEqual(vault["groupId"], "vault")
         host_edges = module(self.function, "host-storage-private-endpoints")
@@ -164,6 +243,46 @@ class CompiledModernFoundationTests(unittest.TestCase):
             self.assertEqual(configs["input"]["properties"]["privateDnsZoneId"],
                              "[parameters('targets')[copyIndex()].privateDnsZoneResourceIds[copyIndex('privateDnsZoneConfigs')]]")
             self.assertNotIn("Microsoft.Network/privateDnsZones/A", {x["type"] for x in resources(t)})
+
+    def selected_vault_graph(self, mode):
+        references = {
+            "modernFoundry": {"outputs": {"foundryAccountResourceId": {"value": "new-foundry"}}},
+            "networking": {"outputs": {"privateDnsZoneResourceIds": {"value": foundation.ZONES}}},
+        }
+        if mode == "freshVault":
+            references["keyVault"] = {"outputs": {
+                "keyVaultResourceId": {"value": "new-vault"},
+                "keyVaultName": {"value": "new-vault-name"}}}
+        parameters = {"keyVaultReferences": {"mode": mode}}
+        evaluate = lambda expression: evaluate_vault_expression(expression, parameters, references)
+        vault = module(self.main, "key-vault-deployment")
+        targets = module(self.main, "foundation-private-endpoints")["properties"]["parameters"]["targets"]["value"]
+        return {"vaultCount": len(resources(vault["properties"]["template"], "Microsoft.KeyVault/vaults"))
+                if evaluate(vault["condition"]) else 0,
+                "targets": evaluate(targets), "evaluate": evaluate}
+
+    def test_selected_existing_omits_owned_vault_and_endpoint_while_default_preserves_both(self):
+        self.assertEqual(self.main["parameters"]["keyVaultReferences"]["defaultValue"], {"mode": "freshVault"})
+        host_targets = module(self.function, "host-storage-private-endpoints")["properties"]["parameters"]["targets"]["value"]
+        for mode, vault_count, pe_count, ip_count in (("freshVault", 1, 5, 7), ("existing", 0, 4, 6)):
+            with self.subTest(mode=mode):
+                graph = self.selected_vault_graph(mode)
+                self.assertEqual(graph["vaultCount"], vault_count)
+                groups = [target["groupId"] for target in graph["targets"] + host_targets]
+                self.assertEqual(len(groups), pe_count)
+                self.assertEqual(sum(3 if group == "account" else 1 for group in groups), ip_count)
+                self.assertEqual("vault" in groups, mode == "freshVault")
+                for output, expected in (("keyVaultResourceId", "new-vault"), ("keyVaultName", "new-vault-name")):
+                    self.assertTrue(self.main["outputs"][output]["nullable"])
+                    self.assertEqual(graph["evaluate"](self.main["outputs"][output]["value"]),
+                                     expected if mode == "freshVault" else None)
+                call = module(self.main, "function-app-deployment")["properties"]["parameters"]["keyVaultName"]
+                self.assertEqual(graph["evaluate"](call)["value"], "new-vault-name" if mode == "freshVault" else None)
+                reader = module(self.function, "function-fresh-vault-reader")
+                self.assertEqual(graph["evaluate"](reader["condition"]), mode == "freshVault")
+                self.assertEqual(graph["evaluate"](self.main["outputs"]["keyVaultReferenceMode"]["value"]), mode)
+                self.assertEqual(graph["evaluate"](self.main["outputs"]["externalKeyVaultReferences"]["value"]),
+                                 {"mode": "existing"} if mode == "existing" else None)
 
     def test_keyless_private_storage_vault_premium_and_outbound_integration(self):
         storage, = resources(self.function, "Microsoft.Storage/storageAccounts")
@@ -206,6 +325,88 @@ class CompiledModernFoundationTests(unittest.TestCase):
         self.assertEqual({x["settingName"] for x in call["extraKeyVaultReferenceAppSettings"]["value"]},
                          {"ARIZE_OTLP_ENDPOINT", "ARIZE_SPACE_ID", "ARIZE_API_KEY"})
 
+    def test_single_instance_bound_reaches_plan_and_app_with_explicit_warm_behavior(self):
+        parameter = self.main["parameters"]["functionMaximumInstances"]
+        self.assertEqual(parameter["allowedValues"], [1])
+        self.assertEqual(parameter["defaultValue"], 1)
+        call = module(self.main, "function-app-deployment")["properties"]["parameters"]
+        self.assertEqual(call["maximumInstances"]["value"], "[parameters('functionMaximumInstances')]")
+        self.assertEqual(self.function["parameters"]["maximumInstances"]["allowedValues"], [1])
+        plan, = resources(self.function, "Microsoft.Web/serverfarms")
+        self.assertEqual(plan["properties"]["maximumElasticWorkerCount"], "[parameters('maximumInstances')]")
+        site, = resources(self.function, "Microsoft.Web/sites")
+        config = site["properties"]["siteConfig"]
+        self.assertEqual(config["functionAppScaleLimit"], "[parameters('maximumInstances')]")
+        self.assertEqual(config["minimumElasticInstanceCount"], 1)
+        self.assertEqual(config["preWarmedInstanceCount"], 1)
+        for filename in ("main.parameters.json", "main.parameters.private-endpoint.json"):
+            profile = json.loads((ROOT / "infra" / filename).read_text())
+            self.assertEqual(profile["parameters"]["functionMaximumInstances"], {"value": 1})
+
+    def test_existing_secret_references_are_forwarded_without_external_vault_writes_or_grants(self):
+        call = module(self.main, "function-app-deployment")["properties"]["parameters"]
+        self.assertEqual(call["keyVaultReferences"]["value"], "[parameters('keyVaultReferences')]")
+        mapping = self.main["definitions"]["functionSecretReferences"]["discriminator"]["mapping"]
+        self.assertEqual(set(mapping), {"freshVault", "existing"})
+        self.assertEqual(set(mapping["existing"]["properties"]), {
+            "mode", "applicationInsightsSecretUri", "arizeEndpointSecretUri",
+            "arizeSpaceIdSecretUri", "arizeApiKeySecretUri"})
+        reader = module(self.function, "function-fresh-vault-reader")
+        self.assertEqual(reader["condition"], "[equals(parameters('keyVaultReferences').mode, 'freshVault')]")
+        for field in ("arizeEndpointSecretUri", "arizeSpaceIdSecretUri", "arizeApiKeySecretUri"):
+            self.assertIn(field, self.function["variables"]["extraAppSettings"])
+        settings = {x["name"]: x["value"] for x in self.function["variables"]["baseAppSettings"]}
+        self.assertIn("applicationInsightsSecretUri", settings["APPLICATIONINSIGHTS_CONNECTION_STRING"])
+        access = compile_bicep("infra/existing-function-secret-access.bicep")
+        self.assertEqual({r["type"] for r in resources(access)}, {"Microsoft.Authorization/roleAssignments"})
+        role, = resources(access)
+        self.assertIn("Microsoft.KeyVault/vaults/secrets", role["scope"])
+        self.assertEqual(access["variables"]["secretsUserRoleId"], "4633458b-17de-408a-b874-0445c86b69e6")
+        self.assertEqual(role["properties"]["principalId"], "[parameters('functionPrincipalId')]")
+
+    def test_evaluated_function_vault_graph_with_null_owned_name_and_exact_fresh_rbac(self):
+        reader = module(self.function, "function-fresh-vault-reader")
+        inner = reader["properties"]["template"]
+        self.assertEqual({r["type"] for r in resources(inner)}, {"Microsoft.Authorization/roleAssignments"})
+        # ARM validates existing-resource names even if their consumer has a
+        # false condition. Only a skipped nested deployment isolates that graph.
+        for mode, vault_name in (("existing", None), ("freshVault", "synthetic-vault")):
+            parameters = {"keyVaultReferences": {"mode": mode}, "keyVaultName": vault_name}
+            evaluate = lambda expression: evaluate_vault_expression(expression, parameters, {})
+            active = list(resources(self.function, writable=False))
+            if evaluate(reader["condition"]):
+                inner_parameters = {
+                    "keyVaultName": evaluate(reader["properties"]["parameters"]["keyVaultName"]["value"]),
+                    "functionAppResourceId": "/subscriptions/synthetic/resourceGroups/synthetic/providers/Microsoft.Web/sites/synthetic-function",
+                    "functionPrincipalId": "synthetic-principal",
+                }
+                active += resources(inner, writable=False)
+            else:
+                inner_parameters = parameters
+            evaluate_inner = lambda expression: evaluate_vault_expression(
+                expression, inner_parameters,
+                {"variables": inner.get("variables", {})})
+            vaults = [r for r in active if r["type"] == "Microsoft.KeyVault/vaults"]
+            for vault in vaults:
+                self.assertIsInstance(evaluate_inner(vault["name"]), str)
+            if mode == "existing":
+                self.assertIsNone(parameters["keyVaultName"])
+                self.assertFalse(any("keyVault" in r.get("scope", "") for r in active))
+                continue
+            role, = resources(inner, "Microsoft.Authorization/roleAssignments")
+            legacy_vault_id = "/subscriptions/synthetic/resourceGroups/synthetic/providers/Microsoft.KeyVault/vaults/synthetic-vault"
+            legacy_role_id = "4633458b-17de-408a-b874-0445c86b69e6"
+            self.assertEqual(evaluate_inner(role["scope"]), legacy_vault_id)
+            self.assertEqual(evaluate_inner(role["name"]), str(uuid.uuid5(
+                uuid.UUID("11fb06fb-712d-4ddd-98c7-e71bbd588830"),
+                "-".join((legacy_vault_id, inner_parameters["functionAppResourceId"], legacy_role_id)))))
+            self.assertEqual(evaluate_inner(role["properties"]["roleDefinitionId"]),
+                             "/subscriptions/synthetic/providers/Microsoft.Authorization/roleDefinitions/" + legacy_role_id)
+            self.assertEqual(evaluate_inner(role["properties"]["principalId"]), "synthetic-principal")
+            self.assertEqual(role["properties"]["principalType"], "ServicePrincipal")
+            self.assertEqual(reader["properties"]["parameters"]["functionPrincipalId"]["value"],
+                             "[reference('functionApp', '2023-12-01', 'full').identity.principalId]")
+
     def test_host_rbac_and_single_fresh_durable_export_ownership(self):
         self.assertEqual(set(self.function["variables"]["storageRoleIds"]), {
             "ba92f5b4-2d11-453d-a403-e96b0029c9fe", "974c5e8b-45b9-4653-ba55-5f855dd0fb88",
@@ -246,6 +447,69 @@ class CompiledModernFoundationTests(unittest.TestCase):
                 self.assertNotIn("ConnectionString", json.dumps(output.get("value", "")))
                 self.assertNotIn("listKeys", json.dumps(output.get("value", "")))
 
+    def test_issue147_bootstrap_uses_server_side_reference_and_secure_sink_only(self):
+        bootstrap = compile_bicep("infra/issue147-app-insights-bootstrap.bicep")
+        custody = module(bootstrap, "issue147-new-routing-custody")
+        self.assertEqual(custody["resourceGroup"], "fotoa-demo-rg")
+        call = custody["properties"]["parameters"]
+        self.assertEqual(call["vaultName"]["value"], "fotoa-demo-kv-eastus2")
+        self.assertEqual(call["secretName"]["value"], "fotoa147-appinsights-connection-string")
+        self.assertIn("Microsoft.Insights/components", call["connectionString"]["value"])
+        self.assertIn("fotoa147-demo-appi-eastus2", call["connectionString"]["value"])
+        self.assertTrue(call["connectionString"]["value"].endswith(".ConnectionString]"))
+        sink = custody["properties"]["template"]
+        self.assertEqual(sink["parameters"]["connectionString"]["type"], "securestring")
+        secret, = resources(sink)
+        self.assertEqual(secret["type"], "Microsoft.KeyVault/vaults/secrets")
+        self.assertEqual(secret["properties"]["value"], "[parameters('connectionString')]")
+        self.assertIn("buildRequiredTags", json.dumps(secret["tags"]))
+        self.assertEqual(set(sink["outputs"]), {"secretVersionUri", "componentBindingResourceId"})
+        self.assertIn("secretUriWithVersion", sink["outputs"]["secretVersionUri"]["value"])
+        self.assertEqual(set(bootstrap["outputs"]), set(sink["outputs"]))
+        for template in all_templates(bootstrap):
+            for output in template.get("outputs", {}).values():
+                self.assertNotIn("ConnectionString", json.dumps(output))
+                self.assertNotIn("connectionString", json.dumps(output))
+        for old_secret in ("arize-otlp-endpoint", "arize-space-id", "arize-api-key"):
+            self.assertNotIn(old_secret, json.dumps(bootstrap))
+        self.assertNotIn("listSecrets", json.dumps(bootstrap))
+        self.assertNotIn("Microsoft.Authorization/", json.dumps(bootstrap))
+
+    def test_issue147_bootstrap_requires_fixed_expiration_without_clock_default(self):
+        bootstrap = compile_bicep("infra/issue147-app-insights-bootstrap.bicep")
+        custody = module(bootstrap, "issue147-new-routing-custody")
+        sink = custody["properties"]["template"]
+        expiration = sink["parameters"]["expirationEpochSeconds"]
+        self.assertEqual(expiration["type"], "int")
+        self.assertNotIn("defaultValue", expiration)
+        self.assertEqual(custody["properties"]["parameters"]["expirationEpochSeconds"]["value"], 1795169700)
+        secret, = resources(sink)
+        self.assertEqual(secret["properties"]["attributes"]["exp"], "[parameters('expirationEpochSeconds')]")
+        self.assertNotIn("utcNow", json.dumps(bootstrap))
+
+    def test_issue147_subscription_wrapper_binds_exact_profile_and_bootstrap_after_foundation(self):
+        wrapper = compile_bicep("infra/issue147-first-allocation.bicep")
+        self.assertIn("subscriptionDeploymentTemplate", wrapper["$schema"])
+        self.assertFalse(wrapper.get("parameters"))
+        group, = resources(wrapper, "Microsoft.Resources/resourceGroups")
+        self.assertEqual(group["name"], "fotoa-demo-rg147-eastus2")
+        foundation_call = module(wrapper, "issue147-fresh-application")
+        bootstrap = module(wrapper, "issue147-routing-bootstrap")
+        self.assertEqual(foundation_call["resourceGroup"], group["name"])
+        self.assertEqual(bootstrap["resourceGroup"], group["name"])
+        self.assertTrue(any("foundation" in dependency or "issue147-fresh-application" in dependency
+                            for dependency in bootstrap["dependsOn"]))
+        profile = json.loads((ROOT / "infra/main.issue147-existing-network.parameters.json").read_text())
+        loaded = next(v for v in wrapper["variables"].values()
+                      if isinstance(v, dict) and "parameters" in v)
+        self.assertEqual(loaded["parameters"], profile["parameters"])
+        actual = foundation_call["properties"]["parameters"]
+        self.assertEqual(set(actual), set(profile["parameters"]))
+        for name in actual:
+            self.assertEqual(actual[name]["value"], f"[variables('p').{name}.value]")
+        self.assertEqual(profile["parameters"]["tracingAssociationMode"]["value"], "preserveExisting")
+        self.assertEqual(set(wrapper["outputs"]), {"secretVersionUri", "componentBindingResourceId"})
+
     def test_shared_naming_functions_and_portable_non_executable_profiles(self):
         tokens = self.function["variables"]["resourceTypeTokens"]
         self.assertEqual(tokens["foundryAccount"], "foundry")
@@ -280,12 +544,51 @@ def prepared_profile():
                     "privateEndpointSubnetAddressPrefix": "10.40.0.0/26",
                     "functionIntegrationSubnetAddressPrefix": "10.40.0.64/26"},
         "functionPackageBlobName": "sha256-test-package.zip", "arizeProjectName": "test-project",
+        "functionMaximumInstances": 1,
         "appInsightsConnectionName": "test-link",
     }
     return {"parameters": {k: {"value": v} for k, v in values.items()}}
 
 
 class OfflineProfileTests(unittest.TestCase):
+    def test_existing_secret_uris_reject_values_missing_fields_and_uri_injection(self):
+        profile = prepared_profile()
+        fields = ("applicationInsightsSecretUri", "arizeEndpointSecretUri",
+                  "arizeSpaceIdSecretUri", "arizeApiKeySecretUri")
+        refs = {"mode": "existing", **{
+            key: f"https://sample-vault.vault.azure.net/secrets/test-{i}/"
+            for i, key in enumerate(fields)}}
+        profile["parameters"]["keyVaultReferences"] = {"value": refs}
+        self.assertTrue(foundation.validate_profile(profile)["offlineProfileValid"])
+        for bad in ("not-a-uri", "http://sample-vault.vault.azure.net/secrets/test/",
+                    "https://x.vault.azure.net/secrets/test/",
+                    "https://1vault.vault.azure.net/secrets/test/",
+                    "https://sample--vault.vault.azure.net/secrets/test/",
+                    "https://sample-vault.vault.azure.net.evil.test/secrets/test/",
+                    "https://sample-vault.vault.azure.net/secrets/test/?sig=invalid",
+                    "https://sample-vault.vault.azure.net/secrets/test/#fragment",
+                    "https://sample-vault.vault.azure.net/secrets/test/invalid-version"):
+            changed = copy.deepcopy(profile)
+            changed["parameters"]["keyVaultReferences"]["value"][fields[0]] = bad
+            with self.subTest(bad=bad), self.assertRaisesRegex(ValueError, "four exact"):
+                foundation.validate_profile(changed)
+        for field in fields:
+            changed = copy.deepcopy(profile)
+            del changed["parameters"]["keyVaultReferences"]["value"][field]
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                foundation.validate_profile(changed)
+        changed = copy.deepcopy(profile)
+        changed["parameters"]["keyVaultReferences"]["value"][fields[0]] = refs[fields[1]]
+        with self.assertRaisesRegex(ValueError, "distinct"):
+            foundation.validate_profile(changed)
+
+    def test_unbounded_or_larger_ep1_profile_rejected_before_provider(self):
+        for value in (0, -1, 2, 20, True, "1", None):
+            profile = prepared_profile()
+            profile["parameters"]["functionMaximumInstances"]["value"] = value
+            with self.subTest(value=value), self.assertRaisesRegex(ValueError, "functionMaximumInstances=1"):
+                foundation.validate_profile(profile)
+
     def test_complete_synthetic_profile_is_not_provider_or_runtime_proof(self):
         result = foundation.validate_profile(prepared_profile())
         self.assertTrue(result["offlineProfileValid"])
