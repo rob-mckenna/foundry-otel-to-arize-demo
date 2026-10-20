@@ -33,6 +33,54 @@ This is the implemented architecture, not a complete-trace or fresh-deployment v
 claim. See the [detailed architecture and limitations](docs/current-state/architecture.md)
 and [health-isolation evidence](docs/current-state/pipeline-health-cutover.md).
 
+## What the Azure Function does
+
+**The Function is the schema and delivery bridge, not just a JSON forwarder.** It turns
+supported Azure Monitor records into OpenTelemetry spans with OpenInference attributes
+that Arize can ingest. It does not invoke a model.
+
+| Stage | What the code does | Implementation |
+|---|---|---|
+| Receive | `TelemetryTransform` receives Event Hub batches and selects durable admission or direct batch transformation. | [Function triggers](src/telemetry-pipeline/telemetry_pipeline/function_app.py), [batch decoding](src/telemetry-pipeline/telemetry_pipeline/batch.py) |
+| Map | Normalize native/legacy fields, validate trace/span/parent IDs, and map available correlation, model, token usage, input/output, timing and status into an OpenTelemetry span. Invalid records are reported, not repaired with invented identities. | [`record_to_span()`](src/telemetry-pipeline/telemetry_pipeline/mapping.py) |
+| Join content | In durable mode, persist records in a Blob-backed ledger and correlate separately arriving `AppGenAIContent` with its original span. Inline content takes precedence; the content wait is bounded to 300 seconds. | [`Correlator`](src/telemetry-pipeline/telemetry_pipeline/durable.py), [Blob ledger](src/telemetry-pipeline/telemetry_pipeline/durable_store.py) |
+| Deliver | `DurableGenAIOutbox` runs every 30 seconds, drains eligible spans and sends OTLP protobuf to Arize. The durable path distinguishes confirmed acceptance, retryable rejection, rejection and ambiguous delivery rather than treating every response as success. | [Timer trigger](src/telemetry-pipeline/telemetry_pipeline/function_app.py), [OTLP encoding and strict sender](src/telemetry-pipeline/telemetry_pipeline/strict_sender.py) |
+
+For example, this excerpt from
+[`record_to_span()`](src/telemetry-pipeline/telemetry_pipeline/mapping.py#L552)
+shows how normalized source identities and LLM attributes are carried into the span:
+
+```python
+trace_id = parse_trace_id(record.get("operation_Id"))
+span_id = parse_span_id(record.get("id"), trace_id)
+parent_span_id = parse_parent_span_id(record.get("operation_ParentId"), trace_id)
+
+context = build_span_context(trace_id, span_id)
+parent = build_parent_context(trace_id, parent_span_id)
+
+name, status, kind, span_kind_attrs = map_span_kind_status_fields(record, custom_dimensions)
+if record.get("Type") == "AppRequests":
+    kind = SpanKind.SERVER
+
+attributes: dict[str, Any] = {}
+attributes.update(gen_ai_attrs)
+attributes.update(map_correlation_id(custom_dimensions))
+attributes.update(map_token_fields(custom_dimensions))
+attributes.update(map_llm_io_fields(custom_dimensions))
+attributes.update(span_kind_attrs)
+```
+
+`DURABLE_GENAI_ENABLED=true` selects the ledger/outbox path used by the existing POC;
+`false` selects direct batch transformation/export. The code above describes the
+repository implementation, not independent proof of deployed package parity.
+
+**Content joining is per span, not whole-trace assembly.** Genuine agent roots and
+non-LLM children remain eligible; missing source fields cannot be reconstructed.
+Ambiguous durable sends are quarantined rather than blindly replayed. See the
+[mapping/export contract](docs/current-state/telemetry-mapping-export-contract.md)
+and [durable correlation runbook](docs/current-state/durable-genai-correlation.md)
+for the full field, retry and delivery boundaries.
+
 ## Current status
 
 | Area | What this asset supports | Evidence limit |
