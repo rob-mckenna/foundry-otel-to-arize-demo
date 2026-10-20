@@ -1,20 +1,22 @@
 # #153 source validation receipt
 
-**CURRENT-STATE source implementation, offline evidence only — NOT DEPLOYED.**
-Related to #153; the issue remains open for separately authorized live acceptance.
-This receipt records source/package evidence, not final parent review or live
-acceptance. Owner pair/cost/cutover approval has since been granted.
+**MONITORING-ONLY PASSIVE OBSERVATION PASSED; CUTOVER DEPLOYED; TRIGGERS RESUMED.**
+**APP CODE/PACKAGE NOT PUBLISHED; SOURCE GUARD NOT LIVE (HELD).**
+This receipt combines retained offline source/package evidence with the parent's
+verified monitoring-only execution facts below. Issue #153/draft PR #154 remain
+open. No Azure/SCM call was made for this documentation update.
 
 | Revision / release fact | Exact value |
 | --- | --- |
 | BASE | `2219075f86a7ba387490abdb88ceae5e2a775e9d` |
 | Runtime SOURCE HEAD (first implementation commit) | `38ff29e0d3d9d67989b19e75bc84724feee47194` |
 | Branch | `squad/153-pipeline-health-isolation` |
-| Immutable final source/build-tools SHA | `a49bfd21d242b28f070500a446e9d38c2b8839cc`; subsequent receipt commit changes documentation only |
+| Immutable package source/build-tools SHA | `a49bfd21d242b28f070500a446e9d38c2b8839cc`; pinned offline input, not deployed |
 | Package SHA256 | `16de4fdd0e951efa957d470d9e71822d5de558bcb3f16fb44522169a9bd40382` |
 | Dependency artifact / hashes | Approved #143 input `c1a276b62af37da8810c0c120b9cbe8cdff913fc76f43e51399f50db61d540f7`; 29 distributions /1,415 staged files |
-| Package transport / readback | Existing native ARM-bearer SCM option identified; no publication/readback executed. Proposed Blob container does not exist |
-| Live runtime parity | **NOT VERIFIED** |
+| Package transport / readback | Historical GET/VFS evidence only; no package published. Code phase/further SCM work HELD |
+| Live runtime parity / guard | Worker-byte parity **NOT VERIFIED**; app code unchanged, source guard **NOT LIVE** |
+| Live monitoring | `issue153-function-health` succeeded; health LAW UUID `898b620f-3873-4a53-bbee-2b7b96701984`; exact versioned health reference Resolved; triggers resumed; bounded passive observation PASSED |
 | Legacy baseline | ARM/SCM active identity agrees, but actual SCM-visible source differs (8 mismatches /4 missing). Worker-mounted bytes unproven; separately authorized authoritative proof or explicit containment-only recovery remains |
 
 Use the single authoritative [cutover/resource/cost manifest](pipeline-health-cutover.md)
@@ -24,6 +26,61 @@ fresh environment or deploy `main.bicep` to the existing demo. The owner approve
 the dedicated non-exported health LAW/component in existing `fotoa-demo-rg`, `eastus2`.
 Retail ingestion is USD 2.76/GB: gross USD 82.80/30 days at 1 GB/day before
 allowances; the daily cap is not a hard spend ceiling.
+
+## Verified monitoring-only execution — parent evidence (2026-10-20)
+
+- Official monitoring-only validation completed: all **5 Core checks PASS**;
+  actual what-if **3 Creates /0 Modify /0 Delete**. Lead metadata revision and
+  bounded policy review accepted by parent before execution.
+- Deployment **`issue153-function-health` succeeded**, creating health component
+  **`fotoa-demo-funcappi-eastus2`** and health LAW
+  **`fotoa-demo-funclaw-eastus2`**, UUID
+  **`898b620f-3873-4a53-bbee-2b7b96701984`**.
+- Triggers paused **2026-10-20T16:35:52.2613051Z**; **150-second drain** observed.
+  Monitoring switched **2026-10-20T16:39:30.7098697Z** and legacy
+  `APPINSIGHTS_INSTRUMENTATIONKEY` removed.
+- Exact versioned health secret:
+  `https://fotoa-demo-kv-eastus2.vault.azure.net/secrets/function-health-connection-string/09b48bda9a8e45f6ab915f77970e80af`,
+  confirmed **Resolved** through **GET**
+  `/config/configreferences/appsettings?api-version=2024-11-01`.
+  The earlier POST `/list` used the wrong API; it was not evidence of a failed
+  reference. No secret value was read/emitted.
+- At **2026-10-20T16:43:39.876321Z**, parent atomically restored incoming
+  disabled=`false`, outbox disabled key **ABSENT**, and verified **all other app
+  settings unchanged in memory**, without emitting credentials.
+- Existing enabled rollback-monitoring secret metadata was found:
+  `appinsights-connection-string`, version `1ec98e6a56c34d569ccbee29e770e1c9`;
+  its value was never read. This is not a tested code rollback image.
+- **No app code/package was published.** Agent export tables/allowlist,
+  `genai-correlation`, ledger and checkpoints are unchanged; no VM/new container.
+  Guard remains **HELD/NOT LIVE**. Historical queued self-spans can finish
+  draining; their retirement must not be attributed to the undeployed guard.
+
+### MONITORING-ONLY PASSIVE OBSERVATION PASSED — bounded parent evidence
+
+Observation initiated **2026-10-20T16:49:03.0245964Z**; query cutoff
+`TimeGenerated > 2026-10-20T16:43:39.876321Z`:
+
+- Health LAW: **9 DurableGenAIOutbox AppRequests** generated
+  **16:44:30.0085008Z–16:48:30.0038171Z**, plus **618 host/timer AppTraces**;
+  all observed resource IDs point to the health AI.
+- Separate Success aggregate: **3 successful timer executions**
+  (`true`, result `0`, through **16:46:00Z**). Do **not** infer all 9 requests
+  were successful from this evidence.
+- Same final agent-LAW aggregate: **zero Function-role rows** after resumption.
+  Function **Running**, both **TelemetryTransform** and **DurableGenAIOutbox**
+  indexed.
+- At **16:46:47Z**, health LAW `dataExports=[]`, LAW `diagnosticSettings=[]`,
+  health AI `diagnosticSettings=[]`; existing agent export remains enabled with
+  the same three tables/Event Hub destination.
+- Earlier health LAW DCR associations `[]`, default DCR `null`. Health AI
+  DCR-association API **UnsupportedResourceType** is **not** an empty-result proof.
+
+These observations pass the narrowed monitoring-only check within this window,
+not universal future no-feedback, whole-trace completeness, or deployment/
+acceptance of the source guard. Historical queued self-spans may still drain;
+no guard retirement claim is made. #153 remains open and #154 draft because
+broader source/backlog guard acceptance remains incomplete.
 
 ## Cycle 2 executed evidence (2026-10-20)
 
@@ -72,8 +129,10 @@ Full generated evidence remains ignored, available in this worktree:
 
 Both `.release/pipeline-health-final-a.zip` and `-b.zip` have the package
 digest above; both package receipts are equal. Generated files and parent-owned
-`.azure/deployment-plan.md` are not committed. No Azure CUD, credentials/settings
-dump, VM start, telemetry/log read, model call or #147 artifact access occurred.
+`.azure/deployment-plan.md` are not committed. During the offline preparation
+described in this section, this child performed no Azure CUD, credentials/settings
+dump, VM start, telemetry/log read, model call or #147 artifact access. The parent's
+later monitoring-only execution is recorded separately above.
 
 ### Fresh authorized bearer GET/VFS evidence
 
@@ -93,9 +152,10 @@ fail-fast 404 remains `.release/scm-baseline-proof.json`. The new minimal
 keeps bearer only in memory, blocks redirects and retries, and gates future ZIP
 POST behind explicit authorization plus a durable single-attempt intent.
 Its **10 synthetic tests passed**. Future `readback` mode explicitly proves only
-SCM-visible source, not worker imports/dependencies. Parent must separately
-authorize an authoritative worker channel or accept containment-only recovery;
-no POST-based remote command is authorized by this GET-only follow-up.
+SCM-visible source, not worker imports/dependencies. For any later code phase,
+parent would need separate authoritative-worker verification or explicit
+containment-only recovery acceptance. That phase is now **HELD**; no further
+SCM read/POST or remote command is authorized by the monitoring-only execution.
 
 | GET-only evidence | SHA256 |
 |---|---|
@@ -194,21 +254,22 @@ readiness artifacts were part of either original commit. Cycle 2 adds the
 independent metadata revision, package vetting/safe metadata tooling and tests,
 generated-file ignores, then refreshes only this receipt and the cutover manifest.
 
-## Pending acceptance gates
+## Bounded monitoring pass / held code boundary
 
-- Parent review of Lead's revision, official Azure validation/what-if and final
-  live gate (owner pair/cost/cutover approval already granted).
-- Separately authorized authoritative worker-byte proof, or explicit acceptance
-  of containment-only code recovery: executed SCM-visible GET hashes did not
-  match the historical candidate. Old monitoring was not
-  absent; separately authorized ARM custody can use its known component identity.
-- One reviewed complete-ZIP submission with remote build off; active byte/hash,
-  Linux import, indexing and KV-resolution verification.
-- Live isolated health topology/ingestion and legitimate-child acceptance.
-  Issue #153/draft PR #154 stay open. No new private-Blob container or VM approval
-  is assumed or needed for the proposed existing SCM management route.
+- **Monitoring-only passive observation PASSED**, bounded by the cutoff and
+  observations above. Validation, health resource deployment, exact KV reference
+  resolution and trigger resumption are completed facts, not remaining execution
+  instructions or universal future guarantees.
+- **Code phase HELD:** no further SCM reads/POSTs, package publication or guard
+  activation is authorized. Worker-byte proof remains unresolved for any later
+  separately authorized code phase, not an instruction to expand this narrower
+  monitoring-only result. Offline package hashes are not deployed-runtime proof.
+- Keep issue #153 open and PR #154 draft because broader source/backlog guard
+  acceptance remains incomplete; no replay, historical cleanup or attribution of
+  queued self-span retirement to the undeployed guard.
 
-Exact service/component exclusions are record-local, not operation/LLM/trace-wide
-filters. Durable `excluded` is a distinct 48-hour terminal, **not acknowledged
-export**. Genuine non-LLM children remain eligible; no whole-trace completeness,
+In the **undeployed source**, exact service/component exclusions are record-local,
+not operation/LLM/trace-wide filters. Durable `excluded` is a distinct 48-hour
+terminal, **not acknowledged export**. Genuine non-LLM children remain eligible
+under that source policy; no live activation, whole-trace completeness,
 historical cleanup, replay or exactly-once claim follows from this receipt.

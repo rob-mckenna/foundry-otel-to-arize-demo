@@ -1,10 +1,67 @@
 # #153 — targeted existing-demo cutover manifest
 
-**SOURCE/PACKAGE PREPARED; NOT DEPLOYED OR LIVE-ACCEPTED.** Cycle 2 replaces
-the earlier speculative Blob/custodian prerequisites. It does not authorize
-cloud CUD. Parent owns official Azure validation, final reviewed cutover and
+**MONITORING-ONLY PASSIVE OBSERVATION PASSED; CUTOVER DEPLOYED; TRIGGERS RESUMED.**
+**NO APP CODE/PACKAGE PUBLISHED; SOURCE GUARD NOT LIVE (HELD).** Parent narrowed
+execution to the health resources/secret and existing host/worker monitoring sink,
+keeping the working app code unchanged. The offline package below is not the
+deployed runtime. This receipt records parent-supplied live evidence; this docs
+update made no Azure/SCM calls. Parent owns final acceptance and
 `.azure/deployment-plan.md`. No fresh #147 work, model call, replay, Arize
-deletion, VM start, IAM change or diagnostic/policy write is included.
+deletion, VM start, new container, IAM or diagnostic/policy write is included.
+
+## Verified monitoring-only execution — parent evidence (2026-10-20)
+
+- Official monitoring-only workflow validated: all **5 Core checks PASS**,
+  actual what-if **3 Creates /0 Modify /0 Delete**. Parent accepted Lead's
+  metadata revision and completed bounded policy review; these are no longer
+  pending preparation gates.
+- Deployment **`issue153-function-health` succeeded**. Health component:
+  **`fotoa-demo-funcappi-eastus2`**; health LAW:
+  **`fotoa-demo-funclaw-eastus2`**, workspace UUID
+  **`898b620f-3873-4a53-bbee-2b7b96701984`**.
+- Both triggers paused at **2026-10-20T16:35:52.2613051Z**, followed by the
+  **150-second drain**.
+- Monitoring setting switched at **2026-10-20T16:39:30.7098697Z** to the exact
+  versioned health reference:
+  `https://fotoa-demo-kv-eastus2.vault.azure.net/secrets/function-health-connection-string/09b48bda9a8e45f6ab915f77970e80af`.
+  Legacy `APPINSIGHTS_INSTRUMENTATIONKEY` was removed.
+- Health reference confirmed **Resolved** using the official
+  **GET** `/config/configreferences/appsettings?api-version=2024-11-01`.
+  The earlier **POST `/list` was the wrong API**, not a reference-resolution
+  failure. No secret value was read/emitted.
+- At **2026-10-20T16:43:39.876321Z**, parent atomically restored incoming
+  disabled=`false` and the outbox disabled key to **ABSENT**, verifying **all
+  other app settings unchanged in memory**. No credentials were emitted.
+- Existing app code/package, agent export tables and source allowlist,
+  `genai-correlation`, ledger and checkpoints remain unchanged. **No code
+  publication or guard activation occurred.** Historical queued self-spans may
+  finish draining; do not claim the undeployed guard excluded/retired them.
+
+### Bounded passive observation — PASSED (parent evidence)
+
+Observation initiated **2026-10-20T16:49:03.0245964Z**, querying
+`TimeGenerated > 2026-10-20T16:43:39.876321Z` (trigger resumption):
+
+- Health LAW: **9 DurableGenAIOutbox AppRequests**, generated
+  **16:44:30.0085008Z–16:48:30.0038171Z**, plus **618 host/timer AppTraces**;
+  all observed resource IDs point to the health AI.
+- A **separate Success aggregate confirmed 3 successful timer executions**
+  (`true`, result `0`, through **16:46:00Z**). The evidence does **not** establish
+  that all 9 requests were successful.
+- The same final aggregate in the agent LAW returned **zero Function-role rows**
+  after resumption. Function **Running**; both **TelemetryTransform** and
+  **DurableGenAIOutbox** indexed.
+- Final route checks at **16:46:47Z**: health LAW `dataExports=[]`, LAW
+  `diagnosticSettings=[]`, health AI `diagnosticSettings=[]`. Existing agent
+  export remains enabled with the same three tables and Event Hub destination.
+- Earlier health LAW DCR associations were `[]`, default DCR `null`.
+  Health AI DCR-association API returned **UnsupportedResourceType**: this is
+  **not** an empty-result/no-association proof for that component.
+
+This passes the **monitoring-only bounded passive observation**, not universal
+future no-feedback, whole-trace completeness or source-guard acceptance.
+Historical queued self-spans may still drain. Issue #153 stays open and PR #154
+stays draft because broader source/backlog guard acceptance remains incomplete.
 
 ## Approved scope and immutable inputs
 
@@ -23,15 +80,15 @@ SHA256: 16de4fdd0e951efa957d470d9e71822d5de558bcb3f16fb44522169a9bd40382
 Bytes: 8522761
 ```
 
-| Target | Only approved intended change |
+| Target | Monitoring-only execution / held scope |
 |---|---|
-| `R/providers/Microsoft.OperationalInsights/workspaces/fotoa-demo-funclaw-eastus2` | New isolated health LAW, `PerGB2018`, retention 30 days, cap 1 GB/day; no export/forwarder |
-| `R/providers/Microsoft.Insights/components/fotoa-demo-funcappi-eastus2` | New Function-health component backed only by that LAW |
-| Existing `R/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2` | ARM-custodied `function-health-connection-string`; identifiers only in output |
-| Existing Function | Guard-enabled immutable ZIP, exact exclusion arrays, monitoring KV reference, remove obsolete instrumentation key, temporary trigger gates |
+| `R/providers/Microsoft.OperationalInsights/workspaces/fotoa-demo-funclaw-eastus2` | Deployed health LAW; validated configuration `PerGB2018`, retention 30 days, cap 1 GB/day; no export/forwarder in scoped source |
+| `R/providers/Microsoft.Insights/components/fotoa-demo-funcappi-eastus2` | Deployed Function-health component backed by the health LAW |
+| Existing `R/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2` | Health secret version above deployed, reference Resolved; no plaintext retrieval |
+| Existing Function | Monitoring reference switched, obsolete key removed, triggers resumed as recorded above; **ZIP publication/exclusion-code activation HELD** |
 | Agent component/LAW, Event Hub, `genai-correlation`, checkpoints, ledger, source scope | **Unchanged**; no resets, receipt imports or quarantine replay |
 
-All new health resources, including the secret, carry:
+Declared health-resource tags, including the secret:
 `environment=demo`, `owner=infra-team`, `project=foundry-otel-to-arize-demo`,
 `costCenter=demo-engineering`, `dataClassification=synthetic`.
 
@@ -44,16 +101,16 @@ minor usage charges, not a new compute SKU.
 ## Independent revision and exact offline checks
 
 Infra authored the rejected secret metadata. **Lead, not Infra**, independently
-revised it; Infra did not advise/coauthor this cycle. Lead's result remains
-subject to parent review; compilation is not policy/live approval.
+revised it; Infra did not advise/coauthor this cycle. Parent accepted the metadata
+revision, then completed official validation/policy review before the
+monitoring-only deployment. Compilation alone was not treated as live approval.
 
 The secret now has all five synthetic tags and enabled expiration.
 `functionHealthSecretExpirationEpoch` is propagated consistently through the
 module, scoped rollout and fresh callers. Its default is deployment time +90
 days, with integer bounds 1..2147483647. Those bounds alone cannot reject a past
-date. For this rollout explicitly use **1800230400 = 2027-01-18T00:00:00Z**,
-validated as future and within 90 days of the supplied session timestamp.
-Recheck relative to execution time before deployment. Renew by **2027-01-04**
+date. The validated rollout expiry is **1800230400 = 2027-01-18T00:00:00Z**.
+Renew by **2027-01-04**
 through a separately approved additive rollout; verify secret metadata only,
 refresh/verify the Function reference and health ingestion. A versioned reference
 must be updated to the renewed version (or explicitly approved versionless
@@ -122,7 +179,7 @@ Full source/dependency hashes are in the ignored package receipts. They are
 available in this worktree for parent review, not committed dependency payloads.
 See the [source receipt](pipeline-health-source-receipt.md) for inventory digests.
 
-## Actual bounded read-only baseline
+## Historical pre-cutover read-only baseline (not current monitoring state)
 
 All Azure processes used the explicit subscription above and
 `AZURE_CONFIG_DIR=C:\repos\foundry-otel-to-arize-demo\.azure-config`,
@@ -149,8 +206,9 @@ Governance operations were exactly GET on
 `/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/McapsGovernance/providers/Microsoft.OperationalInsights/workspaces/mcaps4f148af4951c0dbb92d2-la/dataExports?api-version=2020-08-01`
 and that LAW's `/providers/Microsoft.Insights/diagnosticSettings?api-version=2021-05-01-preview`.
 They establish **no configured feedback via those two observable route types**,
-not a universal assertion about unobserved external systems. No governance
-telemetry, log records, policies or assignments were read/changed.
+not a universal assertion about unobserved external systems. These two LAW-route
+checks did not read telemetry/log records or change governance policies/assignments.
+Parent separately read inherited policy metadata during official validation.
 
 ARM `sites/.../deployments` GET identifies active successful deployment
 **127794d4-c4a1-466f-b000-08ca0bec3bcb**, start/end
@@ -161,7 +219,7 @@ runtime source `f650fed983a687eb97211b634af3d99e7286d6e1`.
 This is concrete ARM-to-historical-receipt binding, **not fresh live byte proof**
 or permission to call the dependency input a current rollback image.
 
-## Concrete transport, runtime channel and recovery limits
+## Historical transport evidence / recovery limits — code phase HELD
 
 The previous #143 deployment used native config-zip. Earlier in-repo
 `.azure-sandbox/e2e-execute.py` (`bearer`, `scm`) and
@@ -234,91 +292,31 @@ that concrete alternate-scope decision first; a VM start alone cannot fix a
 missing destination. Existing storage/Function runtime private dependencies are
 not evidence that SCM itself is private.
 
-Before changing code, parent must either separately authorize authoritative
+For any later, separately authorized code phase, parent must either authorize authoritative
 worker-byte verification or explicitly accept containment-only code recovery.
-Historical receipts do not prove an exact present rollback image. Original
-monitoring exists but no safe old KV URI was found. Its known agent component
-identity permits a separately authorized ARM-custodied monitoring recovery
-(component reference transferred without CLI credential retrieval); do not
-invent an absence attestation or retrieve the current plaintext setting.
+Historical receipts do not prove an exact present rollback image. Parent later
+found enabled rollback-monitoring secret **metadata only**, without reading its
+value: `appinsights-connection-string`, version
+`1ec98e6a56c34d569ccbee29e770e1c9`, in the existing demo KV. The earlier
+no-safe-KV-URI observation is superseded by that metadata discovery; rollback
+monitoring was not absent. No full code rollback proof or rollback execution
+is claimed.
 
-## Narrow remaining live sequence — NOT EXECUTED
+## Current acceptance boundary — no further execution authorized here
 
-1. Parent finishes official workflow validation/what-if against only
-   `infra/pipeline-health-rollout.bicep`, reviews Lead metadata and this package,
-   chooses the existing bearer route and explicitly accepts the recovery limit
-   or separately authorizes authoritative worker-byte verification. The executed
-   GET-only attempt did not establish exact old-runtime bytes.
-   Pair/cost/cutover approval and Lead metadata acceptance are already recorded.
-2. Recheck `1800230400` is future and <=90 days away at execution. Deploy only
-   the health rollout after parent authorization:
+The earlier combined package/monitoring execution sequence is superseded by the
+completed **monitoring-only** timeline at the top. The setting uses the exact
+**versioned** health secret above, not the previously proposed versionless URI.
+Renewal must account for that pinned version.
 
-   ```powershell
-   az deployment group create --subscription c81fda52-936e-4f14-8af4-951c0dbb92d2 `
-     --resource-group fotoa-demo-rg --name issue153-function-health `
-     --template-file infra/pipeline-health-rollout.bicep `
-     --parameters projectToken=fotoa environment=demo location=eastus2 regionToken=eastus2 `
-       ownerTag=infra-team costCenterTag=demo-engineering keyVaultName=fotoa-demo-kv-eastus2 `
-       functionHealthConnectionStringSecretName=function-health-connection-string `
-       functionHealthSecretExpirationEpoch=1800230400 `
-       workspaceSkuName=PerGB2018 retentionInDays=30 dailyQuotaGb=1 `
-     --query properties.outputs --output json --only-show-errors
-   ```
+**MONITORING-ONLY PASSIVE OBSERVATION PASSED** within the bounded evidence above.
+Triggers are already resumed; this receipt does not instruct another pause or
+resumption. This is not acceptance of the held code/guard phase.
 
-   Use sanitized failure handling, identifiers-only output. Verify new secret
-   tags/expiry, component→LAW, empty exports and no unexpected forwarding.
-3. Pause both triggers via settings-only update, observe existing 120-second
-   claim boundary plus at least 150 seconds and content-free in-flight counts.
-   Preserve all leases/checkpoints/quarantine. No build-setting values were read
-   in this follow-up. Optional flags that must be false for this complete ZIP:
-   `SCM_DO_BUILD_DURING_DEPLOYMENT=false` and `ENABLE_ORYX_BUILD=false`
-   (change only if not already false; no dependency-resolution/remote-build step).
-   One reviewed bearer
-   ZIP submission, no blind retry. No new `WEBSITE_RUN_FROM_PACKAGE` Blob setting,
-   no storage publication or Function parent PUT.
-4. Set exact JSON arrays:
-   `PIPELINE_EXCLUDED_SERVICE_NAMES=["fotoa-demo-func-eastus2"]`,
-   `PIPELINE_EXCLUDED_COMPONENT_RESOURCE_IDS=["R/providers/Microsoft.Insights/components/fotoa-demo-funcappi-eastus2"]`
-   (expand literal `R`). Never exclude the agent component. Verify authoritative
-   worker bytes, Linux dependency imports and indexing, not merely SCM status/VFS.
-5. Confirm the health output URI belongs to the exact expected vault/secret,
-   record its version as metadata, and set `APPLICATIONINSIGHTS_CONNECTION_STRING`
-   to the consistent versionless reference
-   `@Microsoft.KeyVault(SecretUri=https://fotoa-demo-kv-eastus2.vault.azure.net/secrets/function-health-connection-string)`;
-   remove only
-   `APPINSIGHTS_INSTRUMENTATIONKEY`. Refresh/verify KV reference resolution.
-   Do not restore remote build to true for this offline package.
-6. Restore outbox first, then incoming only after count-only health/agent/Arize
-   evidence establishes isolation and legitimate child preservation. No model
-   calls/replays/deletions are authorized by this prep handoff.
-7. On unresolved routing/code/parity, keep both triggers paused. Do not reset
-   sending/ambiguous/rejected ledger states or claim full rollback. Parent alone
-   accepts live result; keep draft PR #154 and issue #153 open until then.
-
-### Exact helper commands for the future authorized parent cutover
-
-The fixed package remains `16de4fdd…40382` from source `a49bfd21…839cc`;
-adding this helper does not rebuild or change runtime bytes. It has no arbitrary
-URL/path/token argument and no remote-command implementation.
-
-```powershell
-# OFFLINE tests only (executed in this follow-up)
-python -B -m unittest discover -s infra/scripts -p 'test_pipeline_health_scm.py' -v
-
-# CLOUD WRITE — NOT executed; requires separate parent authorization AFTER
-# trigger pause, remote-build-off and recovery/runtime-channel gates above.
-python -B infra/scripts/pipeline-health-scm.py --mode publish --authorize-zip-post
-
-# GET-only source comparison after the new deployment becomes active.
-# This checks SCM-visible files ONLY, not worker/import/dependency acceptance.
-python -B infra/scripts/pipeline-health-scm.py --mode readback
-```
-
-The publish mode pins the exact ZIP digest, writes a single-attempt local intent
-before POST and refuses another submission if that intent exists. No automatic
-poll/retry is hidden in the helper. Status GET is exactly
-`https://fotoa-demo-func-eastus2.scm.azurewebsites.net/api/deployments/<returned-guid>`.
-On ambiguous POST, reconcile GET-only; never delete the intent to retry blindly.
-Sanitized failures distinguish HTTP 401/403/404/409/429, blocked redirects,
-TLS certificate/handshake, DNS, timeout and connection failure; no raw response,
-error body or bearer material is persisted/emitted.
+Package publication, guard activation, build-flag changes and further SCM
+reads/POSTs remain **HELD**. The offline ZIP/helper and historical GET evidence
+are retained as preparation only; they are not prerequisites that must now be
+executed to accept the narrower monitoring change. No VM or container is needed
+for the completed scope. Do not retire/replay historical queued self-spans or
+attribute their draining to the undeployed guard. Keep issue #153 open and
+PR #154 draft: broader source/backlog guard acceptance remains incomplete.
