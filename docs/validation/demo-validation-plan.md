@@ -1,5 +1,11 @@
 # Demo Validation Plan
 
+> **Fresh modern environment (#147):** use the [readiness/acceptance
+> packet](../current-state/fresh-foundation-acceptance.md) for the current
+> modern-only source baseline, offline results and separately gated cloud
+> acceptance. Historical per-capability results below do not validate a fresh
+> foundation; the local CLI remains an offline stub, not a live SDK caller.
+
 **Status: MIXED — plan structure is current-state (this document and the synthetic prompt
 library below are complete and usable today); the validation *results* for each capability are
 tracked per-capability and range from "validated" to "blocked on upstream implementation." See the

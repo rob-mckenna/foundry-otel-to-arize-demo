@@ -12,6 +12,11 @@ provider/policy acceptance, quota, DNS reachability, private agent runtime/state
 agent-version publication or Arize receipt. All remain separately approved gates.
 The local Prompt Agent client is still a synthetic stub, not a live SDK backend.
 
+For the next **fresh** environment, use the [QA readiness and acceptance packet
+(#147)](../docs/current-state/fresh-foundation-acceptance.md): exact offline results,
+owner decision choices, public cost basis and gated provider/private/repeat/E2E
+handoffs. It does not authorize cloud execution or certify private agent readiness.
+
 ## Three operations — never substitute one for another
 
 | Operation | Entrypoint / ownership | Scope |
