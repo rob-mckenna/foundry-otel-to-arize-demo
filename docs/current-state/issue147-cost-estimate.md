@@ -12,7 +12,7 @@ contract requires any of them, this scenario is inapplicable, not permission to
 expand it. The [integrated Agent assessment](issue147-private-agent-prerequisites.md)
 resolves the historical v1 Responses contract and SDK pins, not fresh readiness.
 
-**Technical NO-GO / NOT READY FOR APPROVAL:** the ledger prices the present
+**Fresh-readiness hold / NOT READY FOR EXECUTION APPROVAL:** the ledger prices the present
 source graph, not a proven fully private Agent runtime. Basic can use private
 inbound with Microsoft-managed state; that is not Standard private outbound/BYO
 state. If fully private runtime is required, Standard's Storage/Search/Cosmos,
@@ -21,6 +21,14 @@ PE/DNS/permissions are missing and **not priced here**. Resolve the supported
 contract and accepted scope first, then replace the applicable resource/meter
 inventory; do not silently select Basic or label those missing services a
 zero-cost R addend. No architecture expansion is authorized.
+**2026-10-20 correction:** Standard dependencies are **conditional**, not
+missing mandatory meters for ADR-0004's private-client-ingress/no-tool foundation.
+[Agent §1a](issue147-private-agent-prerequisites.md#1a-correction-adr-promise-authoritative-distinction-and-bounded-choices)
+provides exact A/B boundary wording and ADR clarification/amendment requirements.
+A retains this source inventory and service-managed state; B invalidates it and
+requires accepted redesign/repricing. US-zone model processing is independent
+and does not certify every service's residency. No choice or fresh gate is passed
+here; package/runner/custody/security/retention/overage addends remain unresolved.
 
 ## Evidence and reproducibility
 

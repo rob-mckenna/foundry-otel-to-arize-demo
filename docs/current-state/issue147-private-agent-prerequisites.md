@@ -1,6 +1,10 @@
 # #147: no-tool Prompt Agent private-runtime prerequisites
 
 **Technical disposition: NOT READY FOR APPROVAL / live acceptance.**
+**2026-10-20 scope correction:** this is a fresh-readiness hold, **not a
+technical rejection of ADR-0004's no-tool/private-client-ingress foundation**.
+Standard's BYO/injection requirements apply only if fully isolated service
+runtime/customer-owned state is selected. See §1a for the exact promise and choices.
 Discovery date: **2026-10-20 UTC (2026-10-19 Eastern)**. Working as Agent,
 supporting acceptance owner **QA (`squad:qa`)**. #147 stays open.
 This is a prerequisite assessment, not a deployment authorization, architecture
@@ -27,9 +31,10 @@ agent and not a hosted container agent:
 | Authentication | Entra bearer credential scope **`https://ai.azure.com/.default`**. Historical private runner uses **`ManagedIdentityCredential`**, not key auth, CLI auth, dotenv or a connection string. `get_openai_client()` obtains the bearer provider internally. Do not print/read tokens. [S1, E2] |
 | Not the selected protocol | Classic `azure-ai-agents` threads/messages/runs, Assistants IDs, account-level chat completions, hosted `/invoke`, WebSockets, A2A, sessions or a local CLI stub are not substitutes for this versioned Prompt Agent contract. The existence of other transports does not establish their acceptance here. |
 
-**Recommendation:** retain this API/SDK/no-tool contract. This is **not** a
-recommendation or approval to switch #147's privacy target to Basic. Lead/Infra
-must resolve the exact fresh privacy/state contract before owner approval.
+**Recommendation:** retain this API/SDK/no-tool contract. Do not infer that
+ADR-0004 already promised Standard isolation or that Basic private ingress is
+a downgrade from an accepted Standard contract. Lead/Infra and the owner must
+explicitly record the acceptance boundary in §1a; this assessment selects none.
 The present source can
 support a **Basic setup with private inbound account access**, with
 Microsoft-managed agent state. Official documentation expressly permits that
@@ -48,6 +53,127 @@ Even for Basic/private-inbound acceptance, **capacity 1 provider acceptance,
 fresh agent publication/readback, private validator identity/DNS and an immutable
 live runner remain gates**. The repository `StubFoundryModelClient` stays offline
 even when endpoint configuration exists; its estimated tokens are not live usage.
+
+## 1a. Correction: ADR promise, authoritative distinction and bounded choices
+
+**A — Basic private CLIENT INGRESS is supportable, not freshly accepted.**
+The prior blanket “technical NO-GO” language overreached if interpreted as
+requiring Standard resources for the ADR's no-tool Prompt Agent. ADR-0004
+[Decision §1](../adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md#1-one-supported-modern-path-distinct-fresh-adopt-and-retire-operations)
+promises:
+
+> The supported composition includes the Foundry foundation,
+> its private reachability and the existing telemetry pipeline's infrastructure;
+> it must not be advertised as complete while only the account/connection exists.
+> Application package publication, Prompt Agent version creation and validation
+> are subsequent separately authorized operations, not Bicep success claims.
+
+[Decision §4](../adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md#4-tracing-identity-and-state-dependencies-are-part-of-completeness)
+also says:
+
+> No Search, Cosmos DB, ACR, hosted-agent runtime/capability host, managed compute,
+> new VM/Bastion/NAT or extra evaluation storage is added merely to create an
+> account/project/model and tracing foundation. These are not established minimum
+> dependencies of this Prompt Agent scenario.
+
+Its qualification remains binding:
+
+> Conversely, absent capability hosts
+> does **not** certify that a fresh private agent runtime/state path works.
+
+These promises plus §2's account `publicNetworkAccess=Disabled`, local-auth
+disablement and account PE/DNS contract establish a private **client-access
+foundation**, not a promise of customer-VNet execution or BYO state. §4 explicitly
+preserves existing Monitor ingestion/export and Arize HTTPS paths and says no
+AMPLS/outbound redesign is implied. “Private” must therefore name its boundary;
+neither a fully private end-to-end graph nor blanket residency is established.
+
+Pinned [S3], “Compare setup options,” is explicit:
+
+> Private Network Isolation in the table below refers to Secured Agent outbound communication. Basic setup doesn't apply, and you can use Private Network Isolation for your Agents with Standard Setup only.
+
+> Inbound secured communication can be applied to all of setups below, by adding a private endpoint and disabling the inbound public access for your Foundry Account.
+
+The same source says Basic “manages agent states using the platform's built-in
+storage.” Its Assistants comparison does not choose the API: pinned [S1]
+[`PromptAgentDefinition`](https://github.com/Azure/azure-sdk-for-python/blob/3c342025b7088315522ce1e4d0b5973dd9253232/sdk/ai/azure-ai-projects/azure/ai/projects/models/_models.py#L7057-L7158)
+has discriminator `"prompt"`, required deployment `model`, and
+`tools: Optional[list["_models.Tool"]] = None`;
+[`get_version`](https://github.com/Azure/azure-sdk-for-python/blob/3c342025b7088315522ce1e4d0b5973dd9253232/sdk/ai/azure-ai-projects/azure/ai/projects/operations/_operations.py#L3055)
+returns `AgentVersionDetails`.
+[`get_openai_client`](https://github.com/Azure/azure-sdk-for-python/blob/3c342025b7088315522ce1e4d0b5973dd9253232/sdk/ai/azure-ai-projects/azure/ai/projects/_patch.py#L100-L145)
+uses `endpoint.rstrip("/") + "/openai/v1"` and Entra authentication.
+Together with [S2]'s Responses/agent-reference surface, these establish the
+specific new, versioned no-tool contract—not classic threads/runs or hosted compute.
+Optional tools do not waive state, but neither do they impose Standard stores.
+
+Current source is narrower than live acceptance:
+[`modern-foundry-foundation.bicep`](../../infra/modules/modern-foundry-foundation.bicep)
+declares the 2025-09-01 account/project, both system identities, account
+PNA Disabled/local auth disabled/ACL Deny/bypass None and project-MI account role.
+It declares no Standard capability provisioning or network injection;
+[`main.bicep`](../../infra/main.bicep) composes the account PE/DNS and existing
+pipeline, not BYO Search/Cosmos. It does not publish a data-plane agent.
+[`agent.py`](../../src/prompt-agent/prompt_agent/agent.py) still defaults to
+`StubFoundryModelClient`. Thus source supports A's foundation topology, not a
+ready fresh live runner, and does not implement B.
+
+Historical receipts reinforce only that limited feasibility: [E2]'s exact v1,
+zero-tool metadata and root
+`.azure-sandbox\issue143-native-agent-execution-result.json` report
+`NATIVE_RESPONSE_COMPLETED_NOT_TELEMETRY_ACCEPTANCE`, one VM-command submission,
+one confirmed Responses POST, and `telemetry_acceptance_proven=false`.
+The contract targets `fotoa-validation-vm-eastus2` with managed identity.
+That existing modern-v1 private-validator path did not require customer BYO
+Search/Cosmos in the inspected foundation. This is **not** a claim about hidden
+service internals, historical setup certification, fresh capacity/readiness or
+complete telemetry. No event bodies were read, no receipt changed and no call
+replayed. Basic compatibility is established by [S3], not by absence alone.
+
+**B — Standard fully VNet-isolated runtime is a different contract.**
+For that choice, [S3] states “Standard setups require you to Bring Your Own
+(BYO) resources so that all agent data stays in your Azure tenant,” and lists
+Storage, Search and Cosmos. [S4, S5] add provisioning/roles, dedicated injection
+and dependency PE/DNS requirements. The current source does not implement these.
+This remains a **conditional technical NO-GO for Standard**, not an unconditional
+dependency mandate for A. A no-tool waiver from Standard requirements is not
+established, nor needed to choose Basic.
+
+**C — US-zone MODEL/DATA residency is independent of A/B.**
+Pinned [S9], “Data residency for all deployment types,” says:
+
+> Data stored at rest remains in the designated Azure geography.
+
+> **Data Zone** types: The service processes data only within the Microsoft-specified data zone (US, EU, or Asia Pacific (APAC)).
+
+These are **model deployment** statements, not a warranty about every service.
+Proposed `DataZoneStandard` in the US zone constrains model inference; it does
+not prove East-US-2-only processing, Basic agent-state location/retention,
+telemetry/LAW/EH/Function/Arize residency or customer ownership of state.
+Existing `GlobalStandard` history cannot prove the proposed US-zone tuple.
+Service-specific storage/processing/retention terms remain to be documented
+and accepted; a blanket “all data/services remain in the US” is unsupported.
+Model SKU `Standard` is also not Agent Service **Standard setup**.
+
+### Minimal choices for Lead/QA and owner — none selected here
+
+| Choice | Exact proposed acceptance wording | Required clarification / amendment |
+|---|---|---|
+| **A. Retain current-source no-tool scope** | “Accept one new versioned no-tool Prompt Agent with private client ingress through the account PE, PNA Disabled and Entra-only access; runtime and agent state remain Microsoft-service-managed. Do not claim customer-VNet runtime isolation, customer-owned state or fully private outbound execution. Accept model US-zone processing only under the separately approved DataZoneStandard tuple and separately recorded service-specific residency terms.” | Lead records an explicit **ADR-0004 scope clarification** identifying private reachability as client ingress and preserving §4's telemetry egress exceptions. QA uses this exact boundary in fresh acceptance. No new services, API upgrade, BYO/injection or source-architecture expansion is required by this choice; ordinary fresh gates below still apply. If a stronger isolation promise was separately accepted, this would instead need an explicit amendment—not silent reinterpretation. |
+| **B. Require fully isolated Standard runtime/BYO state** | “Require Standard setup with customer-owned Storage/Search/Cosmos, supported capability provisioning, dedicated VNet injection and private dependency paths, with fresh verification of those controls.” | Lead must obtain an **accepted ADR-0004 amendment** defining the added graph/API/roles/costs and changed acceptance. Current source cannot satisfy it. This task authorizes no implementation or resources; do not price or execute it as the existing five-PE graph. |
+| **C. Require blanket US-only data/services** | “Require documented US-only processing and storage/retention for each included service, including agent state and telemetry destination; DataZoneStandard alone is insufficient.” | Lead must explicitly **amend/extend the residency contract** and name included services/exceptions with authoritative service-specific evidence. Until then this stronger claim is blocked. Conversely, accepting only US-zone model processing is a recorded model/residency choice alongside A or B, not a new network architecture. |
+
+Choosing a boundary is an owner/architecture decision, not a request to approve
+unproven fully private execution or missing discovery. For A, technical work
+remains: complete package/build custody, immutable pinned runner/dependency
+hashes and once-only/time/budget controls; fresh authorized no-tool publication/
+readback; private validator DNS/TLS/MI authorization; exact model capacity-one
+provider acceptance/availability and provisioning; Function/package/secure-reference/
+durable readiness; telemetry/correlation/actual usage proof; repeat deployment
+and the official workflow/adapter gates. Separate owner choices remain fresh
+identities/tags, boundary A/B, model/processing/residency, complete cost/lifetime
+and named custodians. Historical invocation, a boundary choice, or owner approval
+does not pass any fresh technical gate.
 
 ## 2. State and network support matrix
 
@@ -377,6 +503,19 @@ acceptance or validation of a fresh runtime.
 | S10 | [Foundry RBAC](https://learn.microsoft.com/en-us/azure/foundry/concepts/rbac-foundry?view=foundry), commit **`aa8dac9af5c360ba3d338f4fe7ad04e794d98ea5`**. Distinguishes consumer, author, project MI, model and provisioning permissions. |
 
 **QA integration:** this artifact is included in PR #151 without closing #147.
-Do not promote “Basic + private inbound” to “Standard private runtime,” change
-the existing model tuple, or consolidate numeric/custody approval until the
-technical state target and provider-only gates are resolved.
+Do not promote “Basic + private inbound” to “Standard private runtime,” impose
+Standard dependencies on A, change the existing model tuple, or present fresh
+acceptance as passed. §1a corrects the prior overbroad NO-GO interpretation;
+the owner/Lead scope choice and actual fresh technical/provider gates remain.
+
+**Clarification validation, 2026-10-20:** all checks were offline. From the issue
+worktree, `python -B -m unittest discover -s tests\readiness -p 'test_issue147_planning.py' -v` **PASS (4 tests)**;
+`.\tests\readiness\check-issue147-docs.ps1` **PASS (14 documentation examples
+and two pinned scripts parsed, none executed)**; `git diff --check` **PASS**.
+The existing `check-contract.py` was also evaluated in memory with only its
+result filename changed to `offline-check-result-clarification.json`:
+**PASS**, 21 pinned public-source hashes, seven metadata hashes, six SDK ASTs,
+two document Python examples and three PowerShell examples, local links and
+API/type/auth assertions. The earlier completed `offline-check-result.json`
+and all historical receipts remain unchanged. No Azure/model/probe command,
+public fetch, new package install or workflow was run for this clarification.
