@@ -1,0 +1,42 @@
+{
+  "issue": 148,
+  "status": "STOPPED_BEFORE_MUTATION_POLICY_APPLICABILITY_UNRESOLVED",
+  "recordedUtc": "2026-10-20T04:34:25.779549+00:00",
+  "approvalSha256": "2FBE3F712DD64C6C8ECFDBE0491E17974F1D61B4A578C95300F3435EA62BCC5F",
+  "proposalSha256": "252211FE787EC5FE041C0364CFD31F31933A59FE93219D18EA704D8C42439FE7",
+  "approvedSourceHead": "9c04a7bed8da759d4092e37eff13064b62bfa9f4",
+  "deadlineUtc": "2026-10-20T05:08:30.5498265Z",
+  "submittedDeleteIds": [],
+  "submissionCount": 0,
+  "deleteHttpOutcomes": [],
+  "executorObjectId": null,
+  "executorIdentityType": "user",
+  "beforeStartedUtc": "2026-10-20T04:27:03.0063999Z",
+  "beforeCompletedUtc": "2026-10-20T04:30:01.8172470Z",
+  "counts": {
+    "primary": 79,
+    "network": 48,
+    "roles": 85,
+    "zones": 8,
+    "records": 17,
+    "links": 10
+  },
+  "allProtectedProjectionComparisonsUnchanged": true,
+  "immutableHistoricalFilesVerified": 64,
+  "stopCondition": "Inherited sys.mfa-delete DenyAction is conditional on current user mfa/p1 claims. Applicability was not established by permitted metadata; no token/cache access or destructive test was performed. This is not an observed policy denial.",
+  "officialWorkflowPin": "a480d4c73380e6dd77c9e1553f6523620c724edf",
+  "officialWorkflowCompleted": false,
+  "officialWorkflowLastStep": "AddValidationSteps",
+  "azureDeployInvoked": false,
+  "mutationsPerformed": false,
+  "localEvidenceDirectory": ".azure-sandbox\\execution-20261020",
+  "validation": {
+    "fullMetadataCollector": "PASS",
+    "freshEvidenceConsistencyFunction": "PASS",
+    "exactProtectedProjectionComparison": "PASS",
+    "focusedUnitTests": "PASS: 7 tests",
+    "exactPeNicActionPermissions": "PASS: unrestricted management action projection",
+    "subscriptionRgPeNicLocks": "PASS: empty observed collections",
+    "policyApplicability": "UNRESOLVED"
+  }
+}

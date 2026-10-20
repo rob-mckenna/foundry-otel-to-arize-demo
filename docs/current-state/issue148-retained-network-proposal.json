@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "issue": 148,
+  "status": "AWAITING_EXPLICIT_OWNER_CONFIRMATION_NO_EXECUTION",
+  "evidence": "evidence/issue148-retained-network-20261020-final.json",
+  "evidenceSha256": "426085B3D7B38748AF96457945024416942D97734D84F4851D2C37E5C39FADAD",
+  "subscriptionId": "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+  "resourceGroupId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg",
+  "explicitDeleteIdsInOrder": [
+    "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-aihub-eastus2",
+    "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-aihub-eastus2"
+  ],
+  "automaticNicRemovalIdsInOrder": [
+    "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-demo-pe-aihub-eastus2.nic.f992623e-9cc8-4bc5-ae48-8c5b618cf5e3",
+    "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/networkInterfaces/fotoa-dev-pe-aihub-eastus2.nic.c1b8719d-2dcc-476e-a541-7dfd4a11bd43"
+  ],
+  "automaticDnsZoneGroupRemovalIdsInOrder": [
+    "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-aihub-eastus2/privateDnsZoneGroups/default",
+    "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-aihub-eastus2/privateDnsZoneGroups/default"
+  ],
+  "automaticConnectionRemovalIdsInOrder": [
+    "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-demo-pe-aihub-eastus2/privateLinkServiceConnections/aihub-connection",
+    "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/privateEndpoints/fotoa-dev-pe-aihub-eastus2/privateLinkServiceConnections/aihub-connection"
+  ],
+  "automaticEffects": [
+    "Provider lifecycle removes only each exact linked NIC and its four recorded IP configurations; releases IP allocations in its own subnet.",
+    "PE-contained disconnected connection configuration and empty privateDnsZoneGroups/default disappear with each parent.",
+    "Only matching PE and NIC IP-configuration references disappear from the recorded shared subnet; subnet, NSG, VNet and remaining consumers stay.",
+    "No DNS record removal is proposed or expected: both zone-group recordSets are empty and the shared azureml zone contains only SOA.",
+    "No IAM effect is expected or accepted; no assignment at either candidate PE/NIC scope was observed."
+  ],
+  "explicitNicDeleteIds": [],
+  "dnsRecordDeleteIds": [],
+  "dnsZoneDeleteIds": [],
+  "roleDeleteIds": [],
+  "otherExplicitDeleteIds": [],
+  "baselineCounts": {
+    "primaryResources": 79,
+    "networkResources": 48,
+    "dnsZones": 8,
+    "dnsRecordSets": 17,
+    "roleAssignments": 85
+  },
+  "expectedFinalCountsIfApprovedAndVerified": {
+    "primaryResources": 75,
+    "networkResources": 44,
+    "dnsZones": 8,
+    "dnsRecordSets": 17,
+    "roleAssignments": 85
+  },
+  "protectedRoleAssignmentIds": [
+    "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2/providers/Microsoft.Authorization/roleAssignments/9881514f-8952-53b2-94cd-63fbb7ae35cb",
+    "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourcegroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-dev-kv-eastus2/providers/Microsoft.Authorization/roleAssignments/b72f6eae-6ac5-5d4b-bd65-7798c41d3b1e",
+    "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.EventHub/namespaces/fotoa-demo-ehns-eastus2/providers/Microsoft.Authorization/roleAssignments/27c683e5-b400-4b1e-9234-89e40fde2198"
+  ],
+  "ownerConfirmation": {
+    "requester": "Rob McKenna",
+    "selection": null,
+    "approvedExactManifestSha256": null,
+    "approvalCommentUrl": null,
+    "networkAndGovernanceOwnerClearance": null,
+    "noRequiredExternalOrHardcodedIpConsumers": null,
+    "acceptProviderOwnedNicIpAndContainedConfigurationLoss": null,
+    "executionWindowUtc": null,
+    "stopAfterDemoBeforeDevForPreservationReview": true,
+    "noSameNameRecoveryGuarantee": true
+  },
+  "executionGates": [
+    "Explicit owner confirmation of the frozen exact-ID manifest and automatic effects, consumer/governance clearance and irreversible loss.",
+    "Fresh prepare then azure-validate then azure-deploy administrative workflow; no old completed validation proof reused.",
+    "Fresh exact-ID GETs for the two PEs and linked NICs plus all projected baseline metadata; resolve any drift before execution.",
+    "Refresh inherited locks, policy and exact action permissions without creating grants, exemptions or executing a destructive test.",
+    "Persist exclusive per-ID submission intent and immutable preflight evidence before any DELETE; at most one logical submission per PE.",
+    "Demo PE first, bounded read-only absence checks for parent/NIC/zone-group and full preservation comparison, then separately continue dev.",
+    "Ambiguous response, unexpected DNS/IAM/resource loss or dependency drift: STOP; no retry DELETE, manual NIC cleanup or automatic remediation."
+  ],
+  "limitations": [
+    "Non-atomic RG-scoped ARM metadata, not runtime traffic, external consumer or complete service dependency audit.",
+    "Previously deleted hub IDs resolve through existing immutable 404 receipts and fresh disconnected PE links; no workspace DELETE or unsupported assets diagnostics retried.",
+    "No activity-log causality assertion, runtime/model-health test, state-content read, VM start, grant, network mutation or deletion.",
+    "All 75 primary resources outside the two PEs and two linked NICs are protected, along with all remaining DNS, grants and application state."
+  ]
+}

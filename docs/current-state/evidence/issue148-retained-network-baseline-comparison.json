@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 1,
+  "issue": 148,
+  "createdUtc": "2026-10-20T01:15:47.7138991Z",
+  "baselineCompletedUtc": "2026-10-19T20:44:00.7888014Z",
+  "freshEvidence": "issue148-retained-network-20261020-final.json",
+  "primaryProjectionDifferenceCount": 0,
+  "roleProjectionDifferenceCount": 0,
+  "dnsRecordProjectionDifferenceCount": 0,
+  "all79PrimaryIdsAndMetadataMatch": true,
+  "all48NetworkIdsRemain": true,
+  "all85RoleProjectionsMatch": true,
+  "all17DnsRecordProjectionsMatch": true,
+  "mode": "READ_ONLY_METADATA_COMPARISON_NOT_RUNTIME_OR_CONTENT_VERIFICATION",
+  "immutableRootHistorySha256": [
+    {
+      "path": ".azure\\deployment-plan.md",
+      "sha256": "F5E404FB84A1F35DCED447D0E311DE6E4C2818F7851E135DB58B1BC2F6024C68"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-clearance-diagnostic-2.json",
+      "sha256": "5FD262E28FD5264361F9ABB4C753A2F47C1C4432B17F10A14493DB9DEBF99058"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-clearance-diagnostic-3.json",
+      "sha256": "F5B6F52A72DEDAB18D11BDD354935C4829228B34D6BE2981CE7E528947209D23"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-completion-comment.txt",
+      "sha256": "2C6DAD98E195F26CCE849A27C87A6CD001D295A87B46B9ED25D65EFD074E4C15"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-completion-issue-body.txt",
+      "sha256": "8B1C11C72A32AEAF99A8A668AC0CF0673CB86E81AD2571492FD703953AB2DF80"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-contained-role-approval-comment.txt",
+      "sha256": "532248F78EF05EE9F4C65ED587824FA107DC289686F481269ADA9947F4E8EC5C"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-continuation-after-fotoa-demo-aihub-eastus2.json",
+      "sha256": "5FA801EEA5E373332770EA2D422B05198A5CEB067C3C463FD883A562D9FE208C"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-continuation-artifact-hashes.json",
+      "sha256": "1C4FD34288FA2EEC5EAB0E445EBD159B5B9B612C14A6A218E31D25173ACFA309"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-continuation-delete-submission-fotoa-demo-aihub-eastus2.json",
+      "sha256": "A0EF7B307ED6EA4A956D835BFAD9B8F73B697366C645CEE41EEF000E34625C06"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-continuation-dns-final.json",
+      "sha256": "F1E54BBC3365F3B608CE6F40DD1AFD1FA12CF291B240CD765FFBB58985FF9E92"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-continuation-preflight-fotoa-demo-aihub-eastus2.json",
+      "sha256": "31E2888F8F3587C21428AD2060E9B97B404E4483B87FBCAEB6CDDF66EC4A5D02"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-continuation-protected-children-final.json",
+      "sha256": "E8E676B61463B78412FE5A0CC283BC674946758E45AE3E293EA9D1458058BDF8"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-continuation-resources-final.json",
+      "sha256": "21D46ACD3BCADA56472D2D1EB8F9ECA3D0E03E268BF4E65CCB49696CF84DBEE3"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-continuation-roles-final.json",
+      "sha256": "1DFEC8EF77DC7C57B1F1C60140368DE3FD92D0AE58F746C43A94B699D35A41D0"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-continuation-unexpected-dns-delta.json",
+      "sha256": "FB2AD105AA53B0A7A5A3373FD4CEFF7ED9BF55E24F5FE4F1767D7910BCB72C80"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-continuation-unexpected-rg-role-exact-check.json",
+      "sha256": "9D99AD74CFD966305A9E0145FBEA888B83F46EAA8B1D71F02FDA54BABB61ACC4"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-continuation-unsubmitted-final.json",
+      "sha256": "FEF8BCE8AC6A32504BF3159D0ADE57CC11489CEF7A9C7FC9D424BBE64E1D8EFB"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-continuation-vm-final.json",
+      "sha256": "6DB5F8D525861A2C5691A59B7C92284BED4C4000E871E063A5C2DBEEE8C42AF3"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-delete-submission-fotoa-demo-aiproj-eastus2.json",
+      "sha256": "EB085DFFF105262B95BAF99E962BE458AA2CB1B415EB41BE1A5ACD7EC432A381"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-demo-project-reconciliation-corrected.json",
+      "sha256": "AAD3F894FF50ECB4962A99B8445AB31EDB0869E8DD515CDE519680B543167541"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-demo-project-reconciliation.json",
+      "sha256": "B582BB89FC79AC8927B74FC857C80AB7A86A69B7C72550A3AE8B46685EB90A1D"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-dns-after.json",
+      "sha256": "22D1A00903295DDB6D5DF03122EAAAC4E77A08C10CAC440AE4364B0BEDFFD50E"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-dns-before.json",
+      "sha256": "70D2E101CA8B6B5E6D43C25FFA7E9F4C368CFC2F08EC24F649C41CDC7F45C1F8"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-exact-automatic-effects-approval.json",
+      "sha256": "18A6DE4CCBAFA952E995A1EE9FE30CAE603D9CCE0141087BC27497568EC79F71"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-exact-effects-consent-comment.txt",
+      "sha256": "B864151D2E5CF0894DE044E2B2CB9922946FCEDEEDBB8D258D8CCF2A63A56BB0"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-exact-workspace-retirement-aggregate-preservation.json",
+      "sha256": "44447FEEF25FE7A2306BBBC8245AADF25A001FC22B2750D9B49AB9545827F343"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-exact-workspace-retirement-continuation-intent.json",
+      "sha256": "BE4B50591FE58A83A05595BEC02C132927D06A4C9EDF22E17CFF18DDEEDC3B6C"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-exact-workspace-retirement-continuation.json",
+      "sha256": "5C38BB27477E0D504C4CF5757038272AB88126D30CBE1D03FCB7025C7968B5F1"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-exact-workspace-retirement-final-aggregate-preservation.json",
+      "sha256": "D7D456BEB729E1A1F8AEEC2C0438EB8A037E40403E8C2A64CE832FC2BFBABBCC"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-exact-workspace-retirement-final-intent.json",
+      "sha256": "54F9AB9003DAD6443CE1D14A3BCC930876C39D9846830B3BE6DF84B0525CD6A8"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-exact-workspace-retirement-final.json",
+      "sha256": "43D2AFF8348C3AFD20396C1BC5906A615A2C33476C1E4F60D915EABC6C773792"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-exact-workspace-retirement-intent.json",
+      "sha256": "48705AEC23CD4C9780E7E287A7ECD7BAE5EF78F752ADE09D9C801BEDC57ADDFD"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-exact-workspace-retirement.json",
+      "sha256": "F0DFF4C22D2B78DE48B98A4DBE747FCC99BD56AD76D5BAB7AF536FD0AD99A74D"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-final-after-dev-project.json",
+      "sha256": "27CF0DA6550A4DC33A718E7C62FF071AE7A29653704E1414C89B378D7E1E937A"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-final-delete-submission-fotoa-dev-aihub-eastus2.json",
+      "sha256": "47D6ADA882CB78DB06E60EDB153F45DECF3DED538158C1A22CE2D934809DCFA4"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-final-delete-submission-fotoa-dev-aiproj-eastus2.json",
+      "sha256": "E7632362A63AA25D8F05841BA994250F7D655E932D80D92EBB133A81CAA198D9"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-final-dns-after.json",
+      "sha256": "64B903EB6DC6B1F530FBA66AB7CF7330F2CDD6121FCE863715A0CF433F82738D"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-final-evidence-sha256.json",
+      "sha256": "039C7D139174EDE943CD6BCBF2C91A620B94C04DEE9DC26DAD862B938E35A0D2"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-final-preflight-fotoa-dev-aihub-eastus2.json",
+      "sha256": "FC4AB089AC32A0AB87A669D21AF8D9C838A145FEE3F38E51C359222F176FCFF1"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-final-preflight-fotoa-dev-aiproj-eastus2.json",
+      "sha256": "E92FBDF0BB16F4F52A6A83A52DF76610F4291A3BEC57E3282B7F93618F36ADA3"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-final-protected-children-after.json",
+      "sha256": "78513EF76F01D043EE384A76C5A4D1A6B4B4D2C1C38E026F2C9D63C223C126F0"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-final-resources-after.json",
+      "sha256": "B1B52217837E0551091BACA35B69FC050E08B1AD4D27E450A99FCA42FF925CFA"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-final-roles-after.json",
+      "sha256": "A887D641BA2D61D0C79A4736DE195907308FEF7F38A09F214F40C389ED9513F0"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-final-vm-after.json",
+      "sha256": "4FD90BC355043BFA7F927CBD2738C94D5E2A849A545665AE9BFFB9D1469DA01C"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-github-cleanup-complete-comment.txt",
+      "sha256": "A07DD159540185ABFFA7722EC83E154890CD4E3A6B26C947DBE1A07674E4AF2A"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-hub-effects-comment.txt",
+      "sha256": "43E4D9D08CA7482CAF2AA406BF3A2B609AFBCED3E8CC637E6DF97E80F80F5998"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-locks-before.json",
+      "sha256": "4380480030B34F60E91852174B443E5A608E1843F9B585286627DB782083E0FB"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-owner-approval-comment.txt",
+      "sha256": "7B8B2FA655612B6AEE761575F1BAD23C83E4059E46B534E5CD692C16DB848236"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-partial-retirement-comment.txt",
+      "sha256": "1DDF4BECF22A5B56D278A23B2ED57CED251381F11F7DDABE072A18B585A65EE6"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-policy-before.json",
+      "sha256": "3639AB96C77392F3A40A99B00DD61F6945E6146CD3A66ED01CB843A362CC081C"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-preservation-comparison.json",
+      "sha256": "9BE21DA6E2B04152A617F608C57CC6BC7834E63D1E37F03F4DAD4C68B695D326"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-protected-children-after.json",
+      "sha256": "847664044CEE9570B6884674C0D5944645399F0A9CE24C53EF67B33031DFF9B5"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-protected-children-before.json",
+      "sha256": "B624248D1286BDE99F680DD05BCDA0D71A0A01728B53C6852E9D2BB3EE876C01"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-remaining-workspaces-after.json",
+      "sha256": "DEBF25B863449DA8F87E382881329B670FFC7BFB685E3AC502C86D06EDD5CB6E"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-resources-after.json",
+      "sha256": "91D980A7D830F78456F0D8C3BAB82FC5C0B8D47DE45CEA6443E20174317CEAC8"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-resources-before.json",
+      "sha256": "9C579638A8E50D1E5D3B6BDCFAB74B8BC60534BECBD0E891697CBDFF387E20BF"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-retirement-artifact-hashes.json",
+      "sha256": "1FAB9CB05633DD629D1405AB5AC2BF0F68D94478D1FB5B3DDEC98B5C0A889E21"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-retirement-records-pr-body.txt",
+      "sha256": "C02AF1576EFECA4A7F9385FCCE1B1339E39F60DA2D42F626A8B67D3E63FD85C0"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-roles-after.json",
+      "sha256": "049B78E5B1D4FCD6C74F96E3C7CE963A12854BE5498D53351793F2DCBF208316"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-roles-before.json",
+      "sha256": "6DF4251F999FEBFA3743FF74E5534D46311B95FD6F2EA334CB1AE5FBE059846B"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-validation-prior-status-20261019.json",
+      "sha256": "2C388D01D5515FC2E8C3053AC95A9D47D8B84EB39BCE14510DFF47B5302E6C8D"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-vm-after.json",
+      "sha256": "857330A402F2B9D1C5B24DBE7F39F5F34D5076523678A29005406AD4B6AD9F73"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-vm-before.json",
+      "sha256": "63FEFCE16CA8A3B10FC2FA4370C0DDFD5D791C728B0F3E1A45A9D83E9401C259"
+    },
+    {
+      "path": ".azure-sandbox\\issue148-workspaces-before.json",
+      "sha256": "C083F067286452F30AC76587F4C61A43FF5B32981252D6059BD6B5C54BD4A3E8"
+    }
+  ]
+}
