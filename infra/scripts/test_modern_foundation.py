@@ -309,6 +309,57 @@ class CompiledModernFoundationTests(unittest.TestCase):
                 self.assertNotIn("ConnectionString", json.dumps(output.get("value", "")))
                 self.assertNotIn("listKeys", json.dumps(output.get("value", "")))
 
+    def test_issue147_bootstrap_uses_server_side_reference_and_secure_sink_only(self):
+        bootstrap = compile_bicep("infra/issue147-app-insights-bootstrap.bicep")
+        custody = module(bootstrap, "issue147-new-routing-custody")
+        self.assertEqual(custody["resourceGroup"], "fotoa-demo-rg")
+        call = custody["properties"]["parameters"]
+        self.assertEqual(call["vaultName"]["value"], "fotoa-demo-kv-eastus2")
+        self.assertEqual(call["secretName"]["value"], "fotoa147-appinsights-connection-string")
+        self.assertIn("Microsoft.Insights/components", call["connectionString"]["value"])
+        self.assertIn("fotoa147-demo-appi-eastus2", call["connectionString"]["value"])
+        self.assertTrue(call["connectionString"]["value"].endswith(".ConnectionString]"))
+        sink = custody["properties"]["template"]
+        self.assertEqual(sink["parameters"]["connectionString"]["type"], "securestring")
+        secret, = resources(sink)
+        self.assertEqual(secret["type"], "Microsoft.KeyVault/vaults/secrets")
+        self.assertEqual(secret["properties"]["value"], "[parameters('connectionString')]")
+        self.assertIn("buildRequiredTags", json.dumps(secret["tags"]))
+        self.assertEqual(set(sink["outputs"]), {"secretVersionUri", "componentBindingResourceId"})
+        self.assertIn("secretUriWithVersion", sink["outputs"]["secretVersionUri"]["value"])
+        self.assertEqual(set(bootstrap["outputs"]), set(sink["outputs"]))
+        for template in all_templates(bootstrap):
+            for output in template.get("outputs", {}).values():
+                self.assertNotIn("ConnectionString", json.dumps(output))
+                self.assertNotIn("connectionString", json.dumps(output))
+        for old_secret in ("arize-otlp-endpoint", "arize-space-id", "arize-api-key"):
+            self.assertNotIn(old_secret, json.dumps(bootstrap))
+        self.assertNotIn("listSecrets", json.dumps(bootstrap))
+        self.assertNotIn("Microsoft.Authorization/", json.dumps(bootstrap))
+
+    def test_issue147_subscription_wrapper_binds_exact_profile_and_bootstrap_after_foundation(self):
+        wrapper = compile_bicep("infra/issue147-first-allocation.bicep")
+        self.assertIn("subscriptionDeploymentTemplate", wrapper["$schema"])
+        self.assertFalse(wrapper.get("parameters"))
+        group, = resources(wrapper, "Microsoft.Resources/resourceGroups")
+        self.assertEqual(group["name"], "fotoa-demo-rg147-eastus2")
+        foundation_call = module(wrapper, "issue147-fresh-application")
+        bootstrap = module(wrapper, "issue147-routing-bootstrap")
+        self.assertEqual(foundation_call["resourceGroup"], group["name"])
+        self.assertEqual(bootstrap["resourceGroup"], group["name"])
+        self.assertTrue(any("foundation" in dependency or "issue147-fresh-application" in dependency
+                            for dependency in bootstrap["dependsOn"]))
+        profile = json.loads((ROOT / "infra/main.issue147-existing-network.parameters.json").read_text())
+        loaded = next(v for v in wrapper["variables"].values()
+                      if isinstance(v, dict) and "parameters" in v)
+        self.assertEqual(loaded["parameters"], profile["parameters"])
+        actual = foundation_call["properties"]["parameters"]
+        self.assertEqual(set(actual), set(profile["parameters"]))
+        for name in actual:
+            self.assertEqual(actual[name]["value"], f"[variables('p').{name}.value]")
+        self.assertEqual(profile["parameters"]["tracingAssociationMode"]["value"], "preserveExisting")
+        self.assertEqual(set(wrapper["outputs"]), {"secretVersionUri", "componentBindingResourceId"})
+
     def test_shared_naming_functions_and_portable_non_executable_profiles(self):
         tokens = self.function["variables"]["resourceTypeTokens"]
         self.assertEqual(tokens["foundryAccount"], "foundry")

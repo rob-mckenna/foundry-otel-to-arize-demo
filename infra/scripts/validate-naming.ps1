@@ -48,9 +48,9 @@ if ($moduleFiles.Count -eq 0) {
 foreach ($file in $moduleFiles) {
   $content = Get-Content -Path $file.FullName -Raw
 
-  # Foundation/model names are explicit owner inputs, never normalized. Their
-  # tags still use the shared helper; compiled graph tests enforce both cases.
-  $explicitNames = $file.Name -in @('modern-foundry-foundation.bicep', 'modern-foundry-model.bicep')
+  # Foundation/model/custody names are explicit owner inputs, never normalized.
+  # Their tags use the shared helper; compiled tests enforce the scoped writes.
+  $explicitNames = $file.Name -in @('modern-foundry-foundation.bicep', 'modern-foundry-model.bicep', 'app-insights-secret.bicep')
   $usesNamingImport = $content -match "import\s*\{[^}]*buildRequiredTags[^}]*\}\s*from\s*'naming\.bicep'"
   $usesBuildResourceName = $content -match 'buildResourceName\('
   $usesBuildRequiredTags = $content -match 'buildRequiredTags\('

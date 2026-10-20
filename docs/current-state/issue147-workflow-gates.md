@@ -1,5 +1,18 @@
 # Issue 147 — official workflow reconciliation and residual gates
 
+**2026-10-20 implementation followup (worker d1b017bf):** the new-component →
+existing-vault/new-secret bootstrap is now runnable ARM/Bicep source, **not a
+human-only custody gate**. The exact subscription wrapper passed Provider
+validate; ResourceIdOnly what-if succeeded with **36 Create / 1 Unsupported**
+(container index assignment needs the future Function principal). The new
+secret is Create; no cloud resource/secret mutation occurred. See
+[contract, commands and manifest](issue147-existing-network-proposal.md#fresh-tracing-bootstrap--supported-server-side-automation-staged).
+Pinned official workflow started through **AddValidationSteps only**.
+The unsafe/unscoped official helper was not executed; the safe direct analysis
+commands are partial evidence, **not official completion or Validated status**.
+Earlier "not started" / unresolved bootstrap statements below are superseded
+only to this exact extent; allocation/runtime/repeat/native acceptance remains.
+
 **2026-10-20 concrete supported-route correction:** see
 [fresh application on existing networking](issue147-existing-network-proposal.md).
 The existing-network profile, deterministic connection name and existing-vault

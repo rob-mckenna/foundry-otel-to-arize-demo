@@ -1,11 +1,16 @@
 # Issue 147 — fresh application on the supported existing network
 
-**CURRENT-STATE SOURCE/CONFIGURATION PREPARATION ONLY — 2026-10-20.
-QA owns OPEN #147; PR #151 remains unmerged. No fresh deployment, provider
-validation, repeat deployment, publication, IAM change or inference was run.**
+**CURRENT-STATE STAGED IMPLEMENTATION / PARTIAL VALIDATION — 2026-10-20.
+QA owns OPEN #147; PR #151 remains unmerged. Subscription provider validate
+passed; ResourceIdOnly what-if succeeded with 36 Create and one Unsupported
+dynamic role assignment. No deployment, secret operation, publication, IAM
+change, VM start or inference was executed. NOT officially Validated.**
 
-Worker: `47b39bff-7553-495e-a0da-117c5b757a62`.
-Baseline: `fafbf6af82c5f71a809dcc7392499ace73cb79ed`.
+Latest implementation worker: `d1b017bf-b669-4c1c-847c-cba52dbb1d57`.
+Baseline: `be84fb30f44c82526e54fa62c4c4a6f4220c0494`; prior route worker
+`47b39bff-7553-495e-a0da-117c5b757a62`.
+Exact later resource/role/action/cost handoff:
+[first-allocation manifest](issue147-first-allocation-manifest.json).
 
 ## Decision and acceptance boundary
 
@@ -169,7 +174,7 @@ agent publication/readback/invocation. No such grants were made or assumed.
 The Function's own host-storage/receiver roles remain source-controlled as
 before; the publisher grant is not a Function grant.
 
-## Fresh tracing bootstrap — one exact residual custody action
+## Fresh tracing bootstrap — supported server-side automation, staged
 
 **A secret URI cannot be used as the native project's tracing credential.**
 `modern-foundry-app-insights.bicep` supplies the component's actual connection
@@ -188,25 +193,56 @@ string to `AzureMonitorTraceExporter`, not a vault-URI resolver. Native
 service-side tracing and optional client-exporter tracing must not be conflated.
 No new application code or Function package rebuild is needed.
 
-The exact unresolved **custody operation**, after a separately leased fresh
-foundation allocation, is:
+The earlier human-custody prerequisite is **superseded by implemented ARM
+automation**, not by a secret extraction command:
 
-> Provision the **new** component
-> `fotoa147-demo-appi-eastus2`'s routing material into the already-private,
-> already-template-deployment-enabled **fotoa-demo-kv-eastus2** as
-> **`fotoa147-appinsights-connection-string`**, through its approved secure
-> provisioning channel; return only the immutable **secret version ID** and
-> component-binding attestation. Do not read/copy old Arize secrets or reuse the
-> old component's connection string.
+1. `infra/issue147-first-allocation.bicep` is a subscription wrapper creating
+   exactly `fotoa-demo-rg147-eastus2` plus the existing-network foundation.
+   It embeds the unchanged nonsecret profile above; it takes no parameters.
+2. Only after foundation completion, `issue147-app-insights-bootstrap.bicep`
+   references **new** `fotoa147-demo-appi-eastus2` using API `2020-02-02`.
+   ARM evaluates `reference(...).ConnectionString` server-side.
+3. Its cross-RG module passes that expression directly into **securestring**
+   `connectionString` on `modules/app-insights-secret.bicep`. The only writable
+   resource in that module is API `2023-07-01`
+   `fotoa-demo-kv-eastus2/fotoa147-appinsights-connection-string`.
+   No plaintext credential enters an output, profile, command or caller file.
+4. Only `secretVersionUri` (the provider's immutable `secretUriWithVersion`)
+   and `componentBindingResourceId` are returned. These are identifiers,
+   not values. The secret's tags bind its source component and required tags.
 
-This is not a request to choose a name or owner from a catalog. The material
-cannot exist before the fresh component exists; fabricating a version or
-passing a URI as its value would be false readiness. This task's explicit
-no-extraction/no-secret-write boundary precludes performing that bootstrap.
-If no approved secure provisioning channel can do it, this exact operation is
-the smallest human custody action, not permission to weaken either vault.
+The actual pinned public provider schema supports this ordinary ARM operation.
+Azure/azure-rest-api-specs commit
+`9584a076a20d33bf725cf5fe0cf2595b1cc9aab1`:
 
-After that action, the **narrow** tracing entrypoint (not a repeat of broad
+- [Key Vault secrets 2023-07-01](https://github.com/Azure/azure-rest-api-specs/blob/9584a076a20d33bf725cf5fe0cf2595b1cc9aab1/specification/keyvault/resource-manager/Microsoft.KeyVault/KeyVault/stable/2023-07-01/secrets.json),
+  SHA256 `54450876376678f28ee0c305bbd6c8700aa551263a9c5437ba8263cf768ee1b5`:
+  `Secrets_CreateOrUpdate` is ARM PUT; `SecretProperties.value` is intended for
+  ARM deployments and **never returned** by this management API.
+  `secretUriWithVersion` is a read-only identifier.
+- [App Insights components 2020-02-02](https://github.com/Azure/azure-rest-api-specs/blob/9584a076a20d33bf725cf5fe0cf2595b1cc9aab1/specification/applicationinsights/resource-manager/Microsoft.Insights/ApplicationInsights/stable/2020-02-02/components_API.json),
+  SHA256 `2eee98c98f6f31615568e516d0d2c70b7843b86a48d704a50947a3569b63dc83`:
+  `ConnectionString` is a read-only component property.
+
+Fresh metadata GET confirmed existing vault RBAC=true, PNA=Disabled,
+enabledForTemplateDeployment=true, ACL default Deny / bypass AzureServices.
+No vault policy/network/role change is needed by this staged control-plane
+secret-resource contract. The deployment executor needs the precise
+`Microsoft.KeyVault/vaults/secrets/write` action on the new secret and nested
+deployment permissions in its existing RG, **not a new broad vault data role**.
+Actual successful provisioning/private resolution remains unexecuted; metadata
+and provider analysis do not certify runtime access.
+
+This wrapper is **first-allocation only**, not a repeat-deployment command:
+ARM CreateOrUpdate can rotate an existing name. The later executor must bind
+source/profile/compiled/manifest hashes and verify the exact new RG/component/
+secret are absent through metadata-only admission; stop on an existing,
+ambiguous or non-Create secret result. Do not retry ambiguous execution or
+overwrite the secret. Subsequent foundation repeat proof uses `main.bicep`
+without the bootstrap writer. No old Arize GET/list/copy, VM SDK bootstrap,
+custom transport, authentication code or additional service is required.
+
+After that later leased automation, the **narrow** tracing entrypoint (not a repeat of broad
 main with invented material) receives `tracingAssociationMode=ApiKey`,
 reviewed private sharing / `NotRequired` / `NotApplicable`, name
 `fotoa147-demo-appi-eastus2`, and a secure ARM parameter `reference` with:
@@ -217,11 +253,55 @@ template resolution must pass. Existing vault metadata says template deployment
 enabled, RBAC true, PNA Disabled; it is not a new resolution success.
 No project secret-reader role, plaintext profile, `listSecrets`, component
 connection-string extraction command or metadata-leaking MI migration is used.
+This checkpoint does **not** invent a version or create that association.
 
 The committed foundation profile deliberately remains `preserveExisting`
 (no association PUT). It is **complete for staging**, not a pretend complete
 active-tracing profile. The Function's new runtime reference is unresolved
 until that custody operation and the later fresh-principal role assignments.
+
+### Actual safe provider analysis and reproduction
+
+From TEAM_ROOT; all Azure CLI processes set repository-local config and the
+explicit subscription. Output files contain compiled expressions or projected
+identifiers only. Local compilation used Bicep **0.47.16.16243**.
+
+```powershell
+.\.azure-config\bin\bicep.exe build .worktrees\issue147-readiness\infra\issue147-first-allocation.bicep --outfile .worktrees\issue147-readiness\.azure\issue147-first-allocation.compiled.json
+.\.azure-config\bin\bicep.exe build .worktrees\issue147-readiness\infra\issue147-app-insights-bootstrap.bicep --outfile .worktrees\issue147-readiness\.azure\issue147-app-insights-bootstrap.compiled.json
+$env:AZURE_CONFIG_DIR = 'C:\repos\foundry-otel-to-arize-demo\.azure-config'
+$env:AZURE_LOGGING_ENABLE_LOG_FILE = 'false'
+$env:AZURE_CORE_COLLECT_TELEMETRY = 'no'
+# These two commands were run with stdout/stderr captured in process memory:
+# only the --query projection was persisted; raw failures would emit codes only.
+az deployment sub validate --location eastus2 --name issue147-first-allocation-analysis --template-file .worktrees\issue147-readiness\.azure\issue147-first-allocation.compiled.json --subscription c81fda52-936e-4f14-8af4-951c0dbb92d2 --only-show-errors -o json --validation-level Provider --query '{id:id,errorCode:error.code,errorCodes:error.details[].code}'
+az deployment sub what-if --location eastus2 --name issue147-first-allocation-analysis --template-file .worktrees\issue147-readiness\.azure\issue147-first-allocation.compiled.json --subscription c81fda52-936e-4f14-8af4-951c0dbb92d2 --only-show-errors -o json --validation-level Provider --query '{status:status,changes:changes[].{resourceId:resourceId,changeType:changeType},errorCode:error.code}' --result-format ResourceIdOnly --no-pretty-print --no-prompt
+```
+
+- Both builds **PASS, no warnings**.
+- CLI **2.91.0**, selected subscription Enabled; fresh RG metadata **false**.
+- Validate **exit 0**, 2026-10-20 **08:09:20Z** start, error code null.
+- What-if **exit 0 / Succeeded**, **08:09:28Z** start; **36 Create,
+  0 Modify, 0 Delete, 1 Unsupported**. The secret is specifically **Create**.
+- The Unsupported item is the already-source-defined container-local durable
+  index role assignment: its deterministic GUID incorporates the **future
+  Function principal ID**, which what-if cannot resolve. It is **not** a
+  rejected secure-bootstrap schema or an observed authorization/network error.
+  Do not call that assignment validated or guess a principal to remove the gap.
+- No VNet/subnet/private-DNS-zone/link resource changes appear. Five new
+  PE/zone-group pairs register fresh names in the existing seven zones.
+- Admission analysis is **not allocation proof** of EP1 MPSJ, capacity-1 model,
+  network egress, secret provisioning or private resolution. No execution
+  occurred and no permission/provider/network failure was bypassed.
+
+Projected receipts: worktree `.azure/bootstrap-provider-{validate,what-if}.json`,
+hashes and source/compiled bindings in the manifest. No full what-if properties
+were emitted or saved. The official pinned workflow was started through
+**AddValidationSteps only**; its unadapted helper prints raw failures and omits
+explicit subscription on two CLI commands, so it was not run. The safe
+subscription commands above are **partial gate evidence**, not official
+workflow completion. Plan status remains **Approved PREPARATION / partial
+validation**, never Validated. No new helper/workflow was introduced.
 
 ## Immutable package and publication proof binding
 
@@ -337,7 +417,9 @@ Top-level `azure-prepare` was invoked normally. Only its **repo-contained,
 pinned official equivalent** references were read, as described in
 [workflow gates](issue147-workflow-gates.md); no installed profile references
 were accessed. The worktree-local plan was updated before source edits.
-It remains **Planning**, not Ready for Validation: the exact tracing bootstrap,
-provider/MPSJ/model-capacity admission, effective runtime networking,
-official validation/what-if, scoped later leases, repeat and E2E are unexecuted.
+That earlier preparation remained **Planning**. The implementation continuation
+above stages secure bootstrap and records successful provider validate/what-if,
+but **not officially Validated**: actual MPSJ/model-capacity allocation, effective
+runtime networking, secure provisioning, official workflow completion, scoped
+later leases, repeat and E2E remain unexecuted.
 No closed root plan, receipt, old execution ledger or #148 proposal was changed.

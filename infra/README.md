@@ -17,6 +17,19 @@ For the next **fresh** environment, use the [QA readiness and acceptance packet
 owner decision choices, public cost basis and gated provider/private/repeat/E2E
 handoffs. It does not authorize cloud execution or certify private agent readiness.
 
+**#147 staged existing-network first allocation:** the exact nonsecret profile
+is embedded by `issue147-first-allocation.bicep` (subscription scope, exact fresh
+RG). After foundation creation, `issue147-app-insights-bootstrap.bicep` uses an
+ARM server-side new-component reference and securestring module parameter to
+write only the new routing secret in the existing custody vault. Only immutable
+version URI/component ID outputs are exposed; no existing Arize value is copied.
+This first-allocation writer is **not** the repeat entrypoint. Metadata-only
+collision/ambiguity checks and a later execution lease are mandatory.
+[Manifest and safe provider results](../docs/current-state/issue147-existing-network-proposal.md#fresh-tracing-bootstrap--supported-server-side-automation-staged):
+Provider validate passed; ResourceIdOnly what-if has 36 Create / 1 Unsupported
+(future-principal index assignment). No deployment or secret operation executed;
+official workflow remains incomplete, not Validated.
+
 ## Three operations — never substitute one for another
 
 | Operation | Entrypoint / ownership | Scope |

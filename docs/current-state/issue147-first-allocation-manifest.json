@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 1,
+  "status": "STAGED_IMPLEMENTATION_PARTIAL_VALIDATION_NOT_EXECUTION_AUTHORITY",
+  "issue": 147,
+  "qaOwnership": "OPEN / squad:qa; PR 151 unmerged",
+  "workerId": "d1b017bf-b669-4c1c-847c-cba52dbb1d57",
+  "baselineCommit": "be84fb30f44c82526e54fa62c4c4a6f4220c0494",
+  "subscriptionId": "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+  "location": "eastus2",
+  "route": "fresh application / existing network; NOT standalone fresh-network proof",
+  "scopeIds": {
+    "freshGroup": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2",
+    "existingGroup": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg",
+    "existingVault": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2",
+    "existingVnet": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Network/virtualNetworks/fotoa-demo-vnet-eastus2",
+    "runner": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.Compute/virtualMachines/fotoa-validation-vm-eastus2"
+  },
+  "artifactBindings": {
+    "infra\\main.issue147-existing-network.parameters.json": "b6ce3d1140ce492a00681571db72cac4f0048da590d1f81bf22957d4e8ff4781",
+    "infra\\issue147-first-allocation.bicep": "4bef4fc4ace7f3de5c54d13b42f48acb7b226bdb4af4fb086c601acdf3395e40",
+    "infra\\issue147-app-insights-bootstrap.bicep": "040f893424198f4a80f94ce3910d1edae931db384724457f0cb2450034677d7e",
+    "infra\\modules\\app-insights-secret.bicep": "d0d27e0364ab862127550e3b4d39680d5ed44028ca7007a1ca4ad05893c9eac5",
+    ".azure\\issue147-first-allocation.compiled.json": "8ce51bd74834e2b28195642781e38a230a07653bf8b3287f33d95f4ed73c6e55",
+    ".azure\\issue147-app-insights-bootstrap.compiled.json": "955a0286b2b1b7806fc8dcd4b62b790242ff3045ecbb7378ecf395ab9a3dbb75",
+    ".azure\\bootstrap-provider-validate.json": "465f5893af5effb5a0d59e529c26aeb412ea16338aca7323a8ac44ea0fdbb94f",
+    ".azure\\bootstrap-provider-what-if.json": "423962426914cad38c2a7b6c97f432101bc672942ab9d1f3f7517985dfa8f3c6"
+  },
+  "functionPackage": {
+    "rebuildRequired": false,
+    "bytes": 8472610,
+    "sha256": "b6ffdb3739e261f612a5b1f568f509365da88094a175a3efabc6aaf9c4f2b9ff",
+    "blobUrl": "https://fotoa147demosteastus2.blob.core.windows.net/function-packages/telemetry-936946c8-b6ffdb3739e261f612a5b1f568f509365da88094a175a3efabc6aaf9c4f2b9ff.zip",
+    "fetchAuthentication": "Function SystemAssigned MI; no SAS, shared key or SCM upload",
+    "publicationNow": false
+  },
+  "secureBootstrap": {
+    "sourceComponentPathRelativeToFreshGroup": "providers/Microsoft.Insights/components/fotoa147-demo-appi-eastus2",
+    "sourceApiVersion": "2020-02-02",
+    "operation": "ARM server-side reference(component).ConnectionString -> securestring module parameter -> ARM vaults/secrets PUT",
+    "destinationPathRelativeToExistingGroup": "providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2/secrets/fotoa147-appinsights-connection-string",
+    "destinationApiVersion": "2023-07-01",
+    "newControlPlaneAction": "Microsoft.KeyVault/vaults/secrets/write",
+    "executorAdditionalActions": [
+      "Microsoft.Insights/components/read on ONLY the new component",
+      "Microsoft.Resources/deployments/read and write for the named custody nested deployment in existingGroup",
+      "Microsoft.KeyVault/vaults/read on existingVault; no vault write"
+    ],
+    "outputsOnly": ["secretVersionUri", "componentBindingResourceId"],
+    "actualVersion": null,
+    "valueProcessingInThisPreparation": false,
+    "oldArizeSecretReadOrCopy": false,
+    "vaultNetworkOrRbacChange": false,
+    "imperativeFallback": "Not needed; standard ARM provider contracts supported and analysis accepted",
+    "laterAdmission": "Fresh RG/component/secret absent; exact manifest/source/profile/compiled hashes bound by separate lease. Metadata only. Existing/non-Create/ambiguous secret -> STOP; no overwrite or ambiguous replay. Wrapper is first-allocation only.",
+    "laterTracing": "Use actual returned immutable secret version as secure ARM reference with existing narrow modern-foundry-tracing.bicep, ApiKey, private, NotRequired, NotApplicable, reviewed=true; vault deploy/action separately authorized; no plaintext.",
+    "nativeTracingAssociationCreatedNowOrByThisWrapper": false
+  },
+  "predictedFirstAllocation": {
+    "newGroupCount": 1,
+    "resourcePathConvention": "Append each path below to scopeIds.freshGroup. Deployment resources are Incremental orchestration, not new services.",
+    "freshResourcePaths": [
+      "providers/Microsoft.CognitiveServices/accounts/fotoa147-demo-foundry-eastus2",
+      "providers/Microsoft.CognitiveServices/accounts/fotoa147-demo-foundry-eastus2/projects/fotoa147-demo-fproj-eastus2",
+      "providers/Microsoft.CognitiveServices/accounts/fotoa147-demo-foundry-eastus2/deployments/qa147-synthetic",
+      "providers/Microsoft.Insights/components/fotoa147-demo-appi-eastus2",
+      "providers/Microsoft.OperationalInsights/workspaces/fotoa147-demo-law-eastus2",
+      "providers/Microsoft.OperationalInsights/workspaces/fotoa147-demo-law-eastus2/dataExports/telemetry-to-eventhub",
+      "providers/Microsoft.EventHub/namespaces/fotoa147-demo-ehns-eastus2",
+      "providers/Microsoft.EventHub/namespaces/fotoa147-demo-ehns-eastus2/eventhubs/telemetry",
+      "providers/Microsoft.EventHub/namespaces/fotoa147-demo-ehns-eastus2/eventhubs/telemetry/consumergroups/function-transform",
+      "providers/Microsoft.KeyVault/vaults/fotoa147-demo-kv-eastus2",
+      "providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2",
+      "providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2/blobServices/default/containers/function-packages",
+      "providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2/blobServices/default/containers/genai-correlation",
+      "providers/Microsoft.Web/serverfarms/fotoa147-demo-plan-eastus2",
+      "providers/Microsoft.Web/sites/fotoa147-demo-func-eastus2",
+      "providers/Microsoft.Web/sites/fotoa147-demo-func-eastus2/basicPublishingCredentialsPolicies/ftp",
+      "providers/Microsoft.Web/sites/fotoa147-demo-func-eastus2/basicPublishingCredentialsPolicies/scm",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-foundry-eastus2",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-foundry-eastus2/privateDnsZoneGroups/default",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-kv-eastus2",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-kv-eastus2/privateDnsZoneGroups/default",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-blob-eastus2",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-blob-eastus2/privateDnsZoneGroups/default",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-queue-eastus2",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-queue-eastus2/privateDnsZoneGroups/default",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-table-eastus2",
+      "providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-table-eastus2/privateDnsZoneGroups/default",
+      "providers/Microsoft.Authorization/roleDefinitions/8d04f679-2412-5e17-a20e-5dcb2099c25a"
+    ],
+    "newExternalSecretCount": 1,
+    "newPrivateEndpointCount": 5,
+    "expectedPrivateEndpointIpSlots": 7,
+    "newVnetSubnetZoneLinkPutCount": 0,
+    "existingSubnetJoinActions": "Microsoft.Network/virtualNetworks/subnets/join/action on existing private-endpoints and function-integration only",
+    "existingDnsEffects": "Five PE zone-group PUTs register fresh service names in the seven profile zones via join/action; existing VNet links remain unchanged. No VNet/subnet/zone/link PUT, DNS redesign or custom record executor.",
+    "function": "Linux Python 3.11 / EP1 capacity=1 / plan max=1 / app max=1 / minimum=1 / prewarmed target=1; both consumers disabled",
+    "model": "OpenAI / gpt-5-mini / 2025-08-07 / qa147-synthetic / DataZoneStandard / capacity 1 / NoAutoUpgrade",
+    "runtimeBoundary": "Basic private CLIENT INGRESS, Microsoft-managed runtime/state; not Standard/BYO isolation"
+  },
+  "sourceDefinedFirstAllocationRoles": [
+    {
+      "principal": "future new project system MI",
+      "role": "53ca6127-db72-4b80-b1b0-d745d6d5456d",
+      "scope": "new Foundry account"
+    },
+    {
+      "principal": "future new Function system MI",
+      "roles": [
+        "ba92f5b4-2d11-453d-a403-e96b0029c9fe",
+        "974c5e8b-45b9-4653-ba55-5f855dd0fb88",
+        "0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3",
+        "b7e6dc6d-f1e8-4753-8033-0f276bb0955b"
+      ],
+      "scope": "new storage account",
+      "purpose": "Blob Contributor / Queue Contributor / Table Contributor / Blob Owner host roles"
+    },
+    {
+      "principal": "future new Function system MI",
+      "role": "a638d3c7-ab3a-418d-83e6-5f17a39d4fde",
+      "scope": "new Event Hub namespace"
+    },
+    {
+      "principal": "future new Function system MI",
+      "roleDefinitionPath": "providers/Microsoft.Authorization/roleDefinitions/8d04f679-2412-5e17-a20e-5dcb2099c25a",
+      "roleDefinitionScope": "freshGroup",
+      "assignmentScope": "new storage blobServices/default/containers/genai-correlation ONLY",
+      "dataActions": [
+        "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags/write",
+        "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/filter/action"
+      ],
+      "whatIfStatus": "Unsupported: GUID requires future Function principal; no guessed identity"
+    }
+  ],
+  "laterExecutorManagementActions": {
+    "scope": "Only exact manifest resources, plus named nested deployments; not a grant request",
+    "subscription": ["Microsoft.Resources/subscriptions/resourceGroups/write", "Microsoft.Resources/deployments/read", "Microsoft.Resources/deployments/write"],
+    "freshGroup": [
+      "Microsoft.Resources/deployments/read",
+      "Microsoft.Resources/deployments/write",
+      "Microsoft.CognitiveServices/accounts/write",
+      "Microsoft.CognitiveServices/accounts/projects/write",
+      "Microsoft.CognitiveServices/accounts/deployments/write",
+      "Microsoft.Insights/components/write",
+      "Microsoft.OperationalInsights/workspaces/write",
+      "Microsoft.OperationalInsights/workspaces/dataExports/write",
+      "Microsoft.EventHub/namespaces/write",
+      "Microsoft.EventHub/namespaces/eventhubs/write",
+      "Microsoft.EventHub/namespaces/eventhubs/consumergroups/write",
+      "Microsoft.KeyVault/vaults/write",
+      "Microsoft.Storage/storageAccounts/write",
+      "Microsoft.Storage/storageAccounts/blobServices/write",
+      "Microsoft.Storage/storageAccounts/blobServices/containers/write",
+      "Microsoft.Web/serverfarms/write",
+      "Microsoft.Web/sites/write",
+      "Microsoft.Web/sites/basicPublishingCredentialsPolicies/write",
+      "Microsoft.Network/privateEndpoints/write",
+      "Microsoft.Network/privateEndpoints/privateDnsZoneGroups/write",
+      "Microsoft.Authorization/roleDefinitions/write",
+      "Microsoft.Authorization/roleAssignments/write"
+    ],
+    "existingNetworkOnly": [
+      "Microsoft.Network/virtualNetworks/subnets/read and join/action on the two profile subnets",
+      "Microsoft.Network/privateDnsZones/read and join/action on the seven profile zones"
+    ],
+    "existingVaultOnly": [
+      "Microsoft.KeyVault/vaults/read",
+      "Microsoft.KeyVault/vaults/secrets/write on fotoa147-appinsights-connection-string ONLY",
+      "Microsoft.Resources/deployments/read and write on issue147-new-routing-custody ONLY"
+    ],
+    "excluded": "No existing vault/network resource PUT, broad new vault role, old secret value operation, listKeys/listSecrets, VM operation, model inference, agent publication, service registration or security/governance change"
+  },
+  "separateFutureIamLease": [
+    {
+      "principal": "actual provider-generated new Function system MI, never guessed",
+      "template": "infra\\existing-function-secret-access.bicep (not invoked by wrapper)",
+      "role": "4633458b-17de-408a-b874-0445c86b69e6",
+      "scopeConvention": "scopeIds.existingVault + /secrets/ + each name, four distinct secret-scoped assignments",
+      "secretNames": ["arize-otlp-endpoint", "arize-space-id", "arize-api-key", "fotoa147-appinsights-connection-string"],
+      "broadVaultRole": false
+    },
+    {
+      "principalId": "64c0b8ce-7e6c-4875-a2cb-82552efc0376",
+      "role": "ba92f5b4-2d11-453d-a403-e96b0029c9fe",
+      "scopePathRelativeToFreshGroup": "providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2/blobServices/default/containers/function-packages",
+      "purpose": "Existing private runner immutable no-overwrite package upload, separately leased"
+    },
+    {
+      "principalId": "64c0b8ce-7e6c-4875-a2cb-82552efc0376",
+      "role": "53ca6127-db72-4b80-b1b0-d745d6d5456d",
+      "scopePathRelativeToFreshGroup": "providers/Microsoft.CognitiveServices/accounts/fotoa147-demo-foundry-eastus2/projects/fotoa147-demo-fproj-eastus2",
+      "purpose": "Later separately leased publication/readback/native invocation"
+    }
+  ],
+  "analysisEvidence": {
+    "validateStartUtc": "2026-10-20T08:09:20.098721+00:00",
+    "validate": "Provider / exit 0 / error null",
+    "whatIfStartUtc": "2026-10-20T08:09:28.200851+00:00",
+    "whatIf": "Provider / ResourceIdOnly / Succeeded / exit 0",
+    "changeCounts": {"Create": 36, "Modify": 0, "Delete": 0, "Unsupported": 1},
+    "secretChangeType": "Create",
+    "errorCodes": [],
+    "officialWorkflowCompleted": false,
+    "officialWorkflowCompletedStep": "AddValidationSteps",
+    "officialHelperExecuted": false,
+    "blocker": "No demonstrated secure ARM contract blocker. Official workflow not completed: unadapted helper omits explicit subscription on version/build and prints raw provider failures. Partial safe analyses are not official completion.",
+    "remainingTechnicalGates": [
+      "Dynamic container-local custom role assignment Unsupported in what-if",
+      "Actual EP1 MPSJ allocation/readback and DataZoneStandard capacity-1 admission/reservation, not guaranteed by analysis",
+      "Actual secure provisioning/version metadata and private Function KV resolution under later exact grants",
+      "Package publication/private runtime/egress, new native graph, repeat acceptance"
+    ],
+    "cloudResourceMutationExecuted": false,
+    "deploymentCreateExecuted": false,
+    "secretReadWriteExecuted": false
+  },
+  "conditionalCostAndLifetime": {
+    "source": "docs\\current-state\\issue147-cost-estimate.md and issue147-planning-evidence.json; public 2026-10-19 USD rates, not refreshed",
+    "allocatedHours": 24,
+    "ep1AverageInstances": 1,
+    "ep1HourlyFormulaUSD": "0.16 + 3.5 * 0.0114 = 0.1999",
+    "ep1For24hUSD": "4.7976",
+    "sourceScenarioPricedSubtotalUSD": "15.504880",
+    "existingNetworkIncrementalZoneFeeAdjustmentUSD": "-0.250000",
+    "selectedRouteConditionalPricedSubtotalUSD": "15.254880",
+    "dnsTreatment": "No new zone/link base fee; existing seven-zone base cost continues as shared retained cost. Prior 1M query allowance retained.",
+    "quantityEnvelope": "Prior ledger: EH 25 TU-hour buckets, 5 PEs x25 charge-hours, 1GB ingestion/export, 1M EH events, 10GB blobs, 1GB queue/table, listed operation budgets, 10k KV operations incl new custody, 1M DNS queries, 10GB PE traffic each direction, 10GB internet/inter-region/scanned allowance, 1024 model input/output tokens conditionally; not enforced caps",
+    "fullLifetimeCostFormula": "15.254880 + shared retained DNS allocation if charged + G + L + Microsoft-managed state/private-runner/build R + volume overages + billable allocation/retention time tail + tax/contract effects",
+    "unknowns": "Actual G/L entitlements and usage, state/runner costs, conditional Defender/malware applicability and actual retirement time unknown; no all-in ceiling",
+    "post24h": "Keep unless separately authorized retirement; EP1/EH/PEs continue billing. Operator day-7/day-30 retention reviews. No auto-delete or guaranteed billing TTL.",
+    "executionApproved": false
+  }
+}
