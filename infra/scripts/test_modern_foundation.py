@@ -10,6 +10,7 @@ import re
 import shutil
 import subprocess
 import unittest
+import uuid
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = importlib.util.spec_from_file_location("foundation", Path(__file__).with_name("validate-modern-foundation.py"))
@@ -91,6 +92,10 @@ def evaluate_vault_expression(expression, parameters, references):
                 "createArray": lambda *items: list(items),
                 "createObject": lambda *items: dict(zip(items[::2], items[1::2])),
                 "concat": lambda *items: sum(items, []),
+                "resourceId": lambda kind, name: f"/subscriptions/synthetic/resourceGroups/synthetic/providers/{kind}/{name}",
+                "subscriptionResourceId": lambda kind, name: f"/subscriptions/synthetic/providers/{kind}/{name}",
+                "guid": lambda *items: str(uuid.uuid5(uuid.UUID("11fb06fb-712d-4ddd-98c7-e71bbd588830"), "-".join(items))),
+                "variables": lambda name: references["variables"][name],
             }
             value = operations[name](*values)
         for property_name in text[index + 1:].split(".")[1:]:
@@ -273,9 +278,8 @@ class CompiledModernFoundationTests(unittest.TestCase):
                                      expected if mode == "freshVault" else None)
                 call = module(self.main, "function-app-deployment")["properties"]["parameters"]["keyVaultName"]
                 self.assertEqual(graph["evaluate"](call)["value"], "new-vault-name" if mode == "freshVault" else None)
-                local_role = next(r for r in resources(self.function, "Microsoft.Authorization/roleAssignments")
-                                  if "keyVault" in r.get("scope", ""))
-                self.assertEqual(graph["evaluate"](local_role["condition"]), mode == "freshVault")
+                reader = module(self.function, "function-fresh-vault-reader")
+                self.assertEqual(graph["evaluate"](reader["condition"]), mode == "freshVault")
                 self.assertEqual(graph["evaluate"](self.main["outputs"]["keyVaultReferenceMode"]["value"]), mode)
                 self.assertEqual(graph["evaluate"](self.main["outputs"]["externalKeyVaultReferences"]["value"]),
                                  {"mode": "existing"} if mode == "existing" else None)
@@ -347,9 +351,8 @@ class CompiledModernFoundationTests(unittest.TestCase):
         self.assertEqual(set(mapping["existing"]["properties"]), {
             "mode", "applicationInsightsSecretUri", "arizeEndpointSecretUri",
             "arizeSpaceIdSecretUri", "arizeApiKeySecretUri"})
-        local_role = next(r for r in resources(self.function, "Microsoft.Authorization/roleAssignments")
-                          if "keyVault" in r.get("scope", ""))
-        self.assertEqual(local_role["condition"], "[equals(parameters('keyVaultReferences').mode, 'freshVault')]")
+        reader = module(self.function, "function-fresh-vault-reader")
+        self.assertEqual(reader["condition"], "[equals(parameters('keyVaultReferences').mode, 'freshVault')]")
         for field in ("arizeEndpointSecretUri", "arizeSpaceIdSecretUri", "arizeApiKeySecretUri"):
             self.assertIn(field, self.function["variables"]["extraAppSettings"])
         settings = {x["name"]: x["value"] for x in self.function["variables"]["baseAppSettings"]}
@@ -360,6 +363,49 @@ class CompiledModernFoundationTests(unittest.TestCase):
         self.assertIn("Microsoft.KeyVault/vaults/secrets", role["scope"])
         self.assertEqual(access["variables"]["secretsUserRoleId"], "4633458b-17de-408a-b874-0445c86b69e6")
         self.assertEqual(role["properties"]["principalId"], "[parameters('functionPrincipalId')]")
+
+    def test_evaluated_function_vault_graph_with_null_owned_name_and_exact_fresh_rbac(self):
+        reader = module(self.function, "function-fresh-vault-reader")
+        inner = reader["properties"]["template"]
+        self.assertEqual({r["type"] for r in resources(inner)}, {"Microsoft.Authorization/roleAssignments"})
+        # ARM validates existing-resource names even if their consumer has a
+        # false condition. Only a skipped nested deployment isolates that graph.
+        for mode, vault_name in (("existing", None), ("freshVault", "synthetic-vault")):
+            parameters = {"keyVaultReferences": {"mode": mode}, "keyVaultName": vault_name}
+            evaluate = lambda expression: evaluate_vault_expression(expression, parameters, {})
+            active = list(resources(self.function, writable=False))
+            if evaluate(reader["condition"]):
+                inner_parameters = {
+                    "keyVaultName": evaluate(reader["properties"]["parameters"]["keyVaultName"]["value"]),
+                    "functionAppResourceId": "/subscriptions/synthetic/resourceGroups/synthetic/providers/Microsoft.Web/sites/synthetic-function",
+                    "functionPrincipalId": "synthetic-principal",
+                }
+                active += resources(inner, writable=False)
+            else:
+                inner_parameters = parameters
+            evaluate_inner = lambda expression: evaluate_vault_expression(
+                expression, inner_parameters,
+                {"variables": inner.get("variables", {})})
+            vaults = [r for r in active if r["type"] == "Microsoft.KeyVault/vaults"]
+            for vault in vaults:
+                self.assertIsInstance(evaluate_inner(vault["name"]), str)
+            if mode == "existing":
+                self.assertIsNone(parameters["keyVaultName"])
+                self.assertFalse(any("keyVault" in r.get("scope", "") for r in active))
+                continue
+            role, = resources(inner, "Microsoft.Authorization/roleAssignments")
+            legacy_vault_id = "/subscriptions/synthetic/resourceGroups/synthetic/providers/Microsoft.KeyVault/vaults/synthetic-vault"
+            legacy_role_id = "4633458b-17de-408a-b874-0445c86b69e6"
+            self.assertEqual(evaluate_inner(role["scope"]), legacy_vault_id)
+            self.assertEqual(evaluate_inner(role["name"]), str(uuid.uuid5(
+                uuid.UUID("11fb06fb-712d-4ddd-98c7-e71bbd588830"),
+                "-".join((legacy_vault_id, inner_parameters["functionAppResourceId"], legacy_role_id)))))
+            self.assertEqual(evaluate_inner(role["properties"]["roleDefinitionId"]),
+                             "/subscriptions/synthetic/providers/Microsoft.Authorization/roleDefinitions/" + legacy_role_id)
+            self.assertEqual(evaluate_inner(role["properties"]["principalId"]), "synthetic-principal")
+            self.assertEqual(role["properties"]["principalType"], "ServicePrincipal")
+            self.assertEqual(reader["properties"]["parameters"]["functionPrincipalId"]["value"],
+                             "[reference('functionApp', '2023-12-01', 'full').identity.principalId]")
 
     def test_host_rbac_and_single_fresh_durable_export_ownership(self):
         self.assertEqual(set(self.function["variables"]["storageRoleIds"]), {

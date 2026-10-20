@@ -26,13 +26,20 @@ version URI/component ID outputs are exposed; no existing Arize value is copied.
 This first-allocation writer is **not** the repeat entrypoint. Metadata-only
 collision/ambiguity checks and a later execution lease are mandatory.
 [Manifest and safe provider results](../docs/current-state/issue147-existing-network-proposal.md#fresh-tracing-bootstrap--supported-server-side-automation-staged):
-Revised Provider validate passed; revised ResourceIdOnly what-if exited 1 with
-no safely captured diagnostic code. Analysis stopped, no fallback. Derived
-projection: 33 Creates / one unresolved future-principal index assignment,
-NOT a successful revised what-if. Existing-reference mode omits the unused
+Independent evaluated-graph fix passed Provider validate and ResourceIdOnly
+what-if at 08:53Z on 2026-10-20: **33 Create / 0 Modify / 0 Delete /
+1 Unsupported** future-principal index assignment. All five actual pinned-helper
+checks ran through the narrow metadata-only compatibility adapter. The owned
+vault reader is isolated in a conditional nested module: a null owned-vault
+name never enters ARM's evaluated existing-resource graph. Default freshVault
+RBAC GUID inputs, role, scope, principal and all public outputs are unchanged.
+Existing-reference mode omits the unused
 owned vault and vault PE (four PEs / six expected IP slots); freshVault default
 retains both (five PEs / seven expected slots). No deployment or secret operation executed;
-official workflow remains incomplete, not Validated.
+official policy/workflow and allocation/runtime acceptance remain incomplete,
+not Validated. Run the pinned helper safely (new immutable receipt directory
+per analysis) with `scripts\invoke-issue147-official-validation.ps1`; exact
+commands and projected receipts are bound in the selected-route manifest.
 
 ## Three operations — never substitute one for another
 

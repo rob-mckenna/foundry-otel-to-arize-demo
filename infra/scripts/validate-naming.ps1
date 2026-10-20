@@ -37,7 +37,9 @@ $moduleFiles = Get-ChildItem -Path $ModulesPath -Filter '*.bicep' -File |
   Where-Object {
     # Connections do not support tags and adoption must retain the exact manual name.
     # test_modern_foundry_tracing.py verifies its compiled resource inventory stays connection-only.
-    $_.Name -notin @('naming.bicep', 'modern-foundry-app-insights.bicep', 'durable-genai-state.bicep')
+    # Reader-only module retains the existing RBAC GUID and has no taggable writes.
+    # test_modern_foundation.py verifies its entire compiled inventory and GUID inputs.
+    $_.Name -notin @('naming.bicep', 'modern-foundry-app-insights.bicep', 'durable-genai-state.bicep', 'function-fresh-vault-reader.bicep')
   }
 
 if ($moduleFiles.Count -eq 0) {

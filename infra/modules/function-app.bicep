@@ -241,17 +241,14 @@ resource eventHubReceiverRoleAssignment 'Microsoft.Authorization/roleAssignments
     principalType: 'ServicePrincipal'
   }
 }
-resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
-  name: keyVaultName!
-}
-var keyVaultSecretsUserRoleId = '4633458b-17de-408a-b874-0445c86b69e6'
-resource keyVaultSecretsUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (keyVaultReferences.mode == 'freshVault') {
-  name: guid(keyVault.id, functionApp.id, keyVaultSecretsUserRoleId)
-  scope: keyVault
-  properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', keyVaultSecretsUserRoleId)
-    principalId: functionApp.identity.principalId
-    principalType: 'ServicePrincipal'
+// Isolate the existing resource: ARM evaluates its name even when a scoped
+// role assignment is conditional. External references have no owned vault.
+module freshVaultReader 'function-fresh-vault-reader.bicep' = if (keyVaultReferences.mode == 'freshVault') {
+  name: 'function-fresh-vault-reader'
+  params: {
+    keyVaultName: keyVaultName!
+    functionAppResourceId: functionApp.id
+    functionPrincipalId: functionApp.identity.principalId
   }
 }
 resource scmBasicAuth 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2023-12-01' = {

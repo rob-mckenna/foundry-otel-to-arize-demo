@@ -1,15 +1,22 @@
 # Issue 147 — official workflow reconciliation and residual gates
 
-**Independent composition revision (worker c0769ac8, 2026-10-20):** existing
-reference mode now omits unused owned vault/vault PE. Default freshVault and
-accepted secure-bootstrap/caller source are preserved. Four PEs / six expected
-IP slots; [revised manifest and evidence](issue147-existing-network-proposal.md).
-Revised Provider validate PASS 08:25:18Z; revised ResourceIdOnly what-if exit 1
-08:25:29Z, no safely captured diagnostic code. Provider analysis stopped without
-fallback/mutation. 33 Creates is a derived 36−3 projection, not live proof.
-Pinned workflow restarted through AddValidationSteps only; no RunValidation
-completion, no policy/allocation/runtime acceptance and NOT officially Validated.
-This supersedes the pre-revision graph counts below, not historical receipts.
+**Independent evaluated-graph revision (worker 28f99ce7, 2026-10-20):**
+conditional fresh-reader module isolates the nullable owned-vault name from
+ARM existing-resource evaluation. Both previously rejected authors are locked
+out and did not contribute. Default freshVault RBAC identity/scopes/permissions,
+all public outputs, profile, secure bootstrap, caller and package are unchanged.
+**Actual Provider validate PASS 08:53:05Z; actual ResourceIdOnly what-if PASS
+08:53:15Z, 33 Create / 0 Modify / 0 Delete / 1 Unsupported** future-principal
+index assignment. Four PEs / six expected IP slots. All five actual official
+helper checks ran through the scoped, metadata-only adapter; none is stubbed.
+[Exact commands, receipts and manifest](issue147-existing-network-proposal.md).
+Pinned workflow resumed at AddValidationSteps. Core checks now pass, but the
+recipe's separate policy compliance check has not completed; therefore
+RunValidation is not marked complete. No official Validated status, deployment,
+resource/secret mutation, allocation/private-runtime/repeat/native acceptance.
+Parent re-review pending; QA owns OPEN #147 / PR151 unmerged.
+The 08:25 failed receipt and earlier sections below remain historical, not the
+current result. Root CLOSED plan/status and completed receipts were untouched.
 
 **2026-10-20 implementation followup (worker d1b017bf):** the new-component →
 existing-vault/new-secret bootstrap is now runnable ARM/Bicep source, **not a

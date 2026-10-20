@@ -1,18 +1,20 @@
 # Issue 147 — fresh application on the supported existing network
 
 **CURRENT-STATE STAGED IMPLEMENTATION / PARTIAL VALIDATION — 2026-10-20.
-QA owns OPEN #147; PR #151 remains unmerged. Revised subscription provider
-validate passed; revised ResourceIdOnly what-if exited 1 (diagnostic code not
-captured safely). Analysis stopped, with no fallback. The derived projection is
-33 Create / one unresolved dynamic role assignment, NOT a live what-if result.
+QA owns OPEN #147; PR #151 remains unmerged. Independent evaluated-graph fix:
+subscription Provider validate and ResourceIdOnly what-if both passed at
+08:53Z, **33 Create / 0 Modify / 0 Delete / 1 Unsupported** future-principal
+index assignment. All five actual pinned official helper checks ran.
 No deployment, secret operation, publication, IAM
 change, VM start or inference was executed. NOT officially Validated.**
 
-Independent composition revision worker: `c0769ac8-18a5-4872-8916-8d5326dc0c14`.
-Baseline: `db53b0ff37dc6fb7d03e63e832b227be3d05509c`.
-Runtime identity mechanically asserted different from locked-out composition
-author `47b39bff-7553-495e-a0da-117c5b757a62`; no advice, consultation or
-coauthoring from that author. Parent re-review remains pending. Secure-bootstrap
+Independent revision worker: `28f99ce7-67d3-4007-b20f-4ccb304a3a66`.
+Baseline: `a8d5338c3f0f2d8670bf6ab134dee71e8385563e`.
+Actual `list_agents scope=all` uniquely matched the assigned description;
+identity asserted and recorded before editing, distinct from **both** locked-out
+authors `47b39bff-7553-495e-a0da-117c5b757a62` and
+`c0769ac8-18a5-4872-8916-8d5326dc0c14`. Neither advised, paired, coauthored
+or otherwise contributed. Parent re-review remains pending. Secure-bootstrap
 author's accepted source and behavior are unchanged.
 Exact later resource/role/action/cost handoff:
 [first-allocation manifest](issue147-first-allocation-manifest.json).
@@ -145,6 +147,13 @@ profile. No VM start or guest operation occurred here.
   returns URI identifiers only in existing mode (otherwise null). The Function's
   owned `keyVaultName` parameter is nullable and receives null only for existing
   mode. No invented owned name, implicit external-vault PUT or grant widening.
+- The fresh-vault reader now lives in a **conditional nested module**, not an
+  unconditional existing `keyVault` resource beside a conditional assignment.
+  ARM eagerly validates existing-resource names; Bicep's null-forgiving `!`
+  cannot change that. Existing-reference selection skips the entire reader
+  graph. Fresh selection retains the exact GUID inputs (vault ID, Function ID,
+  Secrets User role ID), vault scope and Function principal. Full compiled
+  baseline comparison found no other graph or public-output change.
 
 Default freshVault still creates its vault, vault PE and local reader and
 expects five PEs / seven IP slots. Existing-network/seven-zone input compatibility
@@ -291,10 +300,8 @@ identifiers only. Local compilation used Bicep **0.47.16.16243**.
 $env:AZURE_CONFIG_DIR = 'C:\repos\foundry-otel-to-arize-demo\.azure-config'
 $env:AZURE_LOGGING_ENABLE_LOG_FILE = 'false'
 $env:AZURE_CORE_COLLECT_TELEMETRY = 'no'
-# These two commands were run with stdout/stderr captured in process memory:
-# only the --query projection was persisted; raw failures would emit codes only.
-az deployment sub validate --location eastus2 --name issue147-first-allocation-analysis --template-file .worktrees\issue147-readiness\.azure\issue147-first-allocation.compiled.json --subscription c81fda52-936e-4f14-8af4-951c0dbb92d2 --only-show-errors -o json --validation-level Provider --query '{id:id,errorCode:error.code,errorCodes:error.details[].code}'
-az deployment sub what-if --location eastus2 --name issue147-first-allocation-analysis --template-file .worktrees\issue147-readiness\.azure\issue147-first-allocation.compiled.json --subscription c81fda52-936e-4f14-8af4-951c0dbb92d2 --only-show-errors -o json --validation-level Provider --query '{status:status,changes:changes[].{resourceId:resourceId,changeType:changeType},errorCode:error.code}' --result-format ResourceIdOnly --no-pretty-print --no-prompt
+# Exact actual invocation; use a NEW receipt directory if authorized to re-analyze.
+.\.worktrees\issue147-readiness\infra\scripts\invoke-issue147-official-validation.ps1 -ReceiptDirectory C:\repos\foundry-otel-to-arize-demo\.worktrees\issue147-readiness\.azure\vault-graph-final-28f99ce7-20261020
 ```
 
 - Both builds **PASS, no warnings**.
@@ -307,35 +314,46 @@ az deployment sub what-if --location eastus2 --name issue147-first-allocation-an
   Function principal ID**, which what-if cannot resolve. It is **not** a
   rejected secure-bootstrap schema or an observed authorization/network error.
   Do not call that assignment validated or guess a principal to remove the gap.
-- Revised Provider validate **exit 0**, **08:25:18Z** start, error null.
-- Revised ResourceIdOnly what-if **exit 1**, **08:25:29Z** start. The safe
-  capture yielded no parenthesized error code and deliberately persisted no raw
-  failure. Exact provider diagnostic is therefore **unknown**, not an empty
-  successful result or a proven permission denial. Analysis stopped; no retry,
-  fallback, further provider query or mutation. Diagnosis requires a separately
-  authorized safe error-code capture; official workflow remains incomplete.
-- **Derived, not live proof:** 36 prior Creates minus owned vault, vault PE and
-  vault zone-group = **33 projected Creates**, retaining the NEW external secret
-  and the unresolved future-principal index assignment. New graph has four
-  PE/zone-group pairs. No predicted VNet/subnet/zone/link resource PUT; new DNS
-  record registration and separately leased secret-scoped IAM remain required.
+- The 08:25 composition attempt (now historical) passed validate but failed
+  what-if. Parent safely reproduced `InvalidTemplate`: existing resource
+  `keyVault` evaluated `parameters('keyVaultName')` as Null, expected String.
+- **Current Provider validate exit 0 / Succeeded**, started
+  **08:53:05.712230Z**, correlation `f315e2d0-f75a-4244-934c-69fe73845b87`,
+  error null. **Current ResourceIdOnly what-if exit 0 / Succeeded**, started
+  **08:53:15.598075Z**, no correlation ID returned by the projected response,
+  error null. **33 Create / 0 Modify / 0 Delete / 1 Unsupported** is an actual
+  revised provider result, not the prior subtraction. New routing secret is
+  Create; no new vault/PE, VNet/subnet/zone/link PUT. Four PE/zone-group pairs;
+  DNS registration and later leased secret-scoped IAM remain required.
 - Admission analysis is **not allocation proof** of EP1 MPSJ, capacity-1 model,
   network egress, secret provisioning or private resolution. No execution
   occurred and no permission/provider/network failure was bypassed.
 
-Historical receipts: worktree `.azure/bootstrap-provider-{validate,what-if}.json`.
-Revised receipts: `.azure/composition-provider-{validate,what-if}.json`,
-hashes and source/compiled bindings in the manifest. No full what-if properties
+Historical receipts: worktree `.azure/bootstrap-provider-{validate,what-if}.json`
+and `.azure/composition-provider-{validate,what-if}.json` (unchanged).
+Current immutable receipts: `.azure\vault-graph-final-28f99ce7-20261020`;
+committed metadata-only copy: [analysis evidence](issue147-vault-graph-analysis.json).
+Exact hashes and source/compiled bindings are in the manifest. No full what-if properties
 were emitted or saved. The manifest distinguishes exact Windows-checkout
 CRLF source hashes from independently verified canonical LF Git blob hashes;
 compiled/package/receipt hashes remain exact bytes. A later executor must
 verify the applicable exact binding, never relax a hash guard on a mismatch.
-The official pinned workflow was started through
-**AddValidationSteps only**; its unadapted helper prints raw failures and omits
-explicit subscription on two CLI commands, so it was not run. The safe
-subscription commands above are **partial gate evidence**, not official
-workflow completion. Plan status remains **Approved PREPARATION / partial
-validation**, never Validated. No new helper/workflow was introduced.
+The unmodified pinned official helper (SHA256 `ac49678e…bc9bb`) actually ran
+through a narrow transport adapter, preserving all **five** checks in order:
+`az version`, `az account show`, `az bicep build`, subscription **Provider**
+validate, subscription **Provider ResourceIdOnly** what-if. Every CLI process
+uses repository config and the explicit subscription; wrapper compilation
+embeds the unchanged profile and models the absent fresh RG and nested graph.
+There is no invalid group-validate call against an absent RG, no provider
+registration/login/account-set fallback and no deployment create.
+Raw outputs/errors are captured only in memory; persisted output is metadata
+and bounded redacted actionable diagnostics. Tests preserve the exact
+InvalidTemplate/null-versus-string diagnostic while masking credentials.
+The official workflow resumed **AddValidationSteps only**: recipe core checks
+pass but the separate policy compliance check has not completed. Thus no
+RunValidation/BuildVerification/StaticRoleVerification/RecordProof/ResolveErrors/
+UpdateStatus step is claimed complete. Status remains **Approved PREPARATION /
+partial validation**, never Validated. No official workflow was replaced.
 
 ## Immutable package and publication proof binding
 

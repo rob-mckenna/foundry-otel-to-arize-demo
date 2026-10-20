@@ -1,0 +1,354 @@
+{
+  "schemaVersion": 1,
+  "status": "ACTUAL_PROVIDER_ANALYSIS_ONLY_NOT_DEPLOYMENT_OR_OFFICIAL_VALIDATED",
+  "workerId": "28f99ce7-67d3-4007-b20f-4ccb304a3a66",
+  "baselineCommit": "a8d5338c3f0f2d8670bf6ab134dee71e8385563e",
+  "lockedAuthors": [
+    "47b39bff-7553-495e-a0da-117c5b757a62",
+    "c0769ac8-18a5-4872-8916-8d5326dc0c14"
+  ],
+  "lockedAuthorParticipation": false,
+  "officialHelperCommit": "a480d4c73380e6dd77c9e1553f6523620c724edf",
+  "officialHelperSha256": "ac49678e5941f2946d8b216370e30dbd8b3451cb15652f8042bb9fad77bcb9bb",
+  "officialWorkflowSha256": "d8b7512cd91b4ec3620d6a48abc1f80179630bd26add65dc0400a34e42745ff9",
+  "officialCompletedStep": "AddValidationSteps",
+  "coreFiveChecksActuallyExecuted": true,
+  "separatePolicyComplianceComplete": false,
+  "exactCommandsAndProjectedReceipts": [
+    {
+      "check": "cli",
+      "startedUtc": "2026-10-20T08:52:48.826356+00:00",
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "version",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "azureConfigDirectory": "C:\\Repos\\foundry-otel-to-arize-demo\\.azure-config",
+      "officialHelperSha256": "ac49678e5941f2946d8b216370e30dbd8b3451cb15652f8042bb9fad77bcb9bb",
+      "profileSha256": "b6ce3d1140ce492a00681571db72cac4f0048da590d1f81bf22957d4e8ff4781",
+      "adapterSha256": "dfe070c6b0db3884bce77b20eabcb49971be124e5c1499891dd288ac96a3c1df",
+      "invocationAdapterSha256": "cdd5e0153f67b964efe1ad6d43e51c4d7d40b79137cdc59f4f617b846f0c464b",
+      "wrapperSourceSha256": "4bef4fc4ace7f3de5c54d13b42f48acb7b226bdb4af4fb086c601acdf3395e40",
+      "templateSha256Before": "cb84caf3722cafe17fbf8929b7d6ec5c85aaf1945c54776f34b01edbfd59104f",
+      "exitCode": 0,
+      "cliVersion": "2.91.0",
+      "completedUtc": "2026-10-20T08:52:50.659590+00:00",
+      "templateSha256": "cb84caf3722cafe17fbf8929b7d6ec5c85aaf1945c54776f34b01edbfd59104f"
+    },
+    {
+      "check": "authentication",
+      "startedUtc": "2026-10-20T08:52:51.565477+00:00",
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "account",
+        "show",
+        "--query",
+        "{id:id,state:state}",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "azureConfigDirectory": "C:\\Repos\\foundry-otel-to-arize-demo\\.azure-config",
+      "officialHelperSha256": "ac49678e5941f2946d8b216370e30dbd8b3451cb15652f8042bb9fad77bcb9bb",
+      "profileSha256": "b6ce3d1140ce492a00681571db72cac4f0048da590d1f81bf22957d4e8ff4781",
+      "adapterSha256": "dfe070c6b0db3884bce77b20eabcb49971be124e5c1499891dd288ac96a3c1df",
+      "invocationAdapterSha256": "cdd5e0153f67b964efe1ad6d43e51c4d7d40b79137cdc59f4f617b846f0c464b",
+      "wrapperSourceSha256": "4bef4fc4ace7f3de5c54d13b42f48acb7b226bdb4af4fb086c601acdf3395e40",
+      "templateSha256Before": "cb84caf3722cafe17fbf8929b7d6ec5c85aaf1945c54776f34b01edbfd59104f",
+      "exitCode": 0,
+      "result": {
+        "id": "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "state": "Enabled"
+      },
+      "completedUtc": "2026-10-20T08:52:54.010771+00:00",
+      "templateSha256": "cb84caf3722cafe17fbf8929b7d6ec5c85aaf1945c54776f34b01edbfd59104f"
+    },
+    {
+      "check": "compile",
+      "startedUtc": "2026-10-20T08:52:55.523277+00:00",
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "bicep",
+        "build",
+        "--file",
+        "C:\\Repos\\foundry-otel-to-arize-demo\\.worktrees\\issue147-readiness\\infra\\issue147-first-allocation.bicep",
+        "--outfile",
+        "C:\\Repos\\foundry-otel-to-arize-demo\\.worktrees\\issue147-readiness\\.azure\\issue147-first-allocation.compiled.json",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json"
+      ],
+      "azureConfigDirectory": "C:\\Repos\\foundry-otel-to-arize-demo\\.azure-config",
+      "officialHelperSha256": "ac49678e5941f2946d8b216370e30dbd8b3451cb15652f8042bb9fad77bcb9bb",
+      "profileSha256": "b6ce3d1140ce492a00681571db72cac4f0048da590d1f81bf22957d4e8ff4781",
+      "adapterSha256": "dfe070c6b0db3884bce77b20eabcb49971be124e5c1499891dd288ac96a3c1df",
+      "invocationAdapterSha256": "cdd5e0153f67b964efe1ad6d43e51c4d7d40b79137cdc59f4f617b846f0c464b",
+      "wrapperSourceSha256": "4bef4fc4ace7f3de5c54d13b42f48acb7b226bdb4af4fb086c601acdf3395e40",
+      "templateSha256Before": "cb84caf3722cafe17fbf8929b7d6ec5c85aaf1945c54776f34b01edbfd59104f",
+      "exitCode": 0,
+      "compiledTemplateSha256": "cb84caf3722cafe17fbf8929b7d6ec5c85aaf1945c54776f34b01edbfd59104f",
+      "completedUtc": "2026-10-20T08:53:04.955420+00:00",
+      "templateSha256": "cb84caf3722cafe17fbf8929b7d6ec5c85aaf1945c54776f34b01edbfd59104f"
+    },
+    {
+      "check": "validate",
+      "startedUtc": "2026-10-20T08:53:05.712230+00:00",
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "deployment",
+        "sub",
+        "validate",
+        "--location",
+        "eastus2",
+        "--name",
+        "issue147-vault-graph-analysis",
+        "--template-file",
+        "C:\\Repos\\foundry-otel-to-arize-demo\\.worktrees\\issue147-readiness\\.azure\\issue147-first-allocation.compiled.json",
+        "--validation-level",
+        "Provider",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json",
+        "--query",
+        "{status:properties.provisioningState,correlationId:properties.correlationId,errorCode:error.code}"
+      ],
+      "azureConfigDirectory": "C:\\Repos\\foundry-otel-to-arize-demo\\.azure-config",
+      "officialHelperSha256": "ac49678e5941f2946d8b216370e30dbd8b3451cb15652f8042bb9fad77bcb9bb",
+      "profileSha256": "b6ce3d1140ce492a00681571db72cac4f0048da590d1f81bf22957d4e8ff4781",
+      "adapterSha256": "dfe070c6b0db3884bce77b20eabcb49971be124e5c1499891dd288ac96a3c1df",
+      "invocationAdapterSha256": "cdd5e0153f67b964efe1ad6d43e51c4d7d40b79137cdc59f4f617b846f0c464b",
+      "wrapperSourceSha256": "4bef4fc4ace7f3de5c54d13b42f48acb7b226bdb4af4fb086c601acdf3395e40",
+      "templateSha256Before": "cb84caf3722cafe17fbf8929b7d6ec5c85aaf1945c54776f34b01edbfd59104f",
+      "exitCode": 0,
+      "result": {
+        "status": "Succeeded",
+        "correlationId": "f315e2d0-f75a-4244-934c-69fe73845b87",
+        "errorCode": null
+      },
+      "completedUtc": "2026-10-20T08:53:14.641753+00:00",
+      "templateSha256": "cb84caf3722cafe17fbf8929b7d6ec5c85aaf1945c54776f34b01edbfd59104f"
+    },
+    {
+      "check": "what-if",
+      "startedUtc": "2026-10-20T08:53:15.598075+00:00",
+      "command": [
+        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.CMD",
+        "deployment",
+        "sub",
+        "what-if",
+        "--location",
+        "eastus2",
+        "--name",
+        "issue147-vault-graph-analysis",
+        "--template-file",
+        "C:\\Repos\\foundry-otel-to-arize-demo\\.worktrees\\issue147-readiness\\.azure\\issue147-first-allocation.compiled.json",
+        "--validation-level",
+        "Provider",
+        "--subscription",
+        "c81fda52-936e-4f14-8af4-951c0dbb92d2",
+        "--only-show-errors",
+        "-o",
+        "json",
+        "--result-format",
+        "ResourceIdOnly",
+        "--no-pretty-print",
+        "--no-prompt",
+        "--query",
+        "{status:status,correlationId:correlationId,changes:changes[].{resourceId:resourceId,changeType:changeType},errorCode:error.code}"
+      ],
+      "azureConfigDirectory": "C:\\Repos\\foundry-otel-to-arize-demo\\.azure-config",
+      "officialHelperSha256": "ac49678e5941f2946d8b216370e30dbd8b3451cb15652f8042bb9fad77bcb9bb",
+      "profileSha256": "b6ce3d1140ce492a00681571db72cac4f0048da590d1f81bf22957d4e8ff4781",
+      "adapterSha256": "dfe070c6b0db3884bce77b20eabcb49971be124e5c1499891dd288ac96a3c1df",
+      "invocationAdapterSha256": "cdd5e0153f67b964efe1ad6d43e51c4d7d40b79137cdc59f4f617b846f0c464b",
+      "wrapperSourceSha256": "4bef4fc4ace7f3de5c54d13b42f48acb7b226bdb4af4fb086c601acdf3395e40",
+      "templateSha256Before": "cb84caf3722cafe17fbf8929b7d6ec5c85aaf1945c54776f34b01edbfd59104f",
+      "exitCode": 0,
+      "result": {
+        "status": "Succeeded",
+        "correlationId": null,
+        "errorCode": null,
+        "changes": [
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg/providers/Microsoft.KeyVault/vaults/fotoa-demo-kv-eastus2/secrets/fotoa147-appinsights-connection-string",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Authorization/roleDefinitions/8d04f679-2412-5e17-a20e-5dcb2099c25a",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.CognitiveServices/accounts/fotoa147-demo-foundry-eastus2",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.CognitiveServices/accounts/fotoa147-demo-foundry-eastus2/deployments/qa147-synthetic",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.CognitiveServices/accounts/fotoa147-demo-foundry-eastus2/projects/fotoa147-demo-fproj-eastus2",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.CognitiveServices/accounts/fotoa147-demo-foundry-eastus2/providers/Microsoft.Authorization/roleAssignments/c8987761-3d1f-506a-9ac7-919b56c12185",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.EventHub/namespaces/fotoa147-demo-ehns-eastus2",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.EventHub/namespaces/fotoa147-demo-ehns-eastus2/eventhubs/telemetry",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.EventHub/namespaces/fotoa147-demo-ehns-eastus2/eventhubs/telemetry/consumergroups/function-transform",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.EventHub/namespaces/fotoa147-demo-ehns-eastus2/providers/Microsoft.Authorization/roleAssignments/a3f43def-cc69-50e3-9690-8a87bb46e9db",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Insights/components/fotoa147-demo-appi-eastus2",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-blob-eastus2",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-blob-eastus2/privateDnsZoneGroups/default",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-foundry-eastus2",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-foundry-eastus2/privateDnsZoneGroups/default",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-queue-eastus2",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-queue-eastus2/privateDnsZoneGroups/default",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-table-eastus2",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Network/privateEndpoints/fotoa147-demo-pe-table-eastus2/privateDnsZoneGroups/default",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.OperationalInsights/workspaces/fotoa147-demo-law-eastus2",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.OperationalInsights/workspaces/fotoa147-demo-law-eastus2/dataExports/telemetry-to-eventhub",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2/blobServices/default/containers/function-packages",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2/blobServices/default/containers/genai-correlation",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2/providers/Microsoft.Authorization/roleAssignments/92e3baa4-3e67-5485-b9ed-1441d1c87cba",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2/providers/Microsoft.Authorization/roleAssignments/9922503a-5f79-5564-b0dd-3f76264bdeaa",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2/providers/Microsoft.Authorization/roleAssignments/a68b17df-7bd0-5275-8898-5a8b05e3a254",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2/providers/Microsoft.Authorization/roleAssignments/c97a50e6-1c9a-5d2a-91c1-789fcccfc108",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Web/serverfarms/fotoa147-demo-plan-eastus2",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Web/sites/fotoa147-demo-func-eastus2",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Web/sites/fotoa147-demo-func-eastus2/basicPublishingCredentialsPolicies/ftp",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Web/sites/fotoa147-demo-func-eastus2/basicPublishingCredentialsPolicies/scm",
+            "changeType": "Create"
+          },
+          {
+            "resourceId": "[extensionResourceId('/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2/blobServices/default/containers/genai-correlation', 'Microsoft.Authorization/roleAssignments', guid('/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Storage/storageAccounts/fotoa147demosteastus2/blobServices/default/containers/genai-correlation', reference('/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Web/sites/fotoa147-demo-func-eastus2', '2023-12-01', 'full').identity.principalId, '/subscriptions/c81fda52-936e-4f14-8af4-951c0dbb92d2/resourceGroups/fotoa-demo-rg147-eastus2/providers/Microsoft.Authorization/roleDefinitions/8d04f679-2412-5e17-a20e-5dcb2099c25a'))]",
+            "changeType": "Unsupported"
+          }
+        ]
+      },
+      "changeCounts": {
+        "Create": 33,
+        "Modify": 0,
+        "Delete": 0,
+        "Unsupported": 1,
+        "Ignore": 0,
+        "NoChange": 0
+      },
+      "completedUtc": "2026-10-20T08:53:36.768765+00:00",
+      "templateSha256": "cb84caf3722cafe17fbf8929b7d6ec5c85aaf1945c54776f34b01edbfd59104f"
+    }
+  ],
+  "localReceiptBindings": {
+    ".azure\\vault-graph-final-28f99ce7-20261020\\1-cli.json": "70f9b9951364beb6c0d1227967f9333937a24e8c41fd1ff5d835802611260c5f",
+    ".azure\\vault-graph-final-28f99ce7-20261020\\2-authentication.json": "9fa37e5d81f5dfc89b7c7bbdb860860988a9a4cbd658f6e4088c83c9a8d2d764",
+    ".azure\\vault-graph-final-28f99ce7-20261020\\3-compile.json": "5f020a72f74b595d206020bdd8cab58ad91537157fc4f4f0354f8487eb1fea55",
+    ".azure\\vault-graph-final-28f99ce7-20261020\\4-validate.json": "9077732ac37faadf5c77317925100b1774c929556b8231f324bf76765a9de738",
+    ".azure\\vault-graph-final-28f99ce7-20261020\\5-what-if.json": "1fd87aec6236b5ec49646a4ce0f53d751cd054100ba8b144bf0d8128841fbf4c"
+  },
+  "freshDefaultCompiledComparison": {
+    "baseline": "a8d5338c3f0f2d8670bf6ab134dee71e8385563e",
+    "capturedUtc": "2026-10-20T08:46:37.432856+00:00",
+    "allOtherCompiledGraphEqual": true,
+    "allPublicOutputsEqual": true,
+    "freshReaderConditionEqual": true,
+    "freshReaderGuidInputsScopeRolePrincipalEqual": true,
+    "compiledTemplateSha256": "21f0bce95eb689cea1398b60988592b7c0aabb9190f77221e8fb16cdc0399d43"
+  },
+  "sourceProfileAndPackageChanged": false,
+  "secureBootstrapAndCallerChanged": false,
+  "mutationExecuted": false,
+  "whatIfCorrelationId": "Not returned by the metadata projection; not fabricated",
+  "finalAdapterSourceBoundInEveryReceipt": true,
+  "priorSuccessfulCurrentGraphAnalysis": "08:44Z run retained unchanged in .azure\\vault-graph-analysis-28f99ce7-20261020-transport2; final fully source-bound run at 08:53Z is authoritative"
+}
