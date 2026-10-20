@@ -296,7 +296,11 @@ az deployment sub what-if --location eastus2 --name issue147-first-allocation-an
 
 Projected receipts: worktree `.azure/bootstrap-provider-{validate,what-if}.json`,
 hashes and source/compiled bindings in the manifest. No full what-if properties
-were emitted or saved. The official pinned workflow was started through
+were emitted or saved. The manifest distinguishes exact Windows-checkout
+CRLF source hashes from independently verified canonical LF Git blob hashes;
+compiled/package/receipt hashes remain exact bytes. A later executor must
+verify the applicable exact binding, never relax a hash guard on a mismatch.
+The official pinned workflow was started through
 **AddValidationSteps only**; its unadapted helper prints raw failures and omits
 explicit subscription on two CLI commands, so it was not run. The safe
 subscription commands above are **partial gate evidence**, not official

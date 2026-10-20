@@ -25,6 +25,14 @@
     ".azure\\bootstrap-provider-validate.json": "465f5893af5effb5a0d59e529c26aeb412ea16338aca7323a8ac44ea0fdbb94f",
     ".azure\\bootstrap-provider-what-if.json": "423962426914cad38c2a7b6c97f432101bc672942ab9d1f3f7517985dfa8f3c6"
   },
+  "hashPolicy": "artifactBindings are exact preparation-checkout/artifact bytes (Windows source CRLF). committedSourceBindings independently pin exact canonical Git blob bytes (LF). Verify the applicable exact-byte binding, never accept a mismatch or relax an execution guard.",
+  "compilerVersion": "0.47.16.16243",
+  "committedSourceBindings": {
+    "infra\\main.issue147-existing-network.parameters.json": "887f053b4b90bb283ebf5328d274c55f9b2e5837dcae211c9aa5cf60b5ba0f99",
+    "infra\\issue147-first-allocation.bicep": "25f06b6488b29142fc3e94a9064b1b83aaab5bd18743e0b2fc5be1e533c5cac6",
+    "infra\\issue147-app-insights-bootstrap.bicep": "99b7cc816d986d5ab509e999e5c63f7265ffba893c215c733d2232956e606438",
+    "infra\\modules\\app-insights-secret.bicep": "c967cbb364bbc39645f993a3fb14a3a366ad68feaa6886686f9961d00a8a9e2e"
+  },
   "functionPackage": {
     "rebuildRequired": false,
     "bytes": 8472610,
