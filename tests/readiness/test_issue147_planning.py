@@ -1,5 +1,6 @@
 """Offline checks of the public pricing workbook, not deployment validation."""
 
+import ast
 import hashlib
 import json
 from decimal import Decimal
@@ -123,8 +124,16 @@ class PlanningEvidenceTests(unittest.TestCase):
             for name, response in evidence["responses"].items():
                 data = (cache / f"price-{name}.json").read_bytes()
                 self.assertEqual(hashlib.sha256(data).hexdigest(), response["sha256"])
-        for doc in ("fresh-foundation-acceptance.md", "issue147-cost-estimate.md", "issue147-workflow-gates.md"):
-            for target in re.findall(r"\[[^]]+\]\(([^)]+)\)", (DOCS / doc).read_text(encoding="utf-8")):
+        for doc in (
+            "fresh-foundation-acceptance.md",
+            "issue147-cost-estimate.md",
+            "issue147-workflow-gates.md",
+            "issue147-private-agent-prerequisites.md",
+        ):
+            content = (DOCS / doc).read_text(encoding="utf-8")
+            for example in re.findall(r"```python\s*\n(.*?)```", content, re.S):
+                ast.parse(example, filename=doc)
+            for target in re.findall(r"\[[^]]+\]\(([^)]+)\)", content):
                 if "://" not in target and not target.startswith("#"):
                     self.assertTrue((DOCS / target.split("#")[0]).exists(), target)
 

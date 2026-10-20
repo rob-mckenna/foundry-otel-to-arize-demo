@@ -1,7 +1,8 @@
 # Fresh modern foundation — readiness and acceptance packet (#147)
 
-**2026-10-19 · QA owner (`squad:qa`) · OFFLINE ACCEPTANCE COMPLETE;
-PROVIDER / PRIVATE RUNTIME / REPEAT DEPLOYMENT / E2E NOT RUN.**
+**2026-10-19 · QA owner (`squad:qa`) · BOUNDED OFFLINE CHECKS PASS;
+TECHNICAL NO-GO / NOT READY FOR APPROVAL.
+PROVIDER / FRESH PRIVATE RUNTIME / REPEAT DEPLOYMENT / E2E NOT RUN.**
 
 This is the bounded readiness slice and same-issue pricing/workflow followup of [#147](https://github.com/rob-mckenna/foundry-otel-to-arize-demo/issues/147),
 not deployment, invocation, spending, grant, or retirement approval. Source baseline:
@@ -38,8 +39,30 @@ plan/receipts remain immutable.
 
 ## 2. One consolidated owner decision packet
 
+### Technical go/no-go — resolve before presenting approval
+
+The integrated [Agent prerequisite assessment](issue147-private-agent-prerequisites.md)
+resolves the runtime contract; it does **not** clear fresh acceptance:
+
+| Boundary | What existing evidence proves | Fresh technical gap / consequence |
+|---|---|---|
+| Source / historical runtime | ARM account/project/model modules pin **2025-09-01**. Historical existing agent version `"1"` is a new Foundry `PromptAgentDefinition`, zero tools, bound to the existing **GlobalStandard capacity 5** deployment. Bounded metadata and prior runtime evidence are not fresh deployment proof. | Fresh Bicep does not publish an agent. The shipped local client remains an offline stub. Fresh publication/readback, immutable runner/dependency lock, validator identity/network and actual usage/correlation evidence are missing. |
+| Exact data plane | `azure-ai-projects==2.0.0`, `azure-identity==1.26.0`, `openai==2.26.0`; `AIProjectClient(api_version="v1").agents.get_version(...)` returns `AgentVersionDetails` / `PromptAgentDefinition`. Invoke HTTPS **POST `<project-endpoint>/openai/v1/responses`** through `project.get_openai_client().responses.create(...)`, with versioned `extra_body.agent_reference` and deployment alias in the definition. Entra scope **`https://ai.azure.com/.default`**, private validator `ManagedIdentityCredential`. | API/SDK selection is **resolved**, not an owner guess or missing research. Full request timeout/budget/once-only intent/error controls and resolved dependency hashes still need a reviewed live runner. Classic threads/runs, account chat completions and hosted `/invoke` are not substitutes. |
+| Privacy / state | Basic supports **private inbound** account access with **Microsoft-managed agent state**. Account PE/PNA Disabled does not establish private outbound service execution, customer-owned state or state residency. Existing metadata is consistent with Basic, not certification of hidden runtime placement. | For fully private outbound/BYO state, current source is **technically incomplete**: Standard needs Storage **and Search and Cosmos**, dedicated agent-subnet injection, supported capability provisioning, dependency PEs/DNS and distinct provisioning/runtime permissions. No no-tool waiver is established. Lead/Infra must resolve the intended privacy target and exact supported contract; a scope change requires explicit accepted review, not silent Basic selection or architecture expansion. |
+| Model / provider | AIServices advertises `OpenAI/gpt-5-mini/2025-08-07/eastus2/DataZoneStandard`, `agentsV2=true`, `responses=true`; quota snapshot is 0/300 Count. | **Capacity 1 remains provider-unproven**: minimum/step/allowedValues null, default 10 is not a minimum. Exact tuple/policy/name validation, allocatable capacity, provisioning and later bounded runtime success remain separate gates; no automatic capacity increase or GlobalStandard fallback. |
+
+**NO-GO:** do not request spending/custody approval for unresolved technical
+work. Source contracts may be reused as an offline foundation; historical v1
+success does not validate a fresh private runtime. Basic/private-inbound is a
+documented option **only**, not an approved downgrade of a fully private target.
+If Standard is required, reconcile its new-runtime provisioning API/roles/state
+and cost graph first. The documented `2026-07-15-preview` capability-settings
+path is not permission to replace the accepted ARM **2025-09-01** pin.
+
 The following are **proposals for explicit approval, not defaults or permission**.
-Do not copy approval=true into a profile until the owner accepts the complete row.
+They are a deferred owner-choice inventory, **not an approval-ready request**.
+Do not copy approval=true into a profile until technical preparation is complete
+and the owner accepts the complete row.
 
 | Choice | Concrete recommendation / evidence | Exact outstanding decision |
 |---|---|---|
@@ -48,7 +71,7 @@ Do not copy approval=true into a profile until the owner accepts the complete ro
 | Residency alternative | GlobalStandard is public-documented and present in metadata, but allows global inference. Geography-based Standard is not listed in this scoped model result. | If US-zone is unacceptable, stop for a newly approved tuple/design; no automatic GlobalStandard fallback. Storage residency, agent-state location and Arize destination processing/retention also need approval. A private endpoint is not a residency control. |
 | Quota | Read-only `eastus2` result: DataZoneStandard gpt-5-mini current **0**, limit **300**, unit **Count**; GlobalStandard current **605**, limit **1000**, unit **Count**. Thus headroom snapshots are 300 / 395 capacity-count units respectively. | Quota discovery is **not missing**; fresh reservation/availability at execution is. Recheck exact selected SKU; require provider acceptance. Do not equate capacity counts to TPM/RPM without the selected model contract, reallocate existing capacity, request an increase or call inference to test quota. |
 | Network / validator | Prefer fresh network ownership to avoid writes to shared DNS/VNet. Propose the example `/24`, PE `/26`, Function `/26` only after network-owner nonoverlap review. Same-region Foundry/VNet, five PEs, seven DNS zones/links; preserve Monitor ingestion/query, LAW→EH and Arize HTTPS egress. | Network owner confirms CIDRs, egress and DNS authority; supplies already-approved private validator identity/path. **No VM start/new VM/VPN/NAT/AMPLS is authorized.** Function integration subnet is not an Agent Service injection subnet. |
-| Private Agent prerequisites | One synthetic text-only Prompt Agent, **no tools**, no evaluation or hosted compute. Do not add Search/Cosmos/ACR/capability hosts in this slice. | Agent + Infra identify exact live SDK/API, agent/version and caller principal, publication/state/recovery requirements. Official standard-private Agent guidance requires BYO Storage/Search/Cosmos and injection; those are absent here. Prove the selected no-tool Prompt Agent path's actual requirements or request scoped architecture approval **before** adding them. Account PE readiness alone cannot pass this gate. |
+| Private Agent prerequisites | One synthetic text-only new Foundry Prompt Agent, **no tools**, no evaluation or hosted compute. Exact v1 Responses API/SDK pins are resolved above and in the [Agent assessment](issue147-private-agent-prerequisites.md). | Lead/Infra resolve the privacy/state target and supported provisioning contract first. Basic private inbound/Microsoft-managed state is not fully private runtime; Standard BYO Storage/Search/Cosmos/injection is absent from source and needs an accepted scoped change if required. Fresh agent/version, consumer/author identities, publication/readback, state/recovery, private validator and immutable runner remain technical gates. No Search/Cosmos/ACR/capability additions are authorized by this packet. |
 | Tracing custody | Stage with `preserveExisting` (no connection PUT); then use the narrow tracing entrypoint with explicitly approved ApiKey association, reviewed sharing/PE fields and version-pinned KV deployment reference. Foundry account local auth remains disabled. | Name responsible secret custodian and deployer; record immutable secret **reference** version, component binding attestation, deployment-enabled vault/private ARM resolution and connection name. A newly created vault does not contain the new component's secret automatically. No plaintext, secret reads, broad grants or network relaxation. |
 | Package custody | Dedicated private `function-packages`; immutable reviewed ZIP name such as `telemetry-<commit>-<sha256>.zip`, package hash/build provenance, Python 3.11/Linux compatible dependencies; system-MI Blob fetch. | Name build/publisher and private uploader principal IDs, approved blob path/hash, Function MI fetch readiness and trigger-sync executor. No SAS, shared keys, raw app-settings export, public SCM bootstrap or overwriting a package URL. Release artifacts are not checked into this doc. |
 | Durable / destination | Fresh `genai-correlation`, explicit `function-transform` consumer and `telemetry` hub, AppDependencies/AppRequests/AppGenAIContent export. Keep `TelemetryTransform` and `DurableGenAIOutbox` disabled until cutover. | Exact workspace UUID, component ARM ID, destination endpoint/project/space identity attestations and KV secret-reference custodians. Telemetry records all ADR-0003 runtime gates, native schema/retention and ledger/index/ACK/outbox readiness before a separately approved enablement. `arizeProjectName` alone does not configure durable scope. |
@@ -56,12 +79,15 @@ Do not copy approval=true into a profile until the owner accepts the complete ro
 | Invocation envelope | Propose **one** live synthetic request, scenario `benefits-deductible-lookup`, new run/correlation IDs, input ≤1,024 tokens, `max_output_tokens=1024` including reasoning, **zero client retries**, no tools/evaluation, one-at-a-time. | Agent confirms API enforces envelope; owner accepts request/token/dollar bounds. No second call on timeout/ambiguous delivery. Poll evidence at most three times over 20 minutes, then stop/reconcile. Limits are proposals, not fabricated usage figures. |
 
 **Consolidated decision packet, not a demand to approve missing discovery:**
-Infra/Agent/Telemetry must finish the technical gates in the linked cost/workflow
-ledgers first; the concurrent Agent prerequisite artifact is deliberately not
-read or integrated in this QA followup. Coordinator then presents scope/model/
-residency, complete spending/lifetime and named custody decisions together.
-Provider/identity/custody gaps are not repaired by broad approval, existing-resource
-reuse or more calls. Execution handoffs remain later and separately authorized.
+Infra/Agent/Telemetry must finish the technical gates in the linked
+Agent/cost/workflow ledgers first. The Agent artifact is now integrated into
+this same-issue packet and PR #151. Provider-only validation/admission unknowns
+are explicitly retained, not recast as owner choices or prerequisites already
+passed. Coordinator can then present actual scope/privacy/model/residency,
+complete spending/lifetime and named custody decisions together, with any
+separately gated provider checks clearly identified. Approval cannot certify
+capacity, private networking or missing implementation. Execution handoffs
+remain later and separately authorized.
 
 ## 3. Full source cost ledger — conditional estimate, not an approved quote
 
@@ -312,7 +338,8 @@ private/runtime/destination readiness gates have signed receipts.
 ## 7. Minimum bounded E2E evidence handoff — NOT EXECUTED
 
 1. Agent supplies a **reviewed, pinned live runner command** for the approved
-   agent/version/API/identity and the §2 one-request envelope. **No repository
+   agent/version/identity, the resolved **v1 Responses** API/three SDK pins above,
+   and the §2 one-request envelope. **No repository
    live command exists today**: `python -m prompt_agent.main --scenarios` is
    explicitly excluded. Do not invent a runnable SDK command or claim this
    packet has cleared the private runtime gate.
@@ -385,7 +412,7 @@ metadata under the issue's own local receipts and link only approved summaries.
 | Provider | Scoped validation + reviewed what-if, policy/quota/unique names | NOT RUN — Infra |
 | Fresh + repeat | Two deployment receipts; identical source/profile/secure versions; IDs/MI/state comparison | NOT RUN — Infra |
 | Private/package | Five PEs/seven zones, two network vantages, MI/KV/package hash/trigger sync | NOT RUN — Infra |
-| Agent/runtime/tracing | Approved live SDK/API command, published version/state/tool prerequisite proof, association readback + actual capture | NOT RUN — Agent + Infra |
+| Agent/runtime/tracing | v1 Responses/SDK contract resolved in Agent assessment; approved immutable live runner, fresh version/state/tool proof, association readback + actual capture | Contract RESOLVED; fresh private/runtime acceptance BLOCKED / NOT RUN — Agent + Infra |
 | Bridge/durable | Explicit consumer, three-table export, exact allowed source/destination, fresh-only cutover, ledger/ACK/quarantine evidence | NOT RUN — Telemetry |
 | E2E independent | Single fresh invocation receipt, source/export/destination identity/parent/correlation/tokens, comparable I/O hash receipts | NOT RUN — Telemetry + QA |
 | Closeout | Exceptions named, cost/lifecycle decision, reusable instructions updated | PENDING — QA; **#147 remains open** |
@@ -402,6 +429,12 @@ display names; corrected to full identity after public evidence showed write/lis
 aliases. No price or usage was silently removed to make the test pass.
 `.\tests\readiness\check-issue147-docs.ps1` also passed: 11 documentation
 PowerShell examples and two pinned official scripts parse; none executed.
+
+Same-issue Agent integration reran both readiness commands: **4 tests PASS**,
+including all four packet documents' local links and both Agent Python examples
+(AST only); **14 PowerShell examples + 2 pinned official scripts parse**, none
+executed. `git diff --check` passed after staging the new Agent document.
+No new provider discovery, model invocation or official workflow step was run.
 
 ## 8. Official public references fetched directly in this slice
 

@@ -2,7 +2,21 @@
 
 **2026-10-19 · preparation evidence only; no official validation completed
 for this fresh foundation.** See [acceptance](fresh-foundation-acceptance.md)
-and [cost ledger](issue147-cost-estimate.md).
+and [cost ledger](issue147-cost-estimate.md), now integrated with the
+[Agent prerequisites](issue147-private-agent-prerequisites.md).
+
+**Technical NO-GO / NOT READY FOR APPROVAL.** The exact runtime is resolved:
+ARM **2025-09-01**; new Prompt Agent definitions/readback **v1**;
+HTTPS Responses **`<project-endpoint>/openai/v1/responses`**;
+`azure-ai-projects==2.0.0`, `azure-identity==1.26.0`, `openai==2.26.0`.
+These historical contract pins are not fresh functional proof. Basic private
+inbound uses Microsoft-managed state and is not fully private outbound/BYO
+runtime. Standard requires the missing Storage/Search/Cosmos, agent-subnet
+injection, capability provisioning and dependency PE/DNS/roles contract.
+Lead/Infra must resolve the privacy/state target and any accepted scope change
+before the plan can be approval-ready. No implicit Basic switch, preview API
+upgrade or architecture expansion is authorized. Later provider checks cannot
+repair an undefined runtime graph.
 
 ## Provenance, not missing-reference escalation
 
@@ -74,12 +88,18 @@ AZCLI recipe shares the same core helper; it is not a shortcut.
 | Requirements and Azure context | Exact subscription supplied by requester; fresh East US 2 scope/model/processing/cost/lifetime are proposals | Owner approves scope/residency, custodians and complete cost/lifetime after technical discovery; no `az account set`/login/default reuse |
 | Full provisioning-limit inventory | Resource inventory and quantities in cost ledger; prior scoped model usage 0/300 is useful but not a whole-foundation capacity check | Infra completes plan-template §6 two-phase inventory/usage/limits for account/project/model, plan/app/storage/EH/KV/VNet/subnets/5 PEs/7 zones/7 links and role/export resources. Invoke `azure-quotas` for that authorized collector; **never retry exhausted unsupported-provider/codes cycles**, register providers, raise quota or claim a reservation |
 | Policy constraints | Source tags/security contracts passed offline | Infra reconciles applicable inherited subscription/RG policies, allowed SKUs/locations, diagnostics and paid security plans using safe projected metadata; no policy exceptions/disablement |
-| Research and security | Public preparation analysis/scan/recipe/architecture/security/research/context/limits/functional refs reconciled | Agent private API/state requirements and Infra publication/custody/network/scale/retention feasibility remain technical gates, not a request for owner to guess |
+| Research and security | Public preparation refs reconciled; Agent assessment resolves historical v1 Responses, exact SDK pins, no-tool semantics, Basic/Standard distinction and advertised model SKU | Privacy/state target and exact supported fresh provisioning contract remain unresolved: Standard's required graph is absent. Fresh publication/readback, immutable runner/lock, author/consumer identities and Infra custody/network/scale/retention feasibility remain technical gates, not owner guesses |
 | Functions composition references | Official selection/composition branches fetched and read | They govern **new generation**. No new template/function/IaC generation is requested. Do not `azd init -t`, regenerate this repository, or add DTS/Search/Cosmos because a generic routing keyword says “durable” |
 | Functional verification before handoff | Existing offline tests prove limited contracts, not private host/API/MI paths | Record applicable local build/test evidence and explicit unavailable private checks; determine whether any remaining check requires separately authorized runtime, never substitute a stub |
 | Approval and handoff | No fresh deployment/spending approval | Only after preparation/approval/functional requirements actually complete, edit issue plan to **Ready for Validation** and invoke `azure-validate` normally again |
 
 Public prose does not fill missing live inventory or functional evidence.
+Capacity 1 for the advertised DataZoneStandard tuple remains provider-unproven
+(minimum/step null, default 10 not a minimum); exact policy/name/tuple validation,
+allocatable capacity, provisioning and later separately bounded runtime success
+are provider/execution gates, not owner attestations. Current-source technical
+preparation must be completed first. Scope/privacy/residency, complete budget/
+retained lifetime and named custody are the later genuine owner choices.
 This document is a discovery/gap record, **not the completed approval-ready
 official plan**. No top-level skill was allowed to access external references.
 The validation invocation stopped at its **Approved-or-later prerequisite**;

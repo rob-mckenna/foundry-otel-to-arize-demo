@@ -2,7 +2,12 @@ $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 $docs = Join-Path $root 'docs\current-state'
 $count = 0
-foreach ($name in @('fresh-foundation-acceptance.md', 'issue147-cost-estimate.md', 'issue147-workflow-gates.md')) {
+foreach ($name in @(
+    'fresh-foundation-acceptance.md',
+    'issue147-cost-estimate.md',
+    'issue147-workflow-gates.md',
+    'issue147-private-agent-prerequisites.md'
+)) {
     $content = Get-Content (Join-Path $docs $name) -Raw
     foreach ($match in [regex]::Matches($content, '(?s)```powershell\s*\r?\n(.*?)```')) {
         $tokens = $null

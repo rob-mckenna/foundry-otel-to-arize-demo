@@ -9,7 +9,18 @@ It prices the **entire existing source foundation**, not a new architecture:
 durable storage. Search, Cosmos DB, NAT, VM, private resolver, AMPLS, ACR, hosted
 agent compute and Durable Task Scheduler are **not added**. If the eventual Agent
 contract requires any of them, this scenario is inapplicable, not permission to
-expand it. Runtime-worker findings are integrated separately by the coordinator.
+expand it. The [integrated Agent assessment](issue147-private-agent-prerequisites.md)
+resolves the historical v1 Responses contract and SDK pins, not fresh readiness.
+
+**Technical NO-GO / NOT READY FOR APPROVAL:** the ledger prices the present
+source graph, not a proven fully private Agent runtime. Basic can use private
+inbound with Microsoft-managed state; that is not Standard private outbound/BYO
+state. If fully private runtime is required, Standard's Storage/Search/Cosmos,
+dedicated agent-subnet injection, capability provisioning and dependency
+PE/DNS/permissions are missing and **not priced here**. Resolve the supported
+contract and accepted scope first, then replace the applicable resource/meter
+inventory; do not silently select Basic or label those missing services a
+zero-cost R addend. No architecture expansion is authorized.
 
 ## Evidence and reproducibility
 
@@ -41,8 +52,10 @@ Public prices are not subscription entitlements. Free allowances, trials,
 discounts, reservations, negotiated minimums, tax, FX and support contracts
 are not assumed. Where a free tier exists, use the positive marginal rate
 conservatively; do not claim another environment's free allowance.
-Both commands **passed** on 2026-10-19: four calculation/provenance/link tests,
-11 PowerShell examples and two pinned official scripts parsed, none executed.
+Both commands **passed** again after same-issue Agent integration: four
+calculation/provenance/link tests (including both Agent Python examples parsed
+without execution), 14 PowerShell examples and two pinned official scripts
+parsed, none executed.
 
 ## Explicit scenario, quantities and clock
 
@@ -158,7 +171,7 @@ Subtotals retain precision in the JSON; USD figures here are display-rounded.
 | Defender for Resource Manager allowance | `1 node × 24 × 0.0069`; conservative allocation, may be shared rather than incremental | 0.165600 |
 | Governance/security services not represented by above plan | Policy/IAM management has no source-defined paid extension; **actual inherited Defender/CSPM/AI protection/diagnostic policies, partner plans and minimum billing need existing sanitized plan/entitlement attestation** | **G: unresolved** |
 | Arize destination ingestion/storage/retention/license/minimum | No public per-unit entitlement established for the destination workspace/contract. No paid API or invoice requested | **L: unresolved** |
-| Agent runtime/state, private runner, publisher/build platform, external access/support/license commitments | Existing source is not proof of a runnable Agent contract; no new compute/data service added or old VM started | **R: unresolved** |
+| Agent runtime/state, private runner, publisher/build platform, external access/support/license commitments | Historical v1 Responses/SDK contract is resolved, but fresh publication/private validation/immutable runner are not. Basic state ownership/residency needs explicit treatment; Standard would invalidate this inventory and require accepted redesign/repricing, not merely an assumed R value. No new compute/data service added or old VM started | **R: unresolved** |
 
 ### Conditional totals, not an approval request for missing discovery
 
@@ -243,3 +256,12 @@ publication prerequisites, using permitted metadata or documented evidence.
 Only contract/invoice/license entitlements remain owner/provider-only facts.
 The owner then decides complete scope, spending envelope and retained lifetime;
 approval does not substitute for technical discovery or authorize teardown.
+
+The precise remaining model-provider gate is acceptance of
+`OpenAI/gpt-5-mini/2025-08-07/eastus2/DataZoneStandard/capacity 1/NoAutoUpgrade`
+under the exact fresh subscription/account/policies, then allocatable capacity,
+provisioning and separately approved runtime admission. Catalog support and
+0/300 Count headroom do not prove that gate. Null minimum/step and default 10
+are not authority to increase capacity. Owner choices are the eventual supported
+privacy/residency scope, complete spending/retained lifetime and custodians;
+they cannot replace missing technical implementation or provider acceptance.
