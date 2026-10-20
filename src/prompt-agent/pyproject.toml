@@ -25,6 +25,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+foundry = [
+    "azure-ai-projects==2.0.0",
+    "azure-identity==1.26.0",
+    "openai==2.26.0",
+    "azure-core[aio]==1.41.0",
+]
 # Azure Monitor exporter is optional so the scaffold still builds/runs/tests
 # in sandboxes without Azure credentials or network access (see #26).
 azure = [
@@ -36,6 +42,7 @@ test = [
 
 [project.scripts]
 prompt-agent = "prompt_agent.main:main"
+foundry-responses-once = "prompt_agent.foundry_responses:main"
 
 [tool.setuptools.packages.find]
 include = ["prompt_agent*"]

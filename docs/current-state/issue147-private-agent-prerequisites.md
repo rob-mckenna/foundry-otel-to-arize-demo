@@ -1,5 +1,17 @@
 # #147: no-tool Prompt Agent private-runtime prerequisites
 
+**2026-10-20 implementation update (offline only):** the repository now includes
+the separate runnable `python -m prompt_agent.foundry_responses` caller and
+focused mocked tests under `src/prompt-agent`. See its
+[run command, once-only ledger and constraints](../../src/prompt-agent/README.md#separate-no-tool-foundry-responses-caller-147).
+It implements the settled versioned no-tool Responses envelope below, explicit
+live opt-in, managed-identity-only auth, zero retries, finite timeouts, exclusive
+durable intent/receipt guards and actual returned usage validation. The existing
+offline CLI/stub is unchanged. Mocks and a non-authenticating dry run are **not**
+fresh native Agent/private/E2E acceptance, full dependency artifact custody or
+permission to submit. No live request/authentication ran in this implementation
+checkpoint. QA retains #147 OPEN and PR #151 unmerged.
+
 **2026-10-20 execution-direction update:** owner's proceed receipt selects
 §1a **A**, Basic private CLIENT ingress with Microsoft-managed runtime/state,
 and the exact DataZoneStandard model tuple below. B/Standard/Search/Cosmos is
