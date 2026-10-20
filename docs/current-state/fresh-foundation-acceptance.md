@@ -3,7 +3,7 @@
 **2026-10-19 · QA owner (`squad:qa`) · OFFLINE ACCEPTANCE COMPLETE;
 PROVIDER / PRIVATE RUNTIME / REPEAT DEPLOYMENT / E2E NOT RUN.**
 
-This is the bounded first slice of [#147](https://github.com/rob-mckenna/foundry-otel-to-arize-demo/issues/147),
+This is the bounded readiness slice and same-issue pricing/workflow followup of [#147](https://github.com/rob-mckenna/foundry-otel-to-arize-demo/issues/147),
 not deployment, invocation, spending, grant, or retirement approval. Source baseline:
 `main` `2219075`, including #146/#145 and #149. [ADR-0004](../adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md)
 and [infra/README](../../infra/README.md) define the supported graph:
@@ -28,10 +28,13 @@ Earlier #143/#144 receipts do not validate a fresh environment or exactly-once d
 The issue-specific worktree `.azure/deployment-plan.md` was created **before**
 refreshing `azure-prepare`. It remains preparation-only, not Ready for Validation.
 The refreshed skill's reference tree is outside the repository and was **not
-read**. Repo-contained official prepare/validate/deploy reference material must
-be deliberately supplied/reconciled by the coordinator before that workflow can
-finish. Public Learn pages are useful evidence, not replacement skill execution.
-The closed root plan/receipts remain immutable.
+read**. The followup reconciled existing official references and fetched only
+needed public official equivalents, pinned and hashed in the repository.
+[Exact workflow gates](issue147-workflow-gates.md) replace the earlier
+“missing/unreconciled references” blocker: public references are now available,
+but approval, technical prerequisites and official workflow execution are not.
+Public prose/offline tests do not confer `Validated`. The closed root
+plan/receipts remain immutable.
 
 ## 2. One consolidated owner decision packet
 
@@ -49,17 +52,42 @@ Do not copy approval=true into a profile until the owner accepts the complete ro
 | Tracing custody | Stage with `preserveExisting` (no connection PUT); then use the narrow tracing entrypoint with explicitly approved ApiKey association, reviewed sharing/PE fields and version-pinned KV deployment reference. Foundry account local auth remains disabled. | Name responsible secret custodian and deployer; record immutable secret **reference** version, component binding attestation, deployment-enabled vault/private ARM resolution and connection name. A newly created vault does not contain the new component's secret automatically. No plaintext, secret reads, broad grants or network relaxation. |
 | Package custody | Dedicated private `function-packages`; immutable reviewed ZIP name such as `telemetry-<commit>-<sha256>.zip`, package hash/build provenance, Python 3.11/Linux compatible dependencies; system-MI Blob fetch. | Name build/publisher and private uploader principal IDs, approved blob path/hash, Function MI fetch readiness and trigger-sync executor. No SAS, shared keys, raw app-settings export, public SCM bootstrap or overwriting a package URL. Release artifacts are not checked into this doc. |
 | Durable / destination | Fresh `genai-correlation`, explicit `function-transform` consumer and `telemetry` hub, AppDependencies/AppRequests/AppGenAIContent export. Keep `TelemetryTransform` and `DurableGenAIOutbox` disabled until cutover. | Exact workspace UUID, component ARM ID, destination endpoint/project/space identity attestations and KV secret-reference custodians. Telemetry records all ADR-0003 runtime gates, native schema/retention and ledger/index/ACK/outbox readiness before a separately approved enablement. `arizeProjectName` alone does not configure durable scope. |
-| Cost / lifetime | EP1 one-instance **floor**, five PEs, seven zones, no new private resolver. Propose **24-hour review window**, total incremental budget **USD 25**, including an inference sub-budget **USD 1**, only if an itemized current quote fits. See §3. | Owner approves numeric total and duration after full quote (or replaces numbers), spend/alert owner and next explicit lifecycle decision. A budget alert is not a hard cap. Stopping invocations does not stop EP1/PE charges. No automatic teardown or reuse of a prior allowance. |
+| Cost / lifetime | Proposed **24-hour review window**, EP1 floor 1 but maximum **unset**, five PEs/seven zones, full source cost ledger in §3. Conditional priced subtotal **$15.504880 at N=1**, **$116.919280 at N=20**, **plus unresolved security/Arize/runtime/overages/tail**. Neither is an all-inclusive bound. | **USD25 is not approved and cannot be called a cap**. Infra establishes scale/retention/inherited-meter applicability; Agent establishes runtime prerequisites; only contract/license facts require owner/provider attestation. Then owner chooses complete budget, lifetime/retained-state disposition and spend/alert custodian. No automatic teardown or reuse of an earlier allowance. |
 | Invocation envelope | Propose **one** live synthetic request, scenario `benefits-deductible-lookup`, new run/correlation IDs, input ≤1,024 tokens, `max_output_tokens=1024` including reasoning, **zero client retries**, no tools/evaluation, one-at-a-time. | Agent confirms API enforces envelope; owner accepts request/token/dollar bounds. No second call on timeout/ambiguous delivery. Poll evidence at most three times over 20 minutes, then stop/reconcile. Limits are proposals, not fabricated usage figures. |
 
-**Coordinator's single question:** approve or replace the exact fresh scope/model/
-residency/budget choices above, and supply named executor/network/private-validator/
-secret/package/destination custodians plus the pinned live Agent API prerequisites.
+**Consolidated decision packet, not a demand to approve missing discovery:**
+Infra/Agent/Telemetry must finish the technical gates in the linked cost/workflow
+ledgers first; the concurrent Agent prerequisite artifact is deliberately not
+read or integrated in this QA followup. Coordinator then presents scope/model/
+residency, complete spending/lifetime and named custody decisions together.
 Provider/identity/custody gaps are not repaired by broad approval, existing-resource
-reuse or more calls. Infra deployment, Agent private runtime and Telemetry
-independent reconciliation remain **later handoffs**; none was spawned here.
+reuse or more calls. Execution handoffs remain later and separately authorized.
 
-## 3. Public cost basis — not a complete quote
+## 3. Full source cost ledger — conditional estimate, not an approved quote
+
+The followup [itemized estimate](issue147-cost-estimate.md) accounts for every
+source resource and potential meter: EP1 min/max/buffers, EH TU/ingress/retention,
+Blob/Queue/Table capacity/operations and retained state, PE/DNS/network/egress,
+LAW ingestion/retention/export, KV/keyless package custody, DataZone model tokens,
+Defender/malware/governance and Arize/external-license unknowns.
+The [machine-readable evidence](issue147-planning-evidence.json) preserves
+39 selected public meters from six complete response sets with source URLs,
+effective dates, retrieval times, immutable workflow commit and file hashes.
+
+For the explicitly conditional 24h quantities, priced subtotals are
+**$15.504880 (N=1), $116.919280 (N=20)**; N=100 sensitivity is $543.927280.
+Full cost additionally includes unresolved security/entitlements **G**, Arize/
+license **L**, Agent/private-runner/build/state **R**, overages and retained
+lifetime. No unconditional all-inclusive ceiling exists. Twenty-instance
+maximum is a scenario condition, not source configuration or provider proof.
+Thirty additional idle retained days illustrate **$235.0028** more under stated
+security/capacity/rounding/connection assumptions, before continuing usage and
+those unresolved addends.
+
+**USD25 is an unapproved historical proposal, not an approved cap.
+$185.93/month below remains historical partial-baseline math, not the quote.**
+
+### Earlier public partial baseline (superseded for decision-making)
 
 Direct official [Retail Prices API](https://prices.azure.com/api/retail/prices)
 read 2026-10-19 (USD retail, no customer pricing or secrets):
@@ -352,8 +380,8 @@ metadata under the issue's own local receipts and link only approved summaries.
 | Gate | Required persistent evidence | Current result / next owner |
 |---|---|---|
 | Offline | §4 exact commands/results, baseline commit, tool versions | PASS as bounded above — QA |
-| Decisions | Completed §2 choices, cost quote and custody identities | PENDING — coordinator/resource owner |
-| Official workflow | Repo-contained official references; approved plan → validate → deploy receipts | BLOCKED at preparation — coordinator/Infra |
+| Decisions | Completed §2 choices, conditional cost technical gates/contract addends and custody identities | Technical discovery first; complete spending/lifetime/custody decision afterward — Infra/Agent/coordinator/resource owner |
+| Official workflow | Public refs reconciled/pinned; approved plan → official validate → separately authorized deploy receipts | References RECONCILED; execution BLOCKED at unapproved planning prerequisites/helper compatibility — Infra |
 | Provider | Scoped validation + reviewed what-if, policy/quota/unique names | NOT RUN — Infra |
 | Fresh + repeat | Two deployment receipts; identical source/profile/secure versions; IDs/MI/state comparison | NOT RUN — Infra |
 | Private/package | Five PEs/seven zones, two network vantages, MI/KV/package hash/trigger sync | NOT RUN — Infra |
@@ -361,6 +389,19 @@ metadata under the issue's own local receipts and link only approved summaries.
 | Bridge/durable | Explicit consumer, three-table export, exact allowed source/destination, fresh-only cutover, ledger/ACK/quarantine evidence | NOT RUN — Telemetry |
 | E2E independent | Single fresh invocation receipt, source/export/destination identity/parent/correlation/tokens, comparable I/O hash receipts | NOT RUN — Telemetry + QA |
 | Closeout | Exceptions named, cost/lifecycle decision, reusable instructions updated | PENDING — QA; **#147 remains open** |
+
+Followup gate clarification: official public references are **RECONCILED**, not
+blocked on external profile access. Official prepare/validate **execution still
+stops at unapproved planning prerequisites**. The [workflow ledger](issue147-workflow-gates.md)
+lists full inventory/quota/policy, build/static-role/proof and explicit-subscription
+helper compatibility gates; prior retirement completion is not fresh acceptance.
+Cost math/provenance/link regression checks passed via
+`python -B -m unittest discover -s tests\readiness -p 'test_issue147_planning.py' -v`
+(4 tests). Initial test incorrectly assumed meter IDs uniquely identify operation
+display names; corrected to full identity after public evidence showed write/list
+aliases. No price or usage was silently removed to make the test pass.
+`.\tests\readiness\check-issue147-docs.ps1` also passed: 11 documentation
+PowerShell examples and two pinned official scripts parse; none executed.
 
 ## 8. Official public references fetched directly in this slice
 

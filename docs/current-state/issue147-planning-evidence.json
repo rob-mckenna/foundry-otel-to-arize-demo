@@ -1,0 +1,1105 @@
+{
+  "status": "CONDITIONAL_PLANNING_ONLY_NOT_APPROVED_NOT_QUOTE",
+  "pricingDate": "2026-10-19",
+  "currency": "USD",
+  "windowHours": 24,
+  "capacityMonthDays": 28,
+  "dnsChargeDaysReserved": 2,
+  "allInclusiveTotal": null,
+  "unresolvedAddends": [
+    "G: inherited security/governance plan applicability and paid extras",
+    "L: Arize/external license and retention/minimum terms",
+    "R: Agent/private validator/build/publisher runtime and state prerequisites",
+    "overages/time tail/tax/contract effects"
+  ],
+  "sourceBaseline": "e1f482fd36953e810df2c2cf60988a1b7be06613",
+  "responses": {
+    "functions": {
+      "source": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview&currencyCode=USD&$filter=serviceName%20eq%20%27Functions%27%20and%20armRegionName%20eq%20%27eastus2%27%20and%20priceType%20eq%20%27Consumption%27",
+      "retrievedUtc": "2026-10-20T01:36:25.6794785Z",
+      "pageCount": 1,
+      "complete": true,
+      "sha256": "9108c484f1fc0b84a24a3ae5b9950facc3e895433fd9a40f49d096bd5588ad19",
+      "itemCount": 13
+    },
+    "eventhub": {
+      "source": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview&currencyCode=USD&$filter=serviceName%20eq%20%27Event%20Hubs%27%20and%20armRegionName%20eq%20%27eastus2%27%20and%20priceType%20eq%20%27Consumption%27",
+      "retrievedUtc": "2026-10-20T01:36:26.3872443Z",
+      "pageCount": 1,
+      "complete": true,
+      "sha256": "76ff3790efa27d4a0fdc7f1d2905693bbf9913db1a2b8a7e9dc70bfdb7c848d1",
+      "itemCount": 11
+    },
+    "supporting": {
+      "source": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview&currencyCode=USD&$filter=armRegionName%20eq%20%27eastus2%27%20and%20priceType%20eq%20%27Consumption%27%20and%20%28serviceName%20eq%20%27Storage%27%20or%20serviceName%20eq%20%27Azure%20Monitor%27%20or%20serviceName%20eq%20%27Log%20Analytics%27%20or%20serviceName%20eq%20%27Key%20Vault%27%20or%20serviceName%20eq%20%27Microsoft%20Defender%20for%20Cloud%27%29",
+      "retrievedUtc": "2026-10-20T01:37:59.9754708Z",
+      "pageCount": 2,
+      "complete": true,
+      "sha256": "678a707c1dcf85231df926e22fea878070048b4fa7edfe316daa468f9a4ad141",
+      "itemCount": 1782
+    },
+    "network": {
+      "source": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview&currencyCode=USD&$filter=priceType%20eq%20%27Consumption%27%20and%20%28serviceName%20eq%20%27Azure%20DNS%27%20or%20%28serviceName%20eq%20%27Virtual%20Network%27%20and%20contains%28productName%2C%27Private%20Link%27%29%29%20or%20%28serviceName%20eq%20%27Bandwidth%27%20and%20%28armRegionName%20eq%20%27eastus2%27%20or%20armRegionName%20eq%20%27Zone%201%27%20or%20armRegionName%20eq%20%27%27%29%29%20or%20serviceName%20eq%20%27Azure%20Policy%27%29",
+      "retrievedUtc": "2026-10-20T01:38:57.5847690Z",
+      "pageCount": 1,
+      "complete": true,
+      "sha256": "cb97ad8eef1cf3ffcb1302e2d2cc6905385a21ef954226365409e87fb1659a3b",
+      "itemCount": 167
+    },
+    "model": {
+      "source": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview&currencyCode=USD&$filter=priceType%20eq%20%27Consumption%27%20and%20armRegionName%20eq%20%27eastus2%27%20and%20contains%28productName%2C%27OpenAI%27%29%20and%20%28contains%28meterName%2C%275-mini%27%29%20or%20contains%28meterName%2C%275%20mini%27%29%20or%20contains%28meterName%2C%275%20Mini%27%29%29",
+      "retrievedUtc": "2026-10-20T01:39:44.4275143Z",
+      "pageCount": 1,
+      "complete": true,
+      "sha256": "879244456b3a02a3021e28a59222e8d5c6fab18ab82aa5a1df500dfad5d30e0e",
+      "itemCount": 18
+    },
+    "connections": {
+      "source": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview&currencyCode=USD&$filter=priceType%20eq%20%27Consumption%27%20and%20serviceName%20eq%20%27Service%20Bus%27%20and%20armRegionName%20eq%20%27eastus2%27%20and%20contains%28meterName%2C%27Connection%27%29",
+      "retrievedUtc": "2026-10-20T01:50:49.4676413Z",
+      "pageCount": 1,
+      "complete": true,
+      "sha256": "7322bb681d811531f8113061afcd09f2cd48b13f400ce1107bb142cff0d46578",
+      "itemCount": 7
+    }
+  },
+  "meters": {
+    "ep1_core": {
+      "response": "functions",
+      "serviceName": "Functions",
+      "productName": "Premium Functions",
+      "skuName": "Premium",
+      "armRegionName": "eastus2",
+      "meterName": "Premium vCPU Duration",
+      "meterId": "4c3f1c09-11cc-44b2-b5a6-4f8b1770b353",
+      "retailPrice": 0.16,
+      "unitOfMeasure": "1 Hour",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2019-11-11T00:00:00Z",
+      "type": "Consumption"
+    },
+    "ep1_memory": {
+      "response": "functions",
+      "serviceName": "Functions",
+      "productName": "Premium Functions",
+      "skuName": "Premium",
+      "armRegionName": "eastus2",
+      "meterName": "Premium Memory Duration",
+      "meterId": "289b982a-33f5-4bae-b62f-50d76c5cf954",
+      "retailPrice": 0.0114,
+      "unitOfMeasure": "1 GiB Hour",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2019-11-11T00:00:00Z",
+      "type": "Consumption"
+    },
+    "eh_tu": {
+      "response": "eventhub",
+      "serviceName": "Event Hubs",
+      "productName": "Event Hubs",
+      "skuName": "Standard",
+      "armRegionName": "eastus2",
+      "meterName": "Standard Throughput Unit",
+      "meterId": "62d94a65-9300-48a6-8c15-0e70fc41eb44",
+      "retailPrice": 0.03,
+      "unitOfMeasure": "1 Hour",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2014-12-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "eh_ingress": {
+      "response": "eventhub",
+      "serviceName": "Event Hubs",
+      "productName": "Event Hubs",
+      "skuName": "Standard",
+      "armRegionName": "eastus2",
+      "meterName": "Standard Ingress Events",
+      "meterId": "d0a685ee-f093-4c5c-ba76-3ec342a75de7",
+      "retailPrice": 0.028,
+      "unitOfMeasure": "1M",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2014-12-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "blob_capacity": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "General Block Blob v2",
+      "skuName": "Hot LRS",
+      "armRegionName": "eastus2",
+      "meterName": "Hot LRS Data Stored",
+      "meterId": "10b97fb2-5db4-4ad2-a4e0-69b858d6b52d",
+      "retailPrice": 0.0184,
+      "unitOfMeasure": "1 GB/Month",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2017-02-03T00:00:00Z",
+      "type": "Consumption"
+    },
+    "blob_write": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "General Block Blob v2",
+      "skuName": "Hot LRS",
+      "armRegionName": "eastus2",
+      "meterName": "Hot LRS Write Operations",
+      "meterId": "3d7aa86c-0e9d-4139-b59f-cc5bad92b873",
+      "retailPrice": 0.05,
+      "unitOfMeasure": "10K",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2016-05-09T00:00:00Z",
+      "type": "Consumption"
+    },
+    "blob_list": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "General Block Blob v2",
+      "skuName": "Hot LRS",
+      "armRegionName": "eastus2",
+      "meterName": "LRS List and Create Container Operations",
+      "meterId": "3d7aa86c-0e9d-4139-b59f-cc5bad92b873",
+      "retailPrice": 0.05,
+      "unitOfMeasure": "10K",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2016-05-09T00:00:00Z",
+      "type": "Consumption"
+    },
+    "blob_read": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "General Block Blob v2",
+      "skuName": "Hot LRS",
+      "armRegionName": "eastus2",
+      "meterName": "Hot Read Operations",
+      "meterId": "c12cb4fa-c6cf-4972-98c0-eb65115d669d",
+      "retailPrice": 0.004,
+      "unitOfMeasure": "10K",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2016-05-09T00:00:00Z",
+      "type": "Consumption"
+    },
+    "blob_other": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "General Block Blob v2",
+      "skuName": "Hot LRS",
+      "armRegionName": "eastus2",
+      "meterName": "All Other Operations",
+      "meterId": "d80790e5-eec3-42e4-a16c-2c8a4037c7dc",
+      "retailPrice": 0.004,
+      "unitOfMeasure": "10K",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2017-10-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "queue_capacity": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "Queues v2",
+      "skuName": "Standard LRS",
+      "armRegionName": "eastus2",
+      "meterName": "LRS Data Stored",
+      "meterId": "d6b6271c-3113-44a9-9d62-b2da937da902",
+      "retailPrice": 0.045,
+      "unitOfMeasure": "1 GB/Month",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2017-11-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "queue_class1": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "Queues v2",
+      "skuName": "Standard LRS",
+      "armRegionName": "eastus2",
+      "meterName": "LRS Class 1 Operations",
+      "meterId": "3d9656a5-22b8-424c-95f1-bff7afa0814e",
+      "retailPrice": 0.004,
+      "unitOfMeasure": "10K",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2017-11-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "queue_class2": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "Queues v2",
+      "skuName": "Standard LRS",
+      "armRegionName": "eastus2",
+      "meterName": "Class 2 Operations",
+      "meterId": "fccafa8b-3887-4345-9c8b-f0d6a5b4c5fc",
+      "retailPrice": 0.004,
+      "unitOfMeasure": "10K",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2017-11-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "queue_io1": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "Queues v2",
+      "skuName": "Standard LRS",
+      "armRegionName": "eastus2",
+      "meterName": "LRS Class 1 Additional IO",
+      "meterId": "b0b874fc-0225-4d12-830f-e2c1913bd9c3",
+      "retailPrice": 0.004,
+      "unitOfMeasure": "10K",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2018-01-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "queue_io2": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "Queues v2",
+      "skuName": "Standard LRS",
+      "armRegionName": "eastus2",
+      "meterName": "LRS Class 2 Additional IO",
+      "meterId": "e49623ca-0736-4fd4-991a-bf05d40f03cf",
+      "retailPrice": 0.004,
+      "unitOfMeasure": "10K",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2018-01-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "table_capacity": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "Tables",
+      "skuName": "Standard LRS",
+      "armRegionName": "eastus2",
+      "meterName": "LRS Data Stored",
+      "meterId": "3f2b1e1c-c886-4ec6-ad6f-dd0ef38819c9",
+      "retailPrice": 0.045,
+      "unitOfMeasure": "1 GB/Month",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2019-06-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "table_read": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "Tables",
+      "skuName": "Standard LRS",
+      "armRegionName": "eastus2",
+      "meterName": "Read Operations",
+      "meterId": "12da282f-7e96-49e2-983a-9a65da2a4866",
+      "retailPrice": 0.00036,
+      "unitOfMeasure": "10K",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2016-04-11T00:00:00Z",
+      "type": "Consumption"
+    },
+    "table_write": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "Tables",
+      "skuName": "Standard LRS",
+      "armRegionName": "eastus2",
+      "meterName": "Write Operations",
+      "meterId": "9cb0bde8-bc0d-468c-8423-a25fe06779d3",
+      "retailPrice": 0.00036,
+      "unitOfMeasure": "10K",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2016-04-11T00:00:00Z",
+      "type": "Consumption"
+    },
+    "table_list": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "Tables",
+      "skuName": "Standard LRS",
+      "armRegionName": "eastus2",
+      "meterName": "List Operations",
+      "meterId": "0cc3ce8d-5848-5cc3-a8ff-91ef6448e1eb",
+      "retailPrice": 0.00036,
+      "unitOfMeasure": "10K",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2016-04-11T00:00:00Z",
+      "type": "Consumption"
+    },
+    "table_delete": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "Tables",
+      "skuName": "Standard LRS",
+      "armRegionName": "eastus2",
+      "meterName": "Delete Operations",
+      "meterId": "e3a600a6-5a85-4679-9721-1c0d192ed142",
+      "retailPrice": 0.00036,
+      "unitOfMeasure": "10K",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2016-04-11T00:00:00Z",
+      "type": "Consumption"
+    },
+    "table_scan": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "Tables",
+      "skuName": "Standard LRS",
+      "armRegionName": "eastus2",
+      "meterName": "Scan Operations",
+      "meterId": "9a56b4f4-1d78-416e-a19b-815490ad7910",
+      "retailPrice": 0.00036,
+      "unitOfMeasure": "10K",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2016-04-11T00:00:00Z",
+      "type": "Consumption"
+    },
+    "table_batch_write": {
+      "response": "supporting",
+      "serviceName": "Storage",
+      "productName": "Tables",
+      "skuName": "Standard LRS",
+      "armRegionName": "eastus2",
+      "meterName": "Batch Write Operations",
+      "meterId": "b9e5e77c-a0b3-4a2c-9b8b-57fa54f31c52",
+      "retailPrice": 0.00036,
+      "unitOfMeasure": "10K",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2016-04-11T00:00:00Z",
+      "type": "Consumption"
+    },
+    "pe_hours": {
+      "response": "network",
+      "serviceName": "Virtual Network",
+      "productName": "Virtual Network Private Link",
+      "skuName": "Standard",
+      "armRegionName": "Global",
+      "meterName": "Standard Private Endpoint",
+      "meterId": "e6ab7238-e433-4fe0-a2b2-2b2564df2cdb",
+      "retailPrice": 0.01,
+      "unitOfMeasure": "1 Hour",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2020-02-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "pe_ingress": {
+      "response": "network",
+      "serviceName": "Virtual Network",
+      "productName": "Virtual Network Private Link",
+      "skuName": "Standard",
+      "armRegionName": "Global",
+      "meterName": "Standard Data Processed - Ingress",
+      "meterId": "10caa28b-6479-4852-9eb7-610870cb6417",
+      "retailPrice": 0.01,
+      "unitOfMeasure": "1 GB",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2021-11-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "pe_egress": {
+      "response": "network",
+      "serviceName": "Virtual Network",
+      "productName": "Virtual Network Private Link",
+      "skuName": "Standard",
+      "armRegionName": "Global",
+      "meterName": "Standard Data Processed - Egress",
+      "meterId": "e7f162f6-7cb8-4cea-ad4f-12cdb5dda25b",
+      "retailPrice": 0.01,
+      "unitOfMeasure": "1 GB",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2021-11-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "dns_zones": {
+      "response": "network",
+      "serviceName": "Azure DNS",
+      "productName": "Azure DNS",
+      "skuName": "Private",
+      "armRegionName": "",
+      "meterName": "Private Zone",
+      "meterId": "0b608a26-f611-4232-8192-ce81b6b57194",
+      "retailPrice": 0.5,
+      "unitOfMeasure": "1",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2019-12-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "dns_queries": {
+      "response": "network",
+      "serviceName": "Azure DNS",
+      "productName": "Azure DNS",
+      "skuName": "Private",
+      "armRegionName": "",
+      "meterName": "Private Queries",
+      "meterId": "46cff9cb-4b15-4af0-bf41-25143827fef8",
+      "retailPrice": 0.4,
+      "unitOfMeasure": "1M",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2019-12-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "internet_egress": {
+      "response": "network",
+      "serviceName": "Bandwidth",
+      "productName": "Rtn Preference: MGN",
+      "skuName": "Standard",
+      "armRegionName": "eastus2",
+      "meterName": "Standard Data Transfer Out",
+      "meterId": "9995d93a-7d35-4d3f-9c69-7a7fea447ef4",
+      "retailPrice": 0.087,
+      "unitOfMeasure": "1 GB",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 100.0,
+      "effectiveStartDate": "2022-05-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "interregion": {
+      "response": "network",
+      "serviceName": "Bandwidth",
+      "productName": "Rtn Preference: MGN",
+      "skuName": "Standard",
+      "armRegionName": "eastus2",
+      "meterName": "Standard Inter-Region Data Transfer",
+      "meterId": "1c635a85-6fa3-5044-af1c-5ddc1e3e7720",
+      "retailPrice": 0.02,
+      "unitOfMeasure": "1 GB",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2018-02-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "analytics_ingest": {
+      "response": "supporting",
+      "serviceName": "Log Analytics",
+      "productName": "Log Analytics",
+      "skuName": "Analytics Logs",
+      "armRegionName": "eastus2",
+      "meterName": "Analytics Logs Data Ingestion",
+      "meterId": "ec00a25a-ab14-4b7b-a94f-66581f123295",
+      "retailPrice": 2.76,
+      "unitOfMeasure": "1 GB",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 5.0,
+      "effectiveStartDate": "2018-02-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "analytics_export": {
+      "response": "supporting",
+      "serviceName": "Azure Monitor",
+      "productName": "Azure Monitor",
+      "skuName": "Log Analytics data export",
+      "armRegionName": "eastus2",
+      "meterName": "Log Analytics data export Data Exported",
+      "meterId": "265db5f4-5cae-5c66-831c-a96973f7c1cd",
+      "retailPrice": 0.1,
+      "unitOfMeasure": "1 GB",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2022-10-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "kv_ops": {
+      "response": "supporting",
+      "serviceName": "Key Vault",
+      "productName": "Key Vault",
+      "skuName": "Standard",
+      "armRegionName": "eastus2",
+      "meterName": "Operations",
+      "meterId": "0f824807-2376-435c-95c9-f992b67a07b0",
+      "retailPrice": 0.03,
+      "unitOfMeasure": "10K",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2015-08-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "model_input": {
+      "response": "model",
+      "serviceName": "Foundry Models",
+      "productName": "Azure OpenAI GPT5",
+      "skuName": "GPT 5 Mini Inpt DZone",
+      "armRegionName": "eastus2",
+      "meterName": "GPT 5 Mini Inpt DZone 1M Tokens",
+      "meterId": "98f1d5fa-d072-5c83-b642-14ee0dd9a28a",
+      "retailPrice": 0.275,
+      "unitOfMeasure": "1M",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2025-08-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "model_output": {
+      "response": "model",
+      "serviceName": "Foundry Models",
+      "productName": "Azure OpenAI GPT5",
+      "skuName": "GPT 5 Mini outpt DZone",
+      "armRegionName": "eastus2",
+      "meterName": "GPT 5 Mini outpt DZone 1M Tokens",
+      "meterId": "cdcc3879-2b8b-5b38-ae60-241797699355",
+      "retailPrice": 2.2,
+      "unitOfMeasure": "1M",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2025-08-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "defender_storage": {
+      "response": "supporting",
+      "serviceName": "Microsoft Defender for Cloud",
+      "productName": "Microsoft Defender for Storage",
+      "skuName": "Standard",
+      "armRegionName": "eastus2",
+      "meterName": "Standard Node",
+      "meterId": "d168b937-9289-505b-bb69-9da28fab6264",
+      "retailPrice": 0.0134,
+      "unitOfMeasure": "1/Hour",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2022-11-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "malware_scan": {
+      "response": "supporting",
+      "serviceName": "Microsoft Defender for Cloud",
+      "productName": "Microsoft Defender for Storage",
+      "skuName": "Malware Scanning",
+      "armRegionName": "eastus2",
+      "meterName": "Malware Scanning Data Ingested",
+      "meterId": "794dfe11-3939-59f8-aa78-25f9b19ed7ed",
+      "retailPrice": 0.15,
+      "unitOfMeasure": "1 GB",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2023-07-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "defender_kv": {
+      "response": "supporting",
+      "serviceName": "Microsoft Defender for Cloud",
+      "productName": "Microsoft Defender for Key Vault",
+      "skuName": "Per node Std",
+      "armRegionName": "eastus2",
+      "meterName": "Per node Std Node",
+      "meterId": "5ffd6fa6-59ab-5d33-87f0-8a65653d2257",
+      "retailPrice": 0.00034,
+      "unitOfMeasure": "1/Hour",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2023-08-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "defender_app": {
+      "response": "supporting",
+      "serviceName": "Microsoft Defender for Cloud",
+      "productName": "Microsoft Defender for App Service",
+      "skuName": "Standard",
+      "armRegionName": "eastus2",
+      "meterName": "Standard Node",
+      "meterId": "3e7687bd-01e0-4342-bad7-7564cdc293db",
+      "retailPrice": 0.02,
+      "unitOfMeasure": "1/Hour",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2018-09-24T00:00:00Z",
+      "type": "Consumption"
+    },
+    "defender_arm": {
+      "response": "supporting",
+      "serviceName": "Microsoft Defender for Cloud",
+      "productName": "Microsoft Defender for Resource Manager",
+      "skuName": "Per node Std",
+      "armRegionName": "eastus2",
+      "meterName": "Per node Std Node",
+      "meterId": "a562ee45-80fc-516b-a739-efe7123d59b5",
+      "retailPrice": 0.0069,
+      "unitOfMeasure": "1/Hour",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "effectiveStartDate": "2023-08-01T00:00:00Z",
+      "type": "Consumption"
+    },
+    "eh_connections": {
+      "response": "connections",
+      "serviceName": "Service Bus",
+      "productName": "Service Bus",
+      "skuName": "Standard",
+      "armRegionName": "eastus2",
+      "meterName": "Standard Brokered Connection",
+      "meterId": "85f84482-123e-44a9-a2d5-cb53f2abe0f8",
+      "retailPrice": 0.03,
+      "unitOfMeasure": "1",
+      "currencyCode": "USD",
+      "tierMinimumUnits": 1000.0,
+      "effectiveStartDate": "2014-12-01T00:00:00Z",
+      "type": "Consumption"
+    }
+  },
+  "lineItems": [
+    {
+      "meter": "ep1_core",
+      "quantity": "24",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": true
+    },
+    {
+      "meter": "ep1_memory",
+      "quantity": "84",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": true
+    },
+    {
+      "meter": "eh_tu",
+      "quantity": "25",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "eh_ingress",
+      "quantity": "1000000",
+      "unitsPerRate": "1000000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "blob_capacity",
+      "quantity": "10",
+      "unitsPerRate": "28",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "blob_write",
+      "quantity": "100000",
+      "unitsPerRate": "10000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "blob_list",
+      "quantity": "100000",
+      "unitsPerRate": "10000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "blob_read",
+      "quantity": "100000",
+      "unitsPerRate": "10000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "blob_other",
+      "quantity": "100000",
+      "unitsPerRate": "10000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "queue_capacity",
+      "quantity": "1",
+      "unitsPerRate": "28",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "queue_class1",
+      "quantity": "100000",
+      "unitsPerRate": "10000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "queue_class2",
+      "quantity": "100000",
+      "unitsPerRate": "10000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "queue_io1",
+      "quantity": "100000",
+      "unitsPerRate": "10000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "queue_io2",
+      "quantity": "100000",
+      "unitsPerRate": "10000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "table_capacity",
+      "quantity": "1",
+      "unitsPerRate": "28",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "table_read",
+      "quantity": "100000",
+      "unitsPerRate": "10000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "table_write",
+      "quantity": "100000",
+      "unitsPerRate": "10000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "table_list",
+      "quantity": "100000",
+      "unitsPerRate": "10000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "table_delete",
+      "quantity": "100000",
+      "unitsPerRate": "10000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "table_scan",
+      "quantity": "100000",
+      "unitsPerRate": "10000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "table_batch_write",
+      "quantity": "100000",
+      "unitsPerRate": "10000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "pe_hours",
+      "quantity": "125",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "pe_ingress",
+      "quantity": "10",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "pe_egress",
+      "quantity": "10",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "dns_zones",
+      "quantity": "14",
+      "unitsPerRate": "28",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "dns_queries",
+      "quantity": "1000000",
+      "unitsPerRate": "1000000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "internet_egress",
+      "quantity": "10",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "interregion",
+      "quantity": "10",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "analytics_ingest",
+      "quantity": "1",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "analytics_export",
+      "quantity": "1",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "kv_ops",
+      "quantity": "10000",
+      "unitsPerRate": "10000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "model_input",
+      "quantity": "1024",
+      "unitsPerRate": "1000000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "model_output",
+      "quantity": "1024",
+      "unitsPerRate": "1000000",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "defender_storage",
+      "quantity": "24",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "malware_scan",
+      "quantity": "10",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "defender_kv",
+      "quantity": "24",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "defender_app",
+      "quantity": "24",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": true
+    },
+    {
+      "meter": "defender_arm",
+      "quantity": "24",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "eh_connections",
+      "quantity": "2",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": false
+    },
+    {
+      "meter": "eh_connections",
+      "quantity": "2",
+      "unitsPerRate": "1",
+      "scalesWithAllocatedInstances": true
+    }
+  ],
+  "scenarios": [
+    {
+      "allocatedInstances": 1,
+      "conditionalPricedSubtotalUSD": "15.50488011428571428571428572",
+      "effectiveMaximumVerified": false,
+      "volumeEnvelopeEnforced": false
+    },
+    {
+      "allocatedInstances": 20,
+      "conditionalPricedSubtotalUSD": "116.9192801142857142857142857",
+      "effectiveMaximumVerified": false,
+      "volumeEnvelopeEnforced": false
+    },
+    {
+      "allocatedInstances": 100,
+      "conditionalPricedSubtotalUSD": "543.9272801142857142857142856",
+      "effectiveMaximumVerified": false,
+      "volumeEnvelopeEnforced": false
+    }
+  ],
+  "workflow": {
+    "manifestSha256": "7e3dd6b3bb1b236c6f15f0f063572410087733c7577e4e0f146c83f21763ba7d",
+    "upstream": "microsoft/GitHub-Copilot-for-Azure",
+    "commit": "a480d4c73380e6dd77c9e1553f6523620c724edf",
+    "externalProfileRead": false,
+    "files": [
+      {
+        "path": "azure-prepare/SKILL.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/SKILL.md",
+        "sha256": "c77e1484d0da84591a621e19147f626a767c0a539df4c80396f3b8401fb17a36",
+        "bytes": 12873
+      },
+      {
+        "path": "azure-prepare/references/analyze.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/analyze.md",
+        "sha256": "b85092c863ef647dee3c792b7764e83597dab38c7ac59869b435acafc9dd29f5",
+        "bytes": 4115
+      },
+      {
+        "path": "azure-prepare/references/requirements.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/requirements.md",
+        "sha256": "0751dcce6f84e822d8d1a67074264333c3fac0470840ea8a75d4c075e4fc9ce7",
+        "bytes": 2590
+      },
+      {
+        "path": "azure-prepare/references/scan.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/scan.md",
+        "sha256": "ed4789d8a5ce09911be8871e8c65a576ed9c83fb92c3981d479ea2cf13861235",
+        "bytes": 3080
+      },
+      {
+        "path": "azure-prepare/references/recipe-selection.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/recipe-selection.md",
+        "sha256": "2c9e07a34e039c92796c15b85cecbeb2e75bc6ed7eece078ac8a076760c7ece6",
+        "bytes": 3249
+      },
+      {
+        "path": "azure-prepare/references/architecture.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/architecture.md",
+        "sha256": "28075c0cd2f961c5e91e615e83ef736d608327e8bc1224aaa972202859b9cef5",
+        "bytes": 6874
+      },
+      {
+        "path": "azure-prepare/references/plan-template.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/plan-template.md",
+        "sha256": "2b58310bffaaebd89cc43b18d5800d20a8c2b7a3acf551257e789f5bdbe97c3a",
+        "bytes": 10304
+      },
+      {
+        "path": "azure-prepare/references/global-rules.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/global-rules.md",
+        "sha256": "06eb3ddc42c075d1fa656c556ea4ae10e78bc88c6eec7a39f0b387dbb3d0c998",
+        "bytes": 2045
+      },
+      {
+        "path": "azure-prepare/references/azure-context.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/azure-context.md",
+        "sha256": "8d3b26285efee8f7d8c16994686ffe3a4116157e04a16cc91eaa382c7a389386",
+        "bytes": 5880
+      },
+      {
+        "path": "azure-prepare/references/research.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/research.md",
+        "sha256": "92170f7a2773589ea12e28372e04066b3e920f4d2fc148853759c572bbc76974",
+        "bytes": 8798
+      },
+      {
+        "path": "azure-prepare/references/generate.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/generate.md",
+        "sha256": "15aca8d9e59fb96754e738c9c4eb793a70f6693961c99273bcea469cb7fefa65",
+        "bytes": 5444
+      },
+      {
+        "path": "azure-prepare/references/security.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/security.md",
+        "sha256": "f79e2025587d074ce2b5cc6666ccf3c64475f143778b51d08f0f1d40581cd4da",
+        "bytes": 8661
+      },
+      {
+        "path": "azure-prepare/references/functional-verification.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/functional-verification.md",
+        "sha256": "66a4773e4d5c5066ad9f1cfa27912ca090878296e50d118473e04b9fe6301c47",
+        "bytes": 3301
+      },
+      {
+        "path": "azure-prepare/references/recipes/azcli/README.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/recipes/azcli/README.md",
+        "sha256": "4d629b7fbd14cbfb5e7f86d019fd186e23cb25c1e0ff2d74f2e8df33cbeeb215",
+        "bytes": 1893
+      },
+      {
+        "path": "azure-prepare/references/recipes/bicep/README.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/recipes/bicep/README.md",
+        "sha256": "6c6362f0588b40ade1bc12cace5648f93e3ca01aa1337e19536cc68873e1932c",
+        "bytes": 1396
+      },
+      {
+        "path": "azure-validate/SKILL.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-validate/SKILL.md",
+        "sha256": "83e0f0f5e701e2b019ce2d8db9bdb35ecb244e7190ba45694e19faa19d3c719b",
+        "bytes": 3547
+      },
+      {
+        "path": "azure-validate/references/scripts/workflow.ps1",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-validate/references/scripts/workflow.ps1",
+        "sha256": "d8b7512cd91b4ec3620d6a48abc1f80179630bd26add65dc0400a34e42745ff9",
+        "bytes": 5289
+      },
+      {
+        "path": "azure-validate/references/recipes/README.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-validate/references/recipes/README.md",
+        "sha256": "910b5d715e2c1b4251e9fab90ebe7746939778963ba5eaa53c939e804c426476",
+        "bytes": 374
+      },
+      {
+        "path": "azure-validate/references/recipes/azcli/README.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-validate/references/recipes/azcli/README.md",
+        "sha256": "4ee15e1e80529e519dafb342b0967705972d96712a1e71b7ddcb3fdeae8e4b99",
+        "bytes": 2786
+      },
+      {
+        "path": "azure-validate/references/recipes/bicep/README.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-validate/references/recipes/bicep/README.md",
+        "sha256": "5a70caeea9f0823b4b3f1bfafbb3ac8403a9dd50b603bd035fe2cfba28c6abe5",
+        "bytes": 2562
+      },
+      {
+        "path": "azure-validate/references/recipes/scripts/validate-deployment.ps1",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-validate/references/recipes/scripts/validate-deployment.ps1",
+        "sha256": "ac49678e5941f2946d8b216370e30dbd8b3451cb15652f8042bb9fad77bcb9bb",
+        "bytes": 5278
+      },
+      {
+        "path": "azure-validate/references/role-verification.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-validate/references/role-verification.md",
+        "sha256": "a65e952998810969b290ef6832dca7a8c41be9b951e7e7c9a42ee6e84cce2649",
+        "bytes": 3947
+      },
+      {
+        "path": "azure-validate/references/policy-validation.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-validate/references/policy-validation.md",
+        "sha256": "f65dde86f358afa14815ab3d974538723f24c7879464e6688665acf2edc11ffa",
+        "bytes": 1493
+      },
+      {
+        "path": "azure-validate/references/global-rules.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-validate/references/global-rules.md",
+        "sha256": "81395542533728334615e91f7a46ee88ce627d8e21a0fc1b1d5966ce1a2723f4",
+        "bytes": 1215
+      },
+      {
+        "path": "azure-prepare/references/specialized-routing.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/specialized-routing.md",
+        "sha256": "1c520f696ce07a83ee38c87e29e8676bcc99a671f55a0be0835882c06c2b7b33",
+        "bytes": 4405
+      },
+      {
+        "path": "azure-prepare/references/resources-limits-quotas.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/resources-limits-quotas.md",
+        "sha256": "f1b0ddeb4fbc9a5ef756dee1309cc403ef285985a25be1617b983b6c54bf18bc",
+        "bytes": 13322
+      },
+      {
+        "path": "azure-prepare/references/services/functions/templates/selection.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/services/functions/templates/selection.md",
+        "sha256": "a7f0728345019efcea0019b357c33953b27e64c0ad19b694c368d93e443e339d",
+        "bytes": 4436
+      },
+      {
+        "path": "azure-prepare/references/services/functions/templates/recipes/composition.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-prepare/references/services/functions/templates/recipes/composition.md",
+        "sha256": "4dbc126473c77f436cc184b94756437648ed7991820777f04374f2dec854b354",
+        "bytes": 11356
+      },
+      {
+        "path": "azure-validate/references/recipes/bicep/errors.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-validate/references/recipes/bicep/errors.md",
+        "sha256": "161e01f9b04fb372d8c1988728a62fe866d4dd0bf1717a5b91ec6922a8ffe0be",
+        "bytes": 374
+      },
+      {
+        "path": "azure-validate/references/recipes/azcli/errors.md",
+        "source": "https://raw.githubusercontent.com/microsoft/GitHub-Copilot-for-Azure/a480d4c73380e6dd77c9e1553f6523620c724edf/plugins/azure-skills/skills/azure-validate/references/recipes/azcli/errors.md",
+        "sha256": "f91321d8dad4f5c299d92d916d60d7d25886ada160f301180019e3dfda950fd9",
+        "bytes": 505
+      }
+    ],
+    "retrievedUtc": "2026-10-20T01:36:11.3519279Z"
+  },
+  "billingClock": "24 elapsed billable hours; reserve 25 hourly PE/EH charge buckets, 2 DNS calendar days and one full monthly brokered-connection unit per assumed concurrent connection"
+}
