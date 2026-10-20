@@ -28,6 +28,7 @@ from telemetry_pipeline.durable import (
 )
 from telemetry_pipeline.durable_store import BlobLedger, MAX_LEDGER_BYTES
 from telemetry_pipeline.strict_sender import Delivery
+from telemetry_pipeline.source_policy import SourcePolicy
 
 from .conftest import make_record
 
@@ -196,6 +197,201 @@ def rig():
     store = BlobLedger(container)
     engine = Correlator(store, SCOPE, clock=lambda: now[0])
     return engine, store, container, now
+
+
+HEALTH_ROLE = "fotoa-demo-func-eastus2"
+HEALTH_POLICY = SourcePolicy(frozenset({HEALTH_ROLE}))
+
+
+def guarded(store, now, **kwargs):
+    return Correlator(store, SCOPE, clock=lambda: now[0], policy=HEALTH_POLICY, **kwargs)
+
+
+def test_durable_uses_environment_guard_and_rejects_invalid_configuration(rig, monkeypatch):
+    _, store, container, now = rig
+    monkeypatch.setenv("PIPELINE_EXCLUDED_SERVICE_NAMES", json.dumps([HEALTH_ROLE]))
+    engine = Correlator(store, SCOPE, clock=lambda: now[0])
+    key = engine.admit(original(cloud_RoleName=HEALTH_ROLE))
+    assert store.read(key).value["state"] == "excluded"
+    before = copy.deepcopy(container.data)
+    monkeypatch.setenv("PIPELINE_EXCLUDED_COMPONENT_RESOURCE_IDS", "null")
+    with pytest.raises(ValueError, match="PIPELINE_EXCLUDED_COMPONENT_RESOURCE_IDS"):
+        Correlator(store, SCOPE, clock=lambda: now[0])
+    assert container.data == before
+
+
+@pytest.mark.parametrize("content_first", [True, False])
+def test_excluded_cross_batch_original_content_duplicates_and_retention(rig, content_first):
+    _, store, container, now = rig
+    engine = guarded(store, now)
+    source = original(AppRoleName=HEALTH_ROLE)
+    detail = content(AppRoleName=HEALTH_ROLE)
+    first, second = (detail, source) if content_first else (source, detail)
+    key = engine.admit(first)
+    tombstone = store.read(key).value
+    assert tombstone == {
+        "state": "excluded", "excluded": now[0], "reason": "service_identity",
+        "expires": now[0] + ACK_SECONDS,
+    }
+    assert "due" in container.tags[key]
+    now[0] += 100
+    restarted = guarded(BlobLedger(container), now)
+    assert restarted.admit(second) == key
+    # Unlabelled duplicates/content cannot reopen the content-free terminal either.
+    restarted.admit(content())
+    restarted.admit(original())
+    assert store.read(key).value == tombstone
+    sender = Sender()
+    restarted.drain(sender)
+    assert not sender.payloads
+    now[0] = tombstone["expires"]
+    restarted.drain(sender)
+    assert store.read(key) is None
+
+
+@pytest.mark.parametrize("retry", [True, False])
+def test_guard_removes_pre_cutover_unsent_original_before_readiness_or_send_budget(rig, retry):
+    engine, store, _, now = rig
+    source = original(cloud_RoleName=HEALTH_ROLE, customDimensions={})
+    key = engine.admit(source)
+    if retry:
+        assert engine.drain_key(key, Sender(Delivery.RETRYABLE_REJECTION))
+        assert store.read(key).value["state"] == "retry"
+    before = store.read(key).value
+    assert before["original"] == source
+    # Exclude even when the retry due time is in the future and no sends remain.
+    freeze = MagicMock(side_effect=AssertionError("must not freeze excluded work"))
+    sender = Sender()
+    guarded(store, now, freeze=freeze).drain_key(key, sender, allow_send=False)
+    tombstone = store.read(key).value
+    assert tombstone["state"] == "excluded"
+    assert not set(("original", "candidates", "wire", "wire_hash", "attempts")) & tombstone.keys()
+    freeze.assert_not_called()
+    assert not sender.payloads
+
+
+@pytest.mark.parametrize("state", ["acknowledged", "sending", "ambiguous", "rejected"])
+def test_guard_preserves_delivery_history_and_uncertain_quarantine(rig, state):
+    engine, store, _, now = rig
+    key = engine.admit(original(cloud_RoleName=HEALTH_ROLE, customDimensions={}))
+    outcome = {
+        "acknowledged": Delivery.CONFIRMED, "sending": Delivery.AMBIGUOUS,
+        "ambiguous": Delivery.AMBIGUOUS, "rejected": Delivery.REJECTED,
+    }[state]
+    engine.drain_key(key, Sender(outcome))
+    current = store.read(key)
+    if state == "sending":
+        ledger = copy.deepcopy(current.value)
+        ledger["state"] = "sending"
+        store.cas(key, current.etag, ledger)
+    before = store.read(key).value
+    new = guarded(store, now)
+    new.admit(original(cloud_RoleName=HEALTH_ROLE, customDimensions={}))
+    new.admit(content(AppRoleName=HEALTH_ROLE))
+    sender = Sender()
+    new.drain_key(key, sender)
+    assert store.read(key).value == before
+    if state == "sending":
+        now[0] += CLAIM_SECONDS
+        new.drain_key(key, sender)
+        assert store.read(key).value == {**before, "state": "ambiguous"}
+    assert not sender.payloads
+
+
+def test_guard_mixed_admission_conflict_and_content_cannot_discard_good_original(rig):
+    _, store, _, now = rig
+    engine = guarded(store, now)
+    good = original(cloud_RoleName="synthetic-agent")
+    key = engine.admit(good)
+    before = store.read(key).value
+    engine.admit(content(AppRoleName=HEALTH_ROLE))
+    assert store.read(key).value == before
+    with pytest.raises(AdmissionError, match="original_identity_conflict"):
+        engine.admit(original(cloud_RoleName=HEALTH_ROLE))
+    assert store.read(key).value == before
+    conflicting = original(AppRoleName=HEALTH_ROLE, cloud_RoleName="synthetic-agent")
+    self_row = original(id="1111111111111111", AppRoleName=HEALTH_ROLE)
+    ordinary = original(id="2222222222222222", Name="TelemetryTransform.agent.child",
+                        cloud_RoleName=HEALTH_ROLE + "-agent", customDimensions={},
+                        operation_ParentId=SPAN)
+    assert engine.admit_batch([json.dumps([conflicting, self_row, ordinary])]) == 2
+    sender = Sender()
+    engine.drain(sender)
+    assert len(sender.payloads) == 1
+    span, _, _ = decoded(sender.payloads[0])
+    assert span.span_id.hex() == ordinary["id"]
+    assert span.parent_span_id.hex() == SPAN
+    # Re-admission/content do not restart the genuine GenAI original's clock.
+    now[0] += 200
+    engine.admit(good)
+    assert store.read(key).value["deadline"] == before["deadline"]
+    now[0] = before["deadline"]
+    engine.drain_key(key, sender)
+    assert len(sender.payloads) == 2
+
+
+@pytest.mark.parametrize("name,kind", [
+    ("TelemetryTransform", "CHAIN"), ("DurableGenAIOutbox", "AGENT"),
+    ("POST /v1/traces", "LLM"), ("GET storage", "TOOL"),
+    ("retriever.query", "RETRIEVER"), ("arbitrary dependency", None),
+])
+def test_guard_native_operational_backlog_with_content_before_unlabelled_original(rig, name, kind):
+    engine, store, _, now = rig
+    orphan_key = engine.admit(content())
+    assert store.read(orphan_key).value["candidates"]["input"]
+    # Queue real native-column work under the pre-guard compatibility defaults.
+    from .test_source_policy import native
+    source = native(original(Name=name, AppRoleName=HEALTH_ROLE, customDimensions=(
+        {"openinference.span.kind": kind} if kind else {}
+    )))
+    assert engine.admit(source) == orphan_key
+    sender = Sender()
+    guarded(store, now).drain(sender)
+    assert not sender.payloads
+    assert store.read(orphan_key).value["state"] == "excluded"
+    assert "candidates" not in store.read(orphan_key).value
+
+
+def test_guard_component_case_insensitive_and_foreign_exclusion_does_not_poison_batch(rig):
+    _, store, _, now = rig
+    engine = Correlator(
+        store, SCOPE, clock=lambda: now[0],
+        policy=SourcePolicy(components=frozenset({SCOPE.component.lower()})),
+    )
+    key = engine.admit(original(_ResourceId=SCOPE.component.upper()))
+    assert store.read(key).value["reason"] == "component_identity"
+    foreign = original(_ResourceId="/synthetic/health")
+    allowed = original(customDimensions={})
+    other_policy = SourcePolicy(components=frozenset({foreign["_ResourceId"]}))
+    other = Correlator(store, SCOPE, clock=lambda: now[0], policy=other_policy)
+    allowed["id"] = "2222222222222222"
+    assert other.admit_batch([json.dumps([foreign, allowed])]) == 1
+    sender = Sender()
+    other.drain(sender)
+    assert len(sender.payloads) == 1
+
+
+def test_exclusion_cas_cannot_overwrite_concurrent_send_claim(rig):
+    engine, store, _, now = rig
+    key = engine.admit(original(AppRoleName=HEALTH_ROLE, customDimensions={}))
+    actual_cas = store.cas
+    claimed = []
+
+    def racing_cas(candidate_key, etag, value):
+        if value.get("state") == "excluded" and not claimed:
+            # Another worker acquired the send claim after this worker's read.
+            current = store.read(key)
+            ledger = {**current.value, "state": "sending", "claimed": now[0],
+                      "scan_after": now[0] + CLAIM_SECONDS}
+            assert actual_cas(key, current.etag, ledger)
+            claimed.append(ledger)
+        return actual_cas(candidate_key, etag, value)
+
+    store.cas = racing_cas
+    sender = Sender()
+    guarded(store, now).drain_key(key, sender)
+    assert store.read(key).value == claimed[0]
+    assert not sender.payloads
 
 
 @pytest.mark.parametrize("content_first", [True, False])

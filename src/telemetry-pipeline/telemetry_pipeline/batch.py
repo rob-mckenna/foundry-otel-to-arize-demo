@@ -21,6 +21,7 @@ from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
 
 from .mapping import MalformedRecordError, record_to_span
+from .source_policy import SourcePolicy
 
 logger = logging.getLogger(__name__)
 
@@ -91,6 +92,7 @@ def _extract_records(body_text: str) -> list[dict]:
 def transform_batch(
     messages: Iterable[Any],
     exporter: SpanExporter,
+    policy: SourcePolicy | None = None,
 ) -> BatchResult:
     """Transform one Event Hub message batch and export the resulting spans.
 
@@ -102,6 +104,7 @@ def transform_batch(
     One `exporter.export()` call covers the whole batch (see module
     docstring) - never a call per record.
     """
+    policy = SourcePolicy.from_environment() if policy is None else policy
     result = BatchResult()
     for message in messages:
         try:
@@ -114,6 +117,13 @@ def transform_batch(
 
         for raw_record in raw_records:
             try:
+                reason = policy.exclusion_reason(raw_record)
+                if reason:
+                    result.skipped.append(SkippedRecord(
+                        reason=f"excluded:{reason}", raw_record=raw_record,
+                    ))
+                    logger.info("telemetry_pipeline.batch: excluded reason=%s", reason)
+                    continue
                 span = record_to_span(raw_record)
             except MalformedRecordError as exc:
                 result.skipped.append(SkippedRecord(reason=str(exc), raw_record=raw_record))

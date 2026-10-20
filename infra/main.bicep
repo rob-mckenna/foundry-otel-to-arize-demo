@@ -64,6 +64,10 @@ param eventHubConsumerGroupName string = 'function-transform'
 param functionPythonVersion string = '3.11'
 @minLength(1)
 param functionPackageBlobName string
+@description('Health secret expiration as UTC Unix seconds; defaults to 90 days from deployment. Renew before expiry.')
+@minValue(1)
+@maxValue(2147483647)
+param functionHealthSecretExpirationEpoch int = dateTimeToEpoch(dateTimeAdd(utcNow(), 'P90D'))
 @description('Approved Arize project name; endpoint/space/key remain operator-populated KV references, never plaintext.')
 @minLength(1)
 param arizeProjectName string
@@ -215,6 +219,7 @@ module functionApp 'modules/function-app.bicep' = {
     costCenterTag: costCenterTag
     pythonVersion: functionPythonVersion
     functionPackageBlobName: functionPackageBlobName
+    functionHealthSecretExpirationEpoch: functionHealthSecretExpirationEpoch
     functionIntegrationSubnetResourceId: networking.outputs.functionIntegrationSubnetResourceId
     privateEndpointSubnetResourceId: networking.outputs.privateEndpointSubnetResourceId
     privateDnsZoneResourceIds: networking.outputs.privateDnsZoneResourceIds

@@ -23,6 +23,7 @@ from .mapping import (
     record_to_span,
 )
 from .strict_sender import Delivery, MAX_WIRE_BYTES, freeze_record
+from .source_policy import SourcePolicy
 
 logger = logging.getLogger(__name__)
 MAX_RECORD_BYTES = 128 * 1024
@@ -93,11 +94,13 @@ class Correlator:
     def __init__(
         self, store: BlobLedger, scope: Scope, clock: Callable[[], float] = time.time,
         freeze: Callable[[dict, str], bytes] = freeze_record,
+        policy: SourcePolicy | None = None,
     ):
         self.store = store
         self.scope = scope
         self.clock = clock
         self.freeze = freeze
+        self.policy = SourcePolicy.from_environment() if policy is None else policy
         self.prefix = f"ledger/{scope.namespace}/"
 
     def admit_batch(self, messages: Iterable) -> int:
@@ -138,6 +141,11 @@ class Correlator:
         json_bytes(record, MAX_RECORD_BYTES)
         if not isinstance(record, dict):
             raise AdmissionError("record_shape")
+        try:
+            excluded = self.policy.exclusion_reason(record)
+        except MalformedRecordError:
+            _event("malformed_source_identity")
+            return ""
         content = record.get("Type") == "AppGenAIContent"
         if content:
             try:
@@ -157,7 +165,7 @@ class Correlator:
                 _event("malformed_or_disallowed_content")
                 return ""
             candidates = {}
-            for side in ("input", "output"):
+            for side in (() if excluded else ("input", "output")):
                 value = _message_json(record.get(f"{side.title()}Messages"), side)
                 if value is not None:
                     # Canonicalize object-key order to deduplicate equivalent arrays.
@@ -165,12 +173,19 @@ class Correlator:
                     candidates[side] = {
                         "value": value, "parent": parent, "check_parent": parent_present,
                     }
-            if not candidates:
+            if not candidates and not excluded:
                 _event("malformed_content")
                 return ""
             original = None
         else:
-            self.scope.validate(record)
+            try:
+                self.scope.validate(record)
+            except AdmissionError:
+                if not excluded:
+                    raise
+                # Excluded foreign sources cannot create entries in this namespace.
+                _event("excluded_source", detail=excluded)
+                return ""
             mapped = record_to_span(record)
             trace, span = mapped.context.trace_id, mapped.context.span_id
             original = record
@@ -184,6 +199,20 @@ class Correlator:
                 "candidates": {"input": {}, "output": {}},
                 "scan_after": now + ORPHAN_SECONDS,
             }
+            if ledger["state"] == "pending" and original is not None and ledger["original"] is not None:
+                if ledger["original_hash"] != _digest(original):
+                    raise AdmissionError("original_identity_conflict")
+            reason = (
+                self._exclusion_reason(ledger) if ledger.get("original") is not None else excluded
+            )
+            if reason and ledger["state"] in ("pending", "retry"):
+                if self.store.cas(key, current.etag if current else None, self._excluded(now, reason)):
+                    _event("excluded", key, reason)
+                    return key
+                continue
+            if excluded and content:
+                _event("excluded_content", key, excluded)
+                return key
             if ledger["state"] != "pending":
                 _event("late" if content else "replay_suppressed", key)
                 return key
@@ -212,6 +241,18 @@ class Correlator:
                 _event("admitted_content" if content else "admitted", key)
                 return key
         raise AdmissionError("admission_contention")
+
+    def _exclusion_reason(self, ledger: dict) -> str:
+        if ledger["state"] not in ("pending", "retry") or ledger.get("original") is None:
+            return ""
+        return self.policy.exclusion_reason(ledger["original"])
+
+    @staticmethod
+    def _excluded(now: float, reason: str) -> dict:
+        return {
+            "state": "excluded", "excluded": now, "reason": reason,
+            "expires": now + ACK_SECONDS,
+        }
 
     def _enriched(self, ledger: dict, key: str) -> tuple[dict, bool]:
         record = copy.deepcopy(ledger["original"])
@@ -254,7 +295,7 @@ class Correlator:
                 return False
             ledger = copy.deepcopy(current.value)
             state = ledger["state"]
-            if state == "acknowledged":
+            if state in ("acknowledged", "excluded"):
                 if now >= ledger["expires"]:
                     self.store.delete(key, current.etag)
                 return False
@@ -269,6 +310,12 @@ class Correlator:
             if state in ("ambiguous", "rejected"):
                 _event(f"recovery_{state}", key)
                 return False
+            reason = self._exclusion_reason(ledger)
+            if reason:
+                if self.store.cas(key, current.etag, self._excluded(now, reason)):
+                    _event("excluded", key, reason)
+                    return False
+                continue
             if state == "pending":
                 if ledger["original"] is None:
                     if now - ledger["created"] >= ORPHAN_SECONDS:
