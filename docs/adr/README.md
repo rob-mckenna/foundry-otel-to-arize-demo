@@ -62,3 +62,4 @@ docs/adr/0003-...
 | [0002](0002-use-event-hub-for-telemetry-streaming.md) | Use Event Hub for telemetry streaming instead of a direct Log Analytics trigger | Accepted |
 | [0003](0003-opt-in-durable-genai-content-correlation.md) | Opt-in durable GenAI content correlation before OTLP delivery | Accepted; scoped rollout enabled; native content transport and controlled live fallback verified |
 | [0004](0004-modern-only-foundry-foundation-and-cleanup-boundaries.md) | Modern-only Foundry foundation and gated classic retirement | Accepted direction; implementation and live verification pending |
+| [0005](0005-reconcile-retained-private-evaluation-and-browser-assets.md) | Reconcile retained private evaluation storage and Windows browser assets | Proposed cross-track acceptance; historical provisioning complete, registration attempt consumed |

@@ -52,6 +52,15 @@ this is not exactly-once delivery. Keep imported ACKs/checkpoints and the unrela
 ambiguous operational send quarantined; do not resend or replay.
 These receipts do not validate a fresh modern foundation.
 
+## Retained ancillary storage and Windows access (#138)
+
+The [reconciliation and operator packet](private-storage-and-windows-jumpbox.md)
+distinguishes existing keyless storage/private Windows resources from pending
+cross-track ADR agreement and human navigation. The historically approved single
+five-case registration attempt is **consumed (pending-upload HTTP 403)**, not
+reusable authority. No after-shutdown VM start or inference/evaluation is authorized.
+See [ADR-0005](../adr/0005-reconcile-retained-private-evaluation-and-browser-assets.md).
+
 ## Historical reference — not the active setup path
 
 The validation reports, milestone audits and capability matrix linked below are
