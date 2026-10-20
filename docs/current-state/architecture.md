@@ -8,9 +8,11 @@ canonical behavior, source-package reconciliation and separate evidence gates. F
 the conceptual direct-OTLP proposal, see [`/docs/future-state`](../future-state/README.md) instead
 — it is **not** implemented and must never be confused with this page.
 
-This diagram set is the current-state picture referenced from the root
-[`README.md`](../../README.md). Earlier blanket validation summaries elsewhere in the
-repository are historical, not independent end-to-end proof.
+The end-to-end overview diagram lives in the root
+[`README.md`](../../README.md#architecture), including the separate Function-health
+monitoring path. This page retains foundation details, the transform zoom and known
+limitations. Earlier blanket validation summaries elsewhere in the repository are
+historical, not independent end-to-end proof.
 
 ## Foundation: fresh, adopt and retire are distinct
 
@@ -49,17 +51,7 @@ deletes resources nor certifies them unused.
 
 ## End-to-End Pipeline
 
-```mermaid
-flowchart LR
-    A[Foundry Prompt Agent] -->|OpenTelemetry + OpenInference instrumentation| B[Application Insights]
-    B --> C[Log Analytics Workspace]
-    C --> D[Event Hub]
-    D --> E[Azure Function\nTransform / Map]
-    E -->|OTLP| F[Arize]
-
-    classDef current fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
-    class A,B,C,D,E,F current;
-```
+See the [overview diagram in the main README](../../README.md#architecture).
 
 **Implementation flow (live delivery and destination parity require separate evidence):**
 1. The Foundry Prompt Agent emits spans/traces using OpenTelemetry, with LLM-specific attributes

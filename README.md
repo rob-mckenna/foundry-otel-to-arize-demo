@@ -8,6 +8,31 @@ Event Hub → Azure Function transform → Arize OTLP.
 setup below. Live deployment is a separately approved activity, not a prerequisite for
 the synthetic demo and not authorized by this README.
 
+## Architecture
+
+```mermaid
+flowchart LR
+    A[Foundry Prompt Agent] -->|OpenTelemetry + OpenInference| B[Agent Application Insights]
+    B --> C[Agent Log Analytics Workspace]
+    C -->|Data export| D[Event Hub]
+    D --> E["Azure Function<br/>Transform / Map"]
+    E -->|OTLP| F[Arize]
+    E -->|Operational telemetry| H[Function-health Application Insights]
+    H --> I["Function-health Log Analytics Workspace<br/>No agent export"]
+
+    classDef current fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    class A,B,C,D,E,F,H,I current;
+```
+
+Agent telemetry follows the solid-line pipeline to Arize. Function-health telemetry
+uses a separate Application Insights component and non-exported workspace, keeping
+pipeline operations out of the agent-export source. Historical queued self-spans may
+still drain; the additional source-identity guard is not yet deployed.
+
+This is the implemented architecture, not a complete-trace or fresh-deployment validation
+claim. See the [detailed architecture and limitations](docs/current-state/architecture.md)
+and [health-isolation evidence](docs/current-state/pipeline-health-cutover.md).
+
 ## Current status
 
 | Area | What this asset supports | Evidence limit |
