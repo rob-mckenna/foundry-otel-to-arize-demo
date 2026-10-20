@@ -91,14 +91,14 @@ class OfficialValidationAdapterTests(unittest.TestCase):
         raw = "ERROR: " + json.dumps({"error": {"code": "InvalidTemplate", "message": diagnostic,
              "properties": {"password": "synthetic-never-persist"},
              "details": [{"code": "InvalidTemplate", "message":
-                         "token=synthetic-hidden password=synthetic-hidden AccountKey=synthetic-hidden; "
+                         "token=EXAMPLE_SYNTHETIC password=synthetic-hidden AccountKey=EXAMPLE_SYNTHETIC; "
                          'password: "synthetic spaced credential" SharedAccessSignature=synthetic-hidden '
                          "https://synthetic.invalid/path?sig=synthetic-hidden "
                          "eyJsynthetic.eyJsynthetic.synthetic sk-syntheticcredential"}]}})
         safe = adapter.failure_diagnostic(raw)
         self.assertEqual(safe["errorCodes"], ["InvalidTemplate"])
         self.assertIn(diagnostic, safe["diagnostic"])
-        for hidden in ("synthetic-hidden", "synthetic-never-persist", "synthetic spaced credential", "?sig=", "eyJsynthetic", "sk-syntheticcredential"):
+        for hidden in ("EXAMPLE_SYNTHETIC", "synthetic-hidden", "synthetic-never-persist", "synthetic spaced credential", "?sig=", "eyJsynthetic", "sk-syntheticcredential"):
             self.assertNotIn(hidden, json.dumps(safe))
         self.assertLessEqual(len(safe["diagnostic"]), 1600)
         plain = adapter.failure_diagnostic("ERROR: " + diagnostic)
