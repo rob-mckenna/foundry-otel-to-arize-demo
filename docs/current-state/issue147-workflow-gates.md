@@ -1,5 +1,13 @@
 # Issue 147 — official workflow reconciliation and residual gates
 
+**2026-10-20 approved minimal followup:** [bounded source preflight](issue147-bounded-execution.md)
+records owner-selected Basic private client ingress/Microsoft-managed runtime,
+exact EP1 plan/app maximum **1**, 24h validation lifetime, finite operator
+retention reviews and actual safe security-plan metadata. Routine scope choices
+below are superseded, not missing approval. Full-cost entitlement, immutable
+runner/custody and technical/provider gates remain; prepare is incomplete.
+Official validation status has not started/advanced; NOT Validated.
+
 **2026-10-19 · preparation evidence only; no official validation completed
 for this fresh foundation.** See [acceptance](fresh-foundation-acceptance.md)
 and [cost ledger](issue147-cost-estimate.md), now integrated with the
@@ -90,13 +98,13 @@ AZCLI recipe shares the same core helper; it is not a shortcut.
 |---|---|---|
 | Plan first | Issue-worktree `.azure/deployment-plan.md` pre-existed this skill refresh; root plan remains immutable | Populate the official numbered inventory/quota/policy/functional/proof sections before final plan presentation; status remains **Planning** |
 | Analyze, scan, recipe, architecture | Existing source and offline contracts documented in acceptance; no code/IaC generated here | Preserve ADR-0004 graph, keyless/private controls and disabled triggers; source reuse is not new-template generation |
-| Requirements and Azure context | Exact subscription supplied by requester; fresh East US 2 scope/model/processing/cost/lifetime are proposals | Owner approves scope/residency, custodians and complete cost/lifetime after technical discovery; no `az account set`/login/default reuse |
+| Requirements and Azure context | Exact subscription supplied; minimal private-client-ingress direction/model and 24h source-validation plan approved in 2026-10-20 receipt | Technical profile/custody/full-cost exceptions in bounded followup remain; no repeated routine scope choice or `az account set`/login/default reuse |
 | Full provisioning-limit inventory | Resource inventory and quantities in cost ledger; prior scoped model usage 0/300 is useful but not a whole-foundation capacity check | Infra completes plan-template §6 two-phase inventory/usage/limits for account/project/model, plan/app/storage/EH/KV/VNet/subnets/5 PEs/7 zones/7 links and role/export resources. Invoke `azure-quotas` for that authorized collector; **never retry exhausted unsupported-provider/codes cycles**, register providers, raise quota or claim a reservation |
 | Policy constraints | Source tags/security contracts passed offline | Infra reconciles applicable inherited subscription/RG policies, allowed SKUs/locations, diagnostics and paid security plans using safe projected metadata; no policy exceptions/disablement |
 | Research and security | Public preparation refs reconciled; Agent assessment resolves v1 Responses, exact SDK pins, no-tool semantics, Basic private-ingress compatibility and advertised model SKU | Record explicit A/B boundary per Agent §1a: clarify ADR ingress for A; accepted amendment/design needed for B's absent Standard graph. Do not mandate Standard resources for A. Fresh publication/readback, immutable runner/lock, author/consumer identities and Infra custody/network/scale/retention feasibility remain technical gates, not owner guesses |
 | Functions composition references | Official selection/composition branches fetched and read | They govern **new generation**. No new template/function/IaC generation is requested. Do not `azd init -t`, regenerate this repository, or add DTS/Search/Cosmos because a generic routing keyword says “durable” |
 | Functional verification before handoff | Existing offline tests prove limited contracts, not private host/API/MI paths | Record applicable local build/test evidence and explicit unavailable private checks; determine whether any remaining check requires separately authorized runtime, never substitute a stub |
-| Approval and handoff | No fresh deployment/spending approval | Only after preparation/approval/functional requirements actually complete, edit issue plan to **Ready for Validation** and invoke `azure-validate` normally again |
+| Approval and handoff | Minimal direction approved 2026-10-20; no invented numeric ceiling; exact technical prerequisites remain | Only after preparation/cost/custody/functional requirements actually complete, edit issue plan to **Ready for Validation** and invoke official `azure-validate` again; do not ask routine scope-choice questions |
 
 Public prose does not fill missing live inventory or functional evidence.
 Capacity 1 for the advertised DataZoneStandard tuple remains provider-unproven

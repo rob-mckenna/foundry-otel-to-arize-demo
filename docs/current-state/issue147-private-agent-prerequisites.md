@@ -1,5 +1,13 @@
 # #147: no-tool Prompt Agent private-runtime prerequisites
 
+**2026-10-20 execution-direction update:** owner's proceed receipt selects
+§1a **A**, Basic private CLIENT ingress with Microsoft-managed runtime/state,
+and the exact DataZoneStandard model tuple below. B/Standard/Search/Cosmos is
+not scope. No repeated routine boundary-choice request is needed. See
+[Infra bounded preflight](issue147-bounded-execution.md) for implemented scale,
+lifetime, security metadata and exact contract/private-runner/custody exceptions.
+These technical gates remain, not a blanket Standard NO-GO or a new ADR decision.
+
 **Technical disposition: NOT READY FOR APPROVAL / live acceptance.**
 **2026-10-20 scope correction:** this is a fresh-readiness hold, **not a
 technical rejection of ADR-0004's no-tool/private-client-ingress foundation**.

@@ -62,6 +62,9 @@ param eventHubPartitionCount int = 2
 param eventHubConsumerGroupName string = 'function-transform'
 @allowed(['3.10', '3.11', '3.12'])
 param functionPythonVersion string = '3.11'
+@description('Fresh single-app EP1 validation bound. Raising this requires reviewed scale, subnet and cost changes; zero/unbounded is forbidden.')
+@allowed([1])
+param functionMaximumInstances int = 1
 @minLength(1)
 param functionPackageBlobName string
 @description('Approved Arize project name; endpoint/space/key remain operator-populated KV references, never plaintext.')
@@ -214,6 +217,7 @@ module functionApp 'modules/function-app.bicep' = {
     ownerTag: ownerTag
     costCenterTag: costCenterTag
     pythonVersion: functionPythonVersion
+    maximumInstances: functionMaximumInstances
     functionPackageBlobName: functionPackageBlobName
     functionIntegrationSubnetResourceId: networking.outputs.functionIntegrationSubnetResourceId
     privateEndpointSubnetResourceId: networking.outputs.privateEndpointSubnetResourceId

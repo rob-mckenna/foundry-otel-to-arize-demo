@@ -4,6 +4,17 @@
 FRESH-READINESS HOLD / NOT READY FOR EXECUTION APPROVAL.
 PROVIDER / FRESH PRIVATE RUNTIME / REPEAT DEPLOYMENT / E2E NOT RUN.**
 
+**2026-10-20 Infra followup:** owner approved the minimal no-tool Basic/private
+CLIENT ingress + Microsoft-managed runtime/state direction. No repeated scope
+choice is needed. [Bounded source/execution record](issue147-bounded-execution.md)
+supersedes the old choice inventory where applicable: EP1 plan/app maximum **1**,
+minimum **1**, prewarmed target **1** inside the ceiling; explicit 24h validation
+lifetime and finite day-7/day-30 retained-state disposition obligations, no
+automatic destructive teardown. Approved direction has no numeric ceiling.
+One security-plan metadata GET succeeded; exact G/L/R entitlement/custody/
+private-runner/provider exceptions remain. QA owns acceptance; #147 stays OPEN
+and PR #151 unmerged. No fresh deployment or live acceptance is claimed.
+
 This is the bounded readiness slice and same-issue pricing/workflow followup of [#147](https://github.com/rob-mckenna/foundry-otel-to-arize-demo/issues/147),
 not deployment, invocation, spending, grant, or retirement approval. Source baseline:
 `main` `2219075`, including #146/#145 and #149. [ADR-0004](../adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md)
@@ -37,7 +48,7 @@ but approval, technical prerequisites and official workflow execution are not.
 Public prose/offline tests do not confer `Validated`. The closed root
 plan/receipts remain immutable.
 
-## 2. One consolidated owner decision packet
+## 2. Historical consolidated decision packet (see approved-direction update above)
 
 ### Technical go/no-go — distinguish scope choice from fresh readiness
 
@@ -65,8 +76,9 @@ isolated Standard/BYO runtime, is absent and needs an accepted ADR amendment;
 every-service residency warranty. Historical private-VM v1 invocation supports
 only the existing path, never fresh readiness.
 
-Lead/QA and the owner can now choose the real acceptance boundary using those
-wordings; no silent selection or weakening is authorized. A requires an explicit
+At the earlier snapshot, Lead/QA and the owner had not selected the real
+acceptance boundary; the 2026-10-20 receipt now selects A as recorded above.
+No silent selection or weakening is authorized. A requires an explicit
 ADR scope clarification, not unrelated Standard resources. A separately accepted
 stronger promise would require amendment before choosing A. Standard remains
 conditionally blocked pending supported provisioning API/roles/state/cost design.
@@ -91,7 +103,7 @@ and the owner accepts the complete row.
 | Tracing custody | Stage with `preserveExisting` (no connection PUT); then use the narrow tracing entrypoint with explicitly approved ApiKey association, reviewed sharing/PE fields and version-pinned KV deployment reference. Foundry account local auth remains disabled. | Name responsible secret custodian and deployer; record immutable secret **reference** version, component binding attestation, deployment-enabled vault/private ARM resolution and connection name. A newly created vault does not contain the new component's secret automatically. No plaintext, secret reads, broad grants or network relaxation. |
 | Package custody | Dedicated private `function-packages`; immutable reviewed ZIP name such as `telemetry-<commit>-<sha256>.zip`, package hash/build provenance, Python 3.11/Linux compatible dependencies; system-MI Blob fetch. | Name build/publisher and private uploader principal IDs, approved blob path/hash, Function MI fetch readiness and trigger-sync executor. No SAS, shared keys, raw app-settings export, public SCM bootstrap or overwriting a package URL. Release artifacts are not checked into this doc. |
 | Durable / destination | Fresh `genai-correlation`, explicit `function-transform` consumer and `telemetry` hub, AppDependencies/AppRequests/AppGenAIContent export. Keep `TelemetryTransform` and `DurableGenAIOutbox` disabled until cutover. | Exact workspace UUID, component ARM ID, destination endpoint/project/space identity attestations and KV secret-reference custodians. Telemetry records all ADR-0003 runtime gates, native schema/retention and ledger/index/ACK/outbox readiness before a separately approved enablement. `arizeProjectName` alone does not configure durable scope. |
-| Cost / lifetime | Proposed **24-hour review window**, EP1 floor 1 but maximum **unset**, five PEs/seven zones, full source cost ledger in §3. Conditional priced subtotal **$15.504880 at N=1**, **$116.919280 at N=20**, **plus unresolved security/Arize/runtime/overages/tail**. Neither is an all-inclusive bound. | **USD25 is not approved and cannot be called a cap**. Infra establishes scale/retention/inherited-meter applicability; Agent establishes runtime prerequisites; only contract/license facts require owner/provider attestation. Then owner chooses complete budget, lifetime/retained-state disposition and spend/alert custodian. No automatic teardown or reuse of an earlier allowance. |
+| Cost / lifetime | **24h validation lifetime** from first allocation; source EP1 floor/plan/app maximum **1**, minimum/prewarmed target 1. Five PEs/seven zones. Conditional priced subtotal **$15.504880 at N=1**, **plus unresolved security/Arize/runtime/overages/tail**. N=20 is historical sensitivity, not selectable. | [Bounded followup](issue147-bounded-execution.md) fixes the source limit and operator tail plan. **USD25/USD60 are not approved caps**. Exact entitlement/custody/provider gates remain; no automatic teardown. |
 | Invocation envelope | Propose **one** live synthetic request, scenario `benefits-deductible-lookup`, new run/correlation IDs, input ≤1,024 tokens, `max_output_tokens=1024` including reasoning, **zero client retries**, no tools/evaluation, one-at-a-time. | Agent confirms API enforces envelope; owner accepts request/token/dollar bounds. No second call on timeout/ambiguous delivery. Poll evidence at most three times over 20 minutes, then stop/reconcile. Limits are proposals, not fabricated usage figures. |
 
 **Consolidated decision packet, not a demand to approve missing discovery:**
@@ -121,7 +133,8 @@ For the explicitly conditional 24h quantities, priced subtotals are
 Full cost additionally includes unresolved security/entitlements **G**, Arize/
 license **L**, Agent/private-runner/build/state **R**, overages and retained
 lifetime. No unconditional all-inclusive ceiling exists. Twenty-instance
-maximum is a scenario condition, not source configuration or provider proof.
+maximum is now historical sensitivity, not the permitted source configuration
+(explicit plan/app maximum 1) or provider proof.
 Thirty additional idle retained days illustrate **$235.0028** more under stated
 security/capacity/rounding/connection assumptions, before continuing usage and
 those unresolved addends.

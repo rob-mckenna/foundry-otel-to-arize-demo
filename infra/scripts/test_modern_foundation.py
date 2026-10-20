@@ -206,6 +206,24 @@ class CompiledModernFoundationTests(unittest.TestCase):
         self.assertEqual({x["settingName"] for x in call["extraKeyVaultReferenceAppSettings"]["value"]},
                          {"ARIZE_OTLP_ENDPOINT", "ARIZE_SPACE_ID", "ARIZE_API_KEY"})
 
+    def test_single_instance_bound_reaches_plan_and_app_with_explicit_warm_behavior(self):
+        parameter = self.main["parameters"]["functionMaximumInstances"]
+        self.assertEqual(parameter["allowedValues"], [1])
+        self.assertEqual(parameter["defaultValue"], 1)
+        call = module(self.main, "function-app-deployment")["properties"]["parameters"]
+        self.assertEqual(call["maximumInstances"]["value"], "[parameters('functionMaximumInstances')]")
+        self.assertEqual(self.function["parameters"]["maximumInstances"]["allowedValues"], [1])
+        plan, = resources(self.function, "Microsoft.Web/serverfarms")
+        self.assertEqual(plan["properties"]["maximumElasticWorkerCount"], "[parameters('maximumInstances')]")
+        site, = resources(self.function, "Microsoft.Web/sites")
+        config = site["properties"]["siteConfig"]
+        self.assertEqual(config["functionAppScaleLimit"], "[parameters('maximumInstances')]")
+        self.assertEqual(config["minimumElasticInstanceCount"], 1)
+        self.assertEqual(config["preWarmedInstanceCount"], 1)
+        for filename in ("main.parameters.json", "main.parameters.private-endpoint.json"):
+            profile = json.loads((ROOT / "infra" / filename).read_text())
+            self.assertEqual(profile["parameters"]["functionMaximumInstances"], {"value": 1})
+
     def test_host_rbac_and_single_fresh_durable_export_ownership(self):
         self.assertEqual(set(self.function["variables"]["storageRoleIds"]), {
             "ba92f5b4-2d11-453d-a403-e96b0029c9fe", "974c5e8b-45b9-4653-ba55-5f855dd0fb88",
@@ -280,12 +298,20 @@ def prepared_profile():
                     "privateEndpointSubnetAddressPrefix": "10.40.0.0/26",
                     "functionIntegrationSubnetAddressPrefix": "10.40.0.64/26"},
         "functionPackageBlobName": "sha256-test-package.zip", "arizeProjectName": "test-project",
+        "functionMaximumInstances": 1,
         "appInsightsConnectionName": "test-link",
     }
     return {"parameters": {k: {"value": v} for k, v in values.items()}}
 
 
 class OfflineProfileTests(unittest.TestCase):
+    def test_unbounded_or_larger_ep1_profile_rejected_before_provider(self):
+        for value in (0, -1, 2, 20, True, "1", None):
+            profile = prepared_profile()
+            profile["parameters"]["functionMaximumInstances"]["value"] = value
+            with self.subTest(value=value), self.assertRaisesRegex(ValueError, "functionMaximumInstances=1"):
+                foundation.validate_profile(profile)
+
     def test_complete_synthetic_profile_is_not_provider_or_runtime_proof(self):
         result = foundation.validate_profile(prepared_profile())
         self.assertTrue(result["offlineProfileValid"])

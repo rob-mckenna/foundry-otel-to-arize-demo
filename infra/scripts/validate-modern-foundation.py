@@ -30,7 +30,7 @@ REQUIRED = (
     "accountName", "projectName", "customSubDomainName", "modelDeploymentName", "modelFormat",
     "modelName", "modelVersion", "modelDeploymentSkuName", "modelDeploymentCapacity",
     "modelVersionUpgradeOption", "modelDataResidencyApproval", "modelDeploymentApproved",
-    "network", "functionPackageBlobName", "arizeProjectName", "appInsightsConnectionName",
+    "network", "functionPackageBlobName", "functionMaximumInstances", "arizeProjectName", "appInsightsConnectionName",
 )
 
 
@@ -76,6 +76,8 @@ def validate_profile(document: dict) -> dict:
         raise ValueError("Explicit supported modelVersionUpgradeOption required")
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*\.zip", values["functionPackageBlobName"]):
         raise ValueError("functionPackageBlobName must be an immutable ZIP name, not a URL/SAS/path")
+    if type(values["functionMaximumInstances"]) is not int or values["functionMaximumInstances"] != 1:
+        raise ValueError("Fresh EP1 validation profile requires explicit functionMaximumInstances=1")
     if not 3 <= len(values["appInsightsConnectionName"]) <= 33:
         raise ValueError("appInsightsConnectionName must have 3-33 characters")
     network = values["network"]

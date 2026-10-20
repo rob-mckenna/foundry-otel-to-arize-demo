@@ -129,6 +129,7 @@ class PlanningEvidenceTests(unittest.TestCase):
             "issue147-cost-estimate.md",
             "issue147-workflow-gates.md",
             "issue147-private-agent-prerequisites.md",
+            "issue147-bounded-execution.md",
         ):
             content = (DOCS / doc).read_text(encoding="utf-8")
             for example in re.findall(r"```python\s*\n(.*?)```", content, re.S):
@@ -136,6 +137,23 @@ class PlanningEvidenceTests(unittest.TestCase):
             for target in re.findall(r"\[[^]]+\]\(([^)]+)\)", content):
                 if "://" not in target and not target.startswith("#"):
                     self.assertTrue((DOCS / target.split("#")[0]).exists(), target)
+
+    def test_bounded_followup_provenance_and_cost_reserve_reconcile(self):
+        evidence = json.loads((DOCS / "issue147-bounded-execution.json").read_text(encoding="utf-8"))
+        self.assertEqual(Decimal(evidence["conditionalPriced24hSubtotalUSD"]), self.subtotal(1).quantize(Decimal(".000001")))
+        self.assertIsNone(evidence["allInclusiveTotalUSD"])
+        self.assertFalse(evidence["officialValidationCompleted"])
+        cache = ROOT / ".azure-sandbox" / "issue147-bounded"
+        if cache.exists():
+            for file in evidence["publicProof"]:
+                self.assertEqual(hashlib.sha256((cache / file["file"]).read_bytes()).hexdigest(), file["sha256"])
+            self.assertEqual(
+                hashlib.sha256((cache / "security-plan-metadata.json").read_bytes()).hexdigest(),
+                evidence["securityMetadata"]["receiptSha256"],
+            )
+        doc = (DOCS / "issue147-bounded-execution.md").read_text(encoding="utf-8")
+        reserve = Decimal(evidence["conditionalPriced24hSubtotalUSD"]) + Decimal(evidence["conditionalFurther30dayReserveUSD"])
+        self.assertIn(f"${reserve:.6f}", doc)
 
 
 if __name__ == "__main__":

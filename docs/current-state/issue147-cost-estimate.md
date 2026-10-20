@@ -3,6 +3,18 @@
 **2026-10-19 public USD retail basis; PREPARATION ONLY. Not a vendor quote,
 invoice forecast, approved budget, or enforceable spending limit.**
 
+**2026-10-20 approved-direction update:** no-tool Basic/private client ingress
+with Microsoft-managed runtime/state is selected, not a pending Standard choice.
+Fresh source now explicitly bounds plan/app EP1 scale to **1**, with minimum 1
+and prewarmed target 1 inside that ceiling. See [bounded execution proof and
+finite operator retention plan](issue147-bounded-execution.md) and
+[safe metadata index](issue147-bounded-execution.json). The 24h validation lifetime
+and day-7/day-30 tail reviews do not authorize deletion or implement a billing
+TTL. New security metadata establishes Standard AI/CloudPosture and precise
+Storage/KV/ARM subplans, **not their entitlement/rates**. G/L/R still prevent
+an all-in estimate; no fresh paid execution occurred. Older scope/approval
+proposals below are historical where superseded by this update.
+
 This supplements the [acceptance packet](fresh-foundation-acceptance.md).
 It prices the **entire existing source foundation**, not a new architecture:
 `infra/main.bicep` plus its referenced modules, including private package/host/
@@ -108,10 +120,14 @@ links is introduced. This is deliberately more conservative than a one-day
 
 ### EP1 floor and maximum — not interchangeable
 
-Source `modules/function-app.bicep`: **Linux EP1, capacity 1**, one app. It does
-**not** set `maximumElasticWorkerCount`, `functionAppScaleLimit`,
-`minimumElasticInstanceCount` or `preWarmedInstanceCount`. The supported floor
-is **one billed EP1 even idle**; capacity 1 is **not a maximum**.
+Source `modules/function-app.bicep`: **Linux EP1, capacity 1**, one app.
+It now sets **maximumElasticWorkerCount=1, functionAppScaleLimit=1,
+minimumElasticInstanceCount=1, preWarmedInstanceCount=1**. Main and both example
+profiles expose/constrain `functionMaximumInstances=1`; the prepared-profile
+gate rejects any other value. Public schema and pinned official CLI support 1;
+fresh provider acceptance/readback remains outstanding. Prewarmed allocation
+stays inside the app maximum per Premium guidance. Capacity alone was not a cap.
+The supported floor is **one billed EP1 even idle**.
 
 [Official Premium billing/scaling](https://learn.microsoft.com/azure/azure-functions/functions-premium-plan)
 specifies 1 core + 3.5 GB for EP1, per-second allocated-instance billing, no
@@ -122,18 +138,18 @@ separate execution charge, and billable prewarmed buffers when allocated:
 - One instance for 24h: **$4.7976**, not free when triggers are disabled.
 - Conditional maximum **N=20 allocated instances including buffers** for 24h:
   **$95.9520**. This is an illustrative ceiling only if the approved profile
-  and provider readback establish that effective plan/app maximum; **not set
-  or approved here**. Lower burst occupancy reduces billed instance-hours.
+  and provider readback establish that effective plan/app maximum; **not the
+  source profile, which now only permits 1**. Retained as historical sensitivity.
 - Stress sensitivity N=100: **$479.7600** compute alone. This is not a claim
   that this region/subnet/account can allocate 100 instances.
 
-The exact effective provider maximum is **unestablished for the fresh plan**.
-Before spending approval, Infra must establish the explicit approved plan/app
-maximum and subnet feasibility (including scale transitions and buffer
-instances), without silently editing IaC in this QA change. Current `/26`
-example is not proof of high-scale feasibility: Premium networking guidance
-calls for at least 100 available addresses. Do not change the CIDR here.
-Until a maximum is established, there is **no unconditional numeric upper bound**.
+The source maximum is **1**, but effective provider acceptance and subnet
+feasibility (including scale transitions/replacement) remain unestablished.
+Current `/26` example is not certified against Premium networking guidance's
+at-least-100-available-address recommendation. No CIDR changed in this slice.
+Source scale limits are not monetary caps or proof against transient replacement
+allocation. G/L/R, continuing usage and actual retirement timing mean there is
+still **no unconditional all-inclusive numeric upper bound**.
 
 ## Complete source-resource/meter ledger
 
@@ -187,8 +203,8 @@ The JSON/test computes the numeric rows, **including the four conditional
 Defender allowances and malware**, without using any trial/free allocation:
 
 - N=1: **$15.504880 USD** for this assumed 24h source/volume/security scenario.
-- N=20: **$116.919280 USD**, only conditional on verified effective maximum 20.
-- N=100 sensitivity: **$543.927280 USD** under the same volume assumptions.
+- N=20: **$116.919280 USD**, historical sensitivity, not selectable source scale.
+- N=100 sensitivity: **$543.927280 USD**, not selectable source scale.
 
 These are **conditional priced subtotals**. Full cost is
 `priced subtotal + G + L + R + billable overages + time tail + tax/contract effects`.

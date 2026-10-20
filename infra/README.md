@@ -58,7 +58,14 @@ this source work neither replays nor modifies its live state.
   endpoints and DNS groups **before** creating the integrated Function.
 - KV: RBAC, soft delete, purge protection, PNA Disabled, ACL Deny/None.
   Host storage: TLS1.2/HTTPS, no public blobs/shared keys, PNA Disabled, ACL Deny/None.
-- Function: Linux Python 3.11 default, **Premium EP1** (one instance), system MI,
+- Function: Linux Python 3.11 default, **Premium EP1**, capacity/minimum 1,
+  explicit plan `maximumElasticWorkerCount=1` and app `functionAppScaleLimit=1`
+  via `functionMaximumInstances` (only 1 allowed). Always-ready
+  `minimumElasticInstanceCount=1`, prewarmed target `preWarmedInstanceCount=1`;
+  the prewarmed buffer stays inside the app maximum, not one extra worker.
+  Provider acceptance/readback is still required; no automatic larger fallback.
+  These are scale controls, not a monetary cap or deallocation after a test.
+  System MI,
   outbound VNet integration with route-all, PNA Disabled, TLS1.2, FTP/SCM basic
   publishing disabled. This timer/EH worker has no public HTTP ingress requirement.
 - Function retains Blob/Queue/Table Data Contributor, EH Data Receiver and KV
@@ -111,6 +118,7 @@ Required top-level selections:
 | Model | `modelDeploymentName`, `modelFormat`, `modelName`, **`modelVersion`**, `modelDeploymentSkuName`, positive **`modelDeploymentCapacity`**, **`modelVersionUpgradeOption`**; optional `raiPolicyName` |
 | Deployment gates | `modelDeploymentApproved=true` attests owner approval of exact tuple, availability/quota/cost; **`modelDataResidencyApproval`** records processing/residency approval, not a provider setting |
 | Function publication | `functionPackageBlobName`: owner-selected immutable ZIP blob name under `function-packages`; separately upload a built package, never a SAS/connection string |
+| Function scale | Explicit `functionMaximumInstances=1` in prepared profiles; plan/app ceiling with one always-ready instance and prewarmed target 1. See [proof, lifetime and operator retention plan](../docs/current-state/issue147-bounded-execution.md). |
 | Destination | `arizeProjectName`; operator-populated private-vault secret names `arizeEndpointSecretName`, `arizeSpaceIdSecretName`, `arizeApiKeySecretName` |
 | Tracing | `appInsightsConnectionName`; `tracingAssociationMode=preserveExisting` by default, explicitly approved `ApiKey` only for fresh main |
 

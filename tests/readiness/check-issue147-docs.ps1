@@ -7,6 +7,7 @@ foreach ($name in @(
     'issue147-cost-estimate.md',
     'issue147-workflow-gates.md',
     'issue147-private-agent-prerequisites.md'
+    'issue147-bounded-execution.md'
 )) {
     $content = Get-Content (Join-Path $docs $name) -Raw
     foreach ($match in [regex]::Matches($content, '(?s)```powershell\s*\r?\n(.*?)```')) {

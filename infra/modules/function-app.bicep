@@ -13,6 +13,9 @@ param ownerTag string
 param costCenterTag string
 @allowed(['3.10', '3.11', '3.12'])
 param pythonVersion string = '3.11'
+@description('Single-app EP1 plan/app ceiling, including prewarmed instances. Not a billing or transient replacement-instance guarantee.')
+@allowed([1])
+param maximumInstances int = 1
 @minLength(1)
 param keyVaultName string
 @minLength(1)
@@ -125,6 +128,7 @@ resource hostingPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   }
   properties: {
     reserved: true
+    maximumElasticWorkerCount: maximumInstances
   }
 }
 
@@ -170,6 +174,9 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
     vnetRouteAllEnabled: true
     keyVaultReferenceIdentity: 'SystemAssigned'
     siteConfig: {
+      functionAppScaleLimit: maximumInstances
+      minimumElasticInstanceCount: 1
+      preWarmedInstanceCount: 1
       linuxFxVersion: 'Python|${pythonVersion}'
       ftpsState: 'Disabled'
       minTlsVersion: '1.2'
