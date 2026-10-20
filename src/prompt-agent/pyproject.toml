@@ -38,6 +38,11 @@ azure = [
 ]
 test = [
     "pytest>=8.0.0",
+    # Contract tests use real SDK serialization with mocked auth/HTTP only.
+    "azure-ai-projects==2.0.0",
+    "azure-identity==1.26.0",
+    "openai==2.26.0",
+    "azure-core[aio]==1.41.0",
 ]
 
 [project.scripts]

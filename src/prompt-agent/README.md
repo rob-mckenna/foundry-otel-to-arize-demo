@@ -44,6 +44,8 @@ network. These names/UUIDs are synthetic examples, **not live authorization**.
 Pinned opt-in dependencies are `azure-ai-projects==2.0.0`,
 `azure-identity==1.26.0`, `openai==2.26.0`, `azure-core[aio]==1.41.0`
 (async HTTP transport required). This is not a complete transitive wheel lock.
+The `test` extra includes these same pins so standard `.[test]` installs and CI
+exercise the mocked SDK contract tests without authentication.
 
 **Future live command, DO NOT run under this checkpoint:** use the same module
 command with the approved fresh private endpoint/name/version, fresh lowercase
