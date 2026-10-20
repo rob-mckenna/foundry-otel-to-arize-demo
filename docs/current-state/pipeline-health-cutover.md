@@ -159,10 +159,13 @@ tree was found, so it was not widened merely to consume an unapproved archive.
 After approval, stage only the approved dependency members into this worktree's
 `.release\dependencies`, rejecting links/reparse points and configuration
 members before traversal; do not pass a repository-root archive to the builder.
-This keeps output local without a new root-cache interface. **No final source
-HEAD, #153 package hash or deployable #153 ZIP exists yet**; the coordinator
-finalizes the commit and receipt after concurrent work concludes. Source
-validation can pass while this packaging input and live acceptance remain blocked.
+This keeps output local without a new root-cache interface. The finalized runtime
+**SOURCE HEAD is `38ff29e0d3d9d67989b19e75bc84724feee47194`**; see the
+[source validation receipt](pipeline-health-source-receipt.md) for exact runtime
+member hashes and validation provenance. The subsequent receipt-only commit is
+not the runtime source revision. **Package hash: NOT BUILT; live runtime parity:
+NOT VERIFIED.** No deployable #153 ZIP exists. Source validation can pass while
+this packaging input and live acceptance remain blocked.
 
 ## Source topology and permissions
 
@@ -263,8 +266,8 @@ separately authorized diagnostics rather than dumping the provider response.
    record versions/hashes; do not install dependencies in this source-only task.
 
    ```powershell
-   # Replace only after coordinator finalizes all concurrent source work.
-   $SourceHead = '<FINAL_40_HEX_COMMIT>'
+   # Finalized source only; dependencies/build/publication still approval-gated.
+   $SourceHead = '38ff29e0d3d9d67989b19e75bc84724feee47194'
    Invoke-HealthCommand -Operation BuildPackage -Command {
    python .\infra\scripts\build-pipeline-health-package.py --source-head $SourceHead `
      --dependencies .\.release\dependencies --output ".\.release\pipeline-health-$SourceHead.zip"
@@ -608,5 +611,7 @@ evidence; coordinator assembles that evidence before any cutover decision.
 - `git --no-pager diff --check`: **PASS**.
 
 No dependencies were installed. Package tests use only synthetic project-local
-fixtures and remove their scratch files. No real release ZIP was built because
-the coordinator has not finalized the source commit/dependency artifact.
+fixtures and remove their scratch files. No real release ZIP was built: the source
+commit is now finalized, but the approved dependency artifact remains missing.
+The [assembly receipt](pipeline-health-source-receipt.md) records the coordinator's
+complete 319-test runtime result, including durable infrastructure tests.

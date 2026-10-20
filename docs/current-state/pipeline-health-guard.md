@@ -93,7 +93,10 @@ python -m pytest src\telemetry-pipeline\tests --ignore=src\telemetry-pipeline\te
 ```
 
 Result: **314 passed** (2026-10-20). Infrastructure tests are independently owned
-by Infra. `git diff --check` passed. A process-local negative control replaced
+by Infra. The coordinator subsequently observed **319 passed**, including durable
+infrastructure tests; exact command and provenance are in the
+[source validation receipt](pipeline-health-source-receipt.md).
+`git diff --check` passed. A process-local negative control replaced
 `SourcePolicy.exclusion_reason` with a no-op and ran
 `test_mixed_native_normalized_aliases_and_component` plus both parameters of
 `test_guard_removes_pre_cutover_unsent_original_before_readiness_or_send_budget`:
