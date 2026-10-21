@@ -2,36 +2,45 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "projectToken": { "value": "sample" },
-    "environment": { "value": "dev" },
-    "location": { "value": "REPLACE_ME_REGION" },
-    "regionToken": { "value": "REPLACE_ME" },
-    "ownerTag": { "value": "REPLACE_ME_OWNER" },
-    "costCenterTag": { "value": "REPLACE_ME_COST_CENTER" },
-    "accountName": { "value": "REPLACE_ME_UNIQUE_FOUNDRY_ACCOUNT" },
-    "projectName": { "value": "REPLACE_ME_PROJECT" },
-    "customSubDomainName": { "value": "REPLACE_ME_UNIQUE_SUBDOMAIN" },
-    "modelDeploymentName": { "value": "REPLACE_ME_DEPLOYMENT_ALIAS" },
-    "modelFormat": { "value": "REPLACE_ME_MODEL_FORMAT" },
-    "modelName": { "value": "REPLACE_ME_CATALOG_MODEL" },
-    "modelVersion": { "value": "REPLACE_ME_EXACT_VERSION" },
-    "modelDeploymentSkuName": { "value": "REPLACE_ME_DEPLOYMENT_SKU" },
-    "modelDeploymentCapacity": { "value": 0 },
-    "modelVersionUpgradeOption": { "value": "REPLACE_ME_UPGRADE_POLICY" },
-    "modelDataResidencyApproval": { "value": "REPLACE_ME_APPROVED_RESIDENCY_AND_PROCESSING_BOUNDARY" },
-    "modelDeploymentApproved": { "value": false },
-    "network": {
+    "existingAgent": {
       "value": {
-        "mode": "fresh",
-        "virtualNetworkAddressPrefix": "10.40.0.0/24",
-        "privateEndpointSubnetAddressPrefix": "10.40.0.0/26",
-        "functionIntegrationSubnetAddressPrefix": "10.40.0.64/26"
+        "accountResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/synthetic-demo/providers/Microsoft.CognitiveServices/accounts/synthetic-foundry",
+        "projectResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/synthetic-demo/providers/Microsoft.CognitiveServices/accounts/synthetic-foundry/projects/synthetic-project",
+        "modelDeploymentName": "synthetic-model",
+        "agentName": "synthetic-observability-agent",
+        "agentVersion": "1"
       }
     },
-    "functionPackageBlobName": { "value": "REPLACE_ME_IMMUTABLE_PACKAGE.zip" },
-    "arizeProjectName": { "value": "REPLACE_ME_ARIZE_PROJECT" },
-    "appInsightsConnectionName": { "value": "REPLACE_ME_CONNECTION" },
-    "tracingAssociationMode": { "value": "preserveExisting" },
-    "appInsightsConnectionPropertiesReviewed": { "value": false }
+    "functionAppName": { "value": "synthetic-bridge" },
+    "functionPrincipalId": { "value": "00000000-0000-0000-0000-000000000001" },
+    "storageAccountName": { "value": "syntheticbridgestorage" },
+    "workspaceName": { "value": "synthetic-agent-law" },
+    "agentComponentResourceId": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/synthetic-demo/providers/Microsoft.Insights/components/synthetic-agent-ai" },
+    "functionHealthComponentResourceId": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/synthetic-demo/providers/Microsoft.Insights/components/synthetic-health-ai" },
+    "functionHealthWorkspaceResourceId": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/synthetic-demo/providers/Microsoft.OperationalInsights/workspaces/synthetic-health-law" },
+    "keyVaultName": { "value": "synthetic-demo-kv" },
+    "functionHealthConnectionStringSecretName": { "value": "function-health-connection-string" },
+    "arizeEndpointSecretName": { "value": "arize-otlp-endpoint" },
+    "arizeSpaceSecretName": { "value": "arize-space-id" },
+    "arizeApiKeySecretName": { "value": "arize-api-key" },
+    "arizeProjectName": { "value": "synthetic-bridge" },
+    "eventHubNamespaceName": { "value": "synthetic-telemetry-ehns" },
+    "eventHubName": { "value": "telemetry" },
+    "eventHubConsumerGroupName": { "value": "function-transform" },
+    "exportRuleName": { "value": "synthetic-agent-export" },
+    "existingExportTableNames": { "value": ["AppRequests", "AppDependencies"] },
+    "existingExportEnabled": { "value": true },
+    "existingFunctionAppSettings": {
+      "value": {
+        "FUNCTIONS_EXTENSION_VERSION": "~4",
+        "FUNCTIONS_WORKER_RUNTIME": "python",
+        "AzureWebJobsStorage__accountName": "syntheticbridgestorage",
+        "AzureWebJobsStorage__credential": "managedidentity",
+        "WEBSITE_RUN_FROM_PACKAGE": "https://syntheticbridgestorage.blob.core.windows.net/function-packages/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.zip",
+        "WEBSITE_RUN_FROM_PACKAGE_BLOB_MI_RESOURCE_ID": "SystemAssigned",
+        "PIPELINE_EXCLUDED_SERVICE_NAMES": "[\"synthetic-other-worker\"]",
+        "PIPELINE_EXCLUDED_COMPONENT_RESOURCE_IDS": "[]"
+      }
+    }
   }
 }

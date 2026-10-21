@@ -1,5 +1,6 @@
-"""Build an immutable Function ZIP from git bytes and an approved local dependency tree."""
+"""Build an immutable durable-bridge Function ZIP from git and approved Linux dependencies."""
 import argparse
+import ast
 import hashlib
 import io
 import json
@@ -11,6 +12,11 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
 PREFIX = "src/telemetry-pipeline/"
+RUNTIME_MODULES = {
+    "__init__.py", "envelope.py", "mapping.py", "source_policy.py",
+    "durable.py", "durable_store.py", "durable_runtime.py", "strict_sender.py",
+    "function_app.py",
+}
 
 
 def source_members(head):
@@ -30,9 +36,23 @@ def source_members(head):
                 or (relative.startswith("telemetry_pipeline/") and relative.endswith(".py"))
             ):
                 members[relative] = source.read(name)
-    if not {"function_app.py", "host.json", "requirements.txt",
-            "telemetry_pipeline/source_policy.py"}.issubset(members):
-        raise ValueError("commit lacks Function runtime entrypoints or the source-isolation policy")
+    expected = {"function_app.py", "host.json", "requirements.txt"} | {
+        "telemetry_pipeline/" + name for name in RUNTIME_MODULES
+    }
+    if set(members) != expected:
+        raise ValueError("commit must contain exactly the durable Function runtime and source-isolation policy")
+    tree = ast.parse(members["telemetry_pipeline/function_app.py"])
+    names = [
+        keyword.value.value
+        for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        for decorator in node.decorator_list
+        if isinstance(decorator, ast.Call) and isinstance(decorator.func, ast.Attribute)
+        and decorator.func.attr == "function_name"
+        for keyword in decorator.keywords
+        if keyword.arg == "name" and isinstance(keyword.value, ast.Constant)
+    ]
+    if sorted(names) != ["DurableGenAIOutbox", "TelemetryTransform"]:
+        raise ValueError("commit must register exactly TelemetryTransform and DurableGenAIOutbox")
     return members
 
 
@@ -58,7 +78,9 @@ def write_package(head, dependencies, output):
         if not file.is_file():
             continue
         name = file.relative_to(dependencies).as_posix()
-        if file.suffix.lower() == ".pyd" or file.name == ".env" or file.name.startswith(".env."):
+        if file.suffix.lower() in {".pyd", ".dll", ".exe"} or any(
+            p == ".env" or p.startswith(".env.") for p in file.relative_to(dependencies).parts
+        ):
             raise ValueError("Windows binaries or secret configuration in dependency tree")
         if "__pycache__" in file.parts or file.suffix == ".pyc":
             continue

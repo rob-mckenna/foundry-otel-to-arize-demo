@@ -1,5 +1,4 @@
-// Sole fresh state writer. The existing-resource rollout uses identical GUID
-// derivation, but must never run concurrently against fresh-owned resources.
+// Additive state preparation; no storage account/network properties are written.
 param storageAccountName string
 param functionPrincipalId string
 
@@ -10,9 +9,12 @@ resource blobs 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01' exist
   parent: storage
   name: 'default'
 }
-resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' existing = {
+resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {
   parent: blobs
   name: 'genai-correlation'
+  properties: {
+    publicAccess: 'None'
+  }
 }
 resource indexRole 'Microsoft.Authorization/roleDefinitions@2022-04-01' = {
   name: guid(resourceGroup().id, container.id, 'durable-genai-index-v1')
@@ -47,3 +49,4 @@ resource indexAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = 
 }
 output indexRoleDefinitionId string = indexRole.id
 output indexRoleAssignmentId string = indexAssignment.id
+output containerResourceId string = container.id

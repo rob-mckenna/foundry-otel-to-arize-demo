@@ -10,12 +10,12 @@ import zipfile
 
 
 SPEC = importlib.util.spec_from_file_location(
-    "health_package", Path(__file__).with_name("build-pipeline-health-package.py"))
+    "function_package", Path(__file__).with_name("build-function-package.py"))
 builder = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(builder)
 
 
-class PipelineHealthPackageTests(unittest.TestCase):
+class FunctionPackageTests(unittest.TestCase):
     def setUp(self):
         self.path = builder.ROOT / ".release-tests" / uuid.uuid4().hex
         self.deps = self.path / "dependencies"
@@ -55,8 +55,13 @@ class PipelineHealthPackageTests(unittest.TestCase):
             "function_app.py": b"# synthetic \xff\r\n",
             "host.json": b"{}\n",
             "requirements.txt": b"# approved synthetic dependency\n",
-            "telemetry_pipeline/source_policy.py": b"# synthetic policy\n",
         }
+        files.update({"telemetry_pipeline/" + name: b"# synthetic\n"
+                      for name in builder.RUNTIME_MODULES})
+        files["telemetry_pipeline/function_app.py"] = (
+            b'@app.function_name(name="TelemetryTransform")\ndef transform(): pass\n'
+            b'@app.function_name(name="DurableGenAIOutbox")\ndef outbox(): pass\n'
+        )
         buffer = io.BytesIO()
         with zipfile.ZipFile(buffer, "w") as archive:
             for name, data in files.items():
@@ -73,6 +78,28 @@ class PipelineHealthPackageTests(unittest.TestCase):
         run.return_value = subprocess.CompletedProcess([], 0, stdout=buffer.getvalue())
         with self.assertRaisesRegex(ValueError, "source-isolation policy"):
             builder.source_members("b" * 40)
+
+    @patch.object(builder.subprocess, "run")
+    def test_rejects_legacy_modules_and_extra_registered_functions(self, run):
+        files = {
+            "function_app.py": b"# synthetic\n", "host.json": b"{}\n",
+            "requirements.txt": b"# synthetic\n",
+            **{"telemetry_pipeline/" + name: b"# synthetic\n" for name in builder.RUNTIME_MODULES},
+        }
+        files["telemetry_pipeline/function_app.py"] = (
+            b'@app.function_name(name="UnexpectedFunction")\ndef unexpected(): pass\n'
+        )
+        for legacy in (False, True):
+            with self.subTest(legacy=legacy):
+                buffer = io.BytesIO()
+                with zipfile.ZipFile(buffer, "w") as archive:
+                    for name, data in files.items():
+                        archive.writestr(builder.PREFIX + name, data)
+                    if legacy:
+                        archive.writestr(builder.PREFIX + "telemetry_pipeline/batch.py", b"# obsolete\n")
+                run.return_value = subprocess.CompletedProcess([], 0, stdout=buffer.getvalue())
+                with self.assertRaisesRegex(ValueError, "exactly"):
+                    builder.source_members("b" * 40)
 
 
 if __name__ == "__main__":
