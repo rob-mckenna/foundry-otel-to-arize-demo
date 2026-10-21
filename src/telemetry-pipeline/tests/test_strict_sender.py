@@ -89,7 +89,6 @@ def test_invalid_live_configuration_fails_without_console_success(endpoint, spac
 
 
 CONFIGURATION = {
-    "DURABLE_GENAI_ENABLED": "true",
     "DURABLE_ALLOWED_WORKSPACE_ID": "11111111-1111-4111-8111-111111111111",
     "DURABLE_ALLOWED_COMPONENT_RESOURCE_ID": (
         "/subscriptions/22222222-2222-4222-8222-222222222222"
@@ -159,22 +158,17 @@ def test_trigger_admission_failure_raises_without_legacy_export_or_ack(
 ):
     from telemetry_pipeline import durable_runtime
 
-    monkeypatch.setenv("DURABLE_GENAI_ENABLED", "true")
-
     def admit(events):
         raise AdmissionError("synthetic_storage_failure")
 
     runtime = SimpleNamespace(correlator=SimpleNamespace(admit_batch=admit))
     monkeypatch.setattr(durable_runtime, "DurableRuntime", lambda: contextlib.nullcontext(runtime))
-    monkeypatch.setattr(
-        function_app, "_resolve_exporter", lambda: pytest.fail("legacy exporter selected"),
-    )
     invoke = registered_pipeline_functions[0].get_user_function()
     with pytest.raises(AdmissionError, match="synthetic_storage_failure"):
         invoke(["synthetic event"])
 
 
-def test_trigger_admits_and_timer_drains_only_when_enabled(monkeypatch, registered_pipeline_functions):
+def test_trigger_admits_and_timer_drains(monkeypatch, registered_pipeline_functions):
     from telemetry_pipeline import durable_runtime
 
     calls = []
@@ -186,14 +180,7 @@ def test_trigger_admits_and_timer_drains_only_when_enabled(monkeypatch, register
         ),
     )
     monkeypatch.setattr(durable_runtime, "DurableRuntime", lambda: contextlib.nullcontext(runtime))
-    monkeypatch.setattr(
-        function_app, "_resolve_exporter", lambda: pytest.fail("legacy exporter selected"),
-    )
     trigger, timer = [item.get_user_function() for item in registered_pipeline_functions]
-    monkeypatch.setenv("DURABLE_GENAI_ENABLED", "false")
-    timer(None)
-    assert calls == []
-    monkeypatch.setenv("DURABLE_GENAI_ENABLED", "true")
     trigger(["synthetic event"])
     timer(None)
     assert calls == [("admit", ["synthetic event"]), ("drain", "synthetic-sender")]

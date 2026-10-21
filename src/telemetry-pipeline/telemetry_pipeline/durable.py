@@ -1,4 +1,4 @@
-"""Opt-in cross-batch content correlation and conservative durable outbox.
+"""Cross-batch content correlation and conservative durable outbox.
 
 All clocks are durable receipt clocks, never content capture/span event times.
 The store's compare-and-swap, not process memory, owns admission and sending.
@@ -15,7 +15,7 @@ import time
 from dataclasses import dataclass
 from typing import Callable, Iterable
 
-from .batch import _extract_records, _message_body_to_text
+from .envelope import extract_records, message_body_to_text
 from .durable_store import AdmissionError, BlobLedger, json_bytes
 from .mapping import (
     MalformedRecordError, _message_json, _parse_time_ns, normalize_dependency_record,
@@ -115,10 +115,10 @@ class Correlator:
                     raise AdmissionError("message_shape")
                 if len(body) > MAX_MESSAGE_BYTES:
                     raise AdmissionError("message_limit")
-                text = _message_body_to_text(body)
+                text = message_body_to_text(body)
                 if len(text.encode("utf-8")) > MAX_MESSAGE_BYTES:
                     raise AdmissionError("message_limit")
-                records = _extract_records(text)
+                records = extract_records(text)
                 if len(records) > MAX_RECORDS_PER_MESSAGE:
                     raise AdmissionError("message_record_limit")
                 for record in records:

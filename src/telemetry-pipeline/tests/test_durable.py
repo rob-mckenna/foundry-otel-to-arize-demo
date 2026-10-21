@@ -199,6 +199,85 @@ def rig():
     return engine, store, container, now
 
 
+@pytest.mark.parametrize("envelope", ["single", "array", "wrapper"])
+def test_supported_event_envelopes_admit_deduplicate_and_drain(rig, envelope):
+    engine, _, _, _ = rig
+    row = make_record(TenantId=SCOPE.workspace, _ResourceId=SCOPE.component)
+    payload = row if envelope == "single" else [row] if envelope == "array" else {"records": [row]}
+    event = SimpleNamespace(get_body=lambda: json.dumps(payload).encode("utf-8"))
+    assert engine.admit_batch([event, json.dumps(payload), bytearray(json.dumps(payload).encode())]) == 3
+    sender = Sender()
+    engine.drain(sender)
+    assert len(sender.payloads) == 1
+    span, attrs, _ = decoded(sender.payloads[0])
+    assert span.span_id.hex() == SPAN
+    assert attrs["correlation.id"].string_value == "synthetic-correlation-id-123"
+
+
+@pytest.mark.parametrize("body", [b"\xff", "not-json", '{"records": null}', "null", "[]"])
+def test_invalid_event_envelopes_fail_admission_without_sending(rig, body):
+    engine, _, container, _ = rig
+    if body == "[]":
+        assert engine.admit_batch([body]) == 0
+    else:
+        with pytest.raises(AdmissionError, match="durable_admission_failure"):
+            engine.admit_batch([body])
+    assert not container.data
+
+
+def test_fifty_span_native_graph_survives_durable_restart_and_replay(rig):
+    engine, store, _, now = rig
+    rows = []
+    for trace_number in range(1, 11):
+        trace = f"{trace_number:032x}"
+        for index, parent in enumerate((None, 1, 1, 3, 3), 1):
+            rows.append({
+                "TenantId": SCOPE.workspace, "_ResourceId": SCOPE.component,
+                "Type": "AppRequests" if index == 1 else "AppDependencies",
+                "OperationId": trace, "Id": f"{index:016x}",
+                "ParentId": f"|{trace}.{parent:016x}." if parent else "",
+                "Name": f"synthetic.operation.{index}", "Success": index != 4,
+                "TimeGenerated": "2026-10-03T12:00:00.1234567Z", "DurationMs": 1.25,
+                "Properties": {
+                    "correlation.id": f"synthetic-request-{trace_number}",
+                    "input.value": "Synthetic question", "output.value": "Synthetic answer",
+                    "openinference.span.kind": "LLM" if index == 3 else "CHAIN",
+                    **({"llm.model_name": "synthetic-model", "llm.token_count.prompt": "42",
+                        "llm.token_count.completion": "18", "llm.token_count.total": "60"}
+                       if index == 3 else {}),
+                },
+            })
+    assert engine.admit_batch([json.dumps(rows), json.dumps(rows)]) == 100
+    engine = Correlator(store, SCOPE, clock=lambda: now[0])
+    sender = Sender()
+    for _ in range(20):
+        engine.drain(sender)
+    assert len(sender.payloads) == 50
+    actual = {}
+    for payload in sender.payloads:
+        span, attrs, resource = decoded(payload)
+        actual[(span.trace_id.hex(), span.span_id.hex())] = span
+        assert span.start_time_unix_nano == 1791028800123456700
+        assert span.end_time_unix_nano - span.start_time_unix_nano == 1_250_000
+        assert attrs["input.value"].string_value == "Synthetic question"
+        assert attrs["output.value"].string_value == "Synthetic answer"
+        assert any(attr.key == "openinference.project.name"
+                   and attr.value.string_value == SCOPE.project for attr in resource.attributes)
+        if span.span_id.hex() == f"{3:016x}":
+            assert attrs["llm.token_count.total"].int_value == 60
+    assert len(actual) == 50
+    for row in rows:
+        span = actual[(row["OperationId"], row["Id"])]
+        index = int(row["Id"], 16)
+        parent = None if index == 1 else 3 if index in (4, 5) else 1
+        assert span.parent_span_id.hex() == (f"{parent:016x}" if parent else "")
+        assert span.kind == (2 if index == 1 else 3 if index == 3 else 1)
+        assert span.status.code == (2 if index == 4 else 1)
+    engine.admit_batch([json.dumps(rows)])
+    engine.drain(sender)
+    assert len(sender.payloads) == 50
+
+
 HEALTH_ROLE = "fotoa-demo-func-eastus2"
 HEALTH_POLICY = SourcePolicy(frozenset({HEALTH_ROLE}))
 

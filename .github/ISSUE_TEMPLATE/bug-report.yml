@@ -28,7 +28,7 @@ body:
         - Telemetry transformation
         - Arize ingestion
         - Arize trace visualization
-        - Infrastructure (Bicep/Terraform)
+        - Existing-resource attachment (Bicep)
         - Documentation
         - Other
     validations:

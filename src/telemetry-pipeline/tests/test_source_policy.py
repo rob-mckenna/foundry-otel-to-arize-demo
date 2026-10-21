@@ -1,9 +1,8 @@
-"""Synthetic source isolation across native and normalized legacy batches."""
+"""Synthetic source-identity rules; durable integration lives in test_durable."""
 import json
 
 import pytest
 
-from telemetry_pipeline.batch import transform_batch
 from telemetry_pipeline.mapping import MalformedRecordError, record_to_span
 from telemetry_pipeline.source_policy import SourcePolicy
 
@@ -36,20 +35,17 @@ def native(record):
     ("retriever.query", "RETRIEVER"), ("arbitrary operational dependency", None),
 ])
 @pytest.mark.parametrize("native_form", [True, False])
-def test_pipeline_identity_excluded_regardless_of_operation(stub_exporter, name, kind, native_form):
+def test_pipeline_identity_excluded_regardless_of_operation(name, kind, native_form):
     record = make_record(Name=name, cloud_RoleName=ROLE, customDimensions=(
         {"openinference.span.kind": kind} if kind else {}
     ))
     if native_form:
         record = native(record)
-    result = transform_batch([json.dumps(record)], stub_exporter, POLICY)
-    assert not result.spans
-    assert result.skipped[0].reason == "excluded:service_identity"
-    assert not stub_exporter.export_calls
+    assert POLICY.exclusion_reason(record) == "service_identity"
 
 
 @pytest.mark.parametrize("kind", ["CHAIN", "LLM", "TOOL", "RETRIEVER", None])
-def test_agent_children_roots_and_missing_roles_retained(stub_exporter, kind):
+def test_agent_children_roots_and_missing_roles_retained(kind):
     rows = [
         make_record(cloud_RoleName=ROLE + "-agent", Name="TelemetryTransform.agent.child",
                     operation_ParentId="1111111111111111",
@@ -58,31 +54,26 @@ def test_agent_children_roots_and_missing_roles_retained(stub_exporter, kind):
         native(make_record(cloud_RoleName="synthetic-agent", Name="GET storage")),
     ]
     # The mapper's fallback name is explicitly excluded, but is not source evidence.
-    result = transform_batch([json.dumps(rows)], stub_exporter, POLICY)
-    assert len(result.spans) == 3 and not result.skipped
-    assert result.spans[0].parent.span_id == int("1111111111111111", 16)
-    assert result.spans[1].parent is None
-    assert len(stub_exporter.export_calls) == 1
-    for source, actual in zip(rows, result.spans):
-        expected = record_to_span(source)
-        assert actual.context == expected.context
-        assert actual.attributes == expected.attributes
+    assert all(POLICY.exclusion_reason(row) == "" for row in rows)
+    spans = [record_to_span(row) for row in rows]
+    assert spans[0].parent.span_id == int("1111111111111111", 16)
+    assert spans[1].parent is None
 
 
-def test_mixed_native_normalized_aliases_and_component(stub_exporter):
+def test_mixed_native_normalized_aliases_and_component():
     good = make_record(cloud_RoleName="synthetic-agent")
     conflict = native(make_record(cloud_RoleName=ROLE))
     conflict["cloud_RoleName"] = "synthetic-agent"
     rows = [
         native(good), make_record(cloud_RoleName=ROLE),
         native(make_record(_ResourceId=COMPONENT.upper())),
-        conflict, good, make_record(AppRoleName=ROLE, cloud_RoleName=ROLE),
+        good, make_record(AppRoleName=ROLE, cloud_RoleName=ROLE),
     ]
-    result = transform_batch([json.dumps({"records": rows})], stub_exporter, POLICY)
-    assert len(result.spans) == 2 and len(result.skipped) == 4
-    assert sum(row.reason.startswith("excluded:") for row in result.skipped) == 3
-    assert any("conflicting" in row.reason for row in result.skipped)
-    assert len(stub_exporter.export_calls) == 1
+    assert [POLICY.exclusion_reason(row) for row in rows] == [
+        "", "service_identity", "component_identity", "", "service_identity",
+    ]
+    with pytest.raises(MalformedRecordError, match="conflicting"):
+        POLICY.exclusion_reason(conflict)
 
 
 @pytest.mark.parametrize("record", [
@@ -100,11 +91,10 @@ def test_invalid_identity_never_silently_selects_alias(record):
     "PIPELINE_EXCLUDED_SERVICE_NAMES", "PIPELINE_EXCLUDED_COMPONENT_RESOURCE_IDS",
 ])
 @pytest.mark.parametrize("value", ["", "not-json", "null", "{}", '"role"', "[1]", '[""]', '[" role "]'])
-def test_malformed_settings_fail_explicitly_before_any_batch_export(stub_exporter, monkeypatch, name, value):
+def test_malformed_settings_fail_explicitly(monkeypatch, name, value):
     monkeypatch.setenv(name, value)
     with pytest.raises(ValueError, match=name):
-        transform_batch([json.dumps(make_record())], stub_exporter)
-    assert not stub_exporter.export_calls
+        SourcePolicy.from_environment()
 
 
 def test_defaults_empty_and_service_names_case_sensitive(monkeypatch):

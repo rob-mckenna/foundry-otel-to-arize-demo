@@ -1,266 +1,93 @@
-# Foundry telemetry to Arize demo
+# Foundry Agent telemetry → Arize
 
-A reusable, **synthetic-data-only** observability demo for enterprise healthcare:
-Microsoft Foundry Prompt Agent instrumentation → Application Insights → Log Analytics →
-Event Hub → Azure Function transform → Arize OTLP.
-
-**Implemented does not mean independently validated end-to-end.** Start with the offline
-setup below. Live deployment is a separately approved activity, not a prerequisite for
-the synthetic demo and not authorized by this README.
+A **synthetic-data-only technical preview** of an Azure Function that turns native
+Microsoft Foundry Agent telemetry into OpenTelemetry/OpenInference spans for Arize.
+Use an **existing, versioned Foundry Agent** and an approved existing Azure environment.
+This is not a turnkey fresh deployment or a production-readiness claim.
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    accTitle: Foundry agent telemetry to Arize
-    accDescr: Agent telemetry passes through Azure Monitor and Event Hub to the Azure Function for validation, per-span content correlation, mapping and OTLP export to Arize. Function-health telemetry goes to separate Azure Monitor resources with no agent export.
+    accTitle: Native Foundry Agent telemetry to Arize
+    accDescr: One versioned agent invocation produces native Azure Monitor telemetry. The Azure Function validates, correlates per-span content, maps and delivers it to Arize. Function health uses a separate non-exported workspace.
 
-    subgraph FOUNDRY["1. Microsoft Foundry"]
-        A("Prompt Agent<br/>OpenTelemetry + OpenInference")
-    end
-
-    subgraph MONITOR["2. Azure Monitor & transport"]
-        direction TB
-        B("Agent<br/>Application Insights")
-        C("Agent<br/>Log Analytics")
-        D("Event Hub")
-        B --> C -->|Data export| D
-    end
-
-    subgraph TRANSFORM["3. Transform & deliver"]
-        E("Azure Function<br/><br/>Validate & correlate<br/>Map & export")
-    end
-
-    subgraph ARIZE["4. Arize"]
-        F("Traces & spans<br/>LLM inputs, outputs & tokens")
-    end
-
-    subgraph HEALTH["Function health - Azure Monitor only"]
-        direction TB
-        H("Application Insights")
-        I("Log Analytics<br/>No agent export")
-        H --> I
-    end
-
-    A --> MONITOR
-    MONITOR -->|Event Hub batch| E
-    E -->|OTLP| F
-    E -->|Operational telemetry| HEALTH
+    C("Python caller<br/>One exact Agent version") -->|Responses API| A("Foundry Agent<br/>Native service spans")
+    A --> B("Agent<br/>Application Insights")
+    B --> L("Agent<br/>Log Analytics")
+    L -->|AppRequests, AppDependencies<br/>AppGenAIContent| E("Event Hub")
+    E --> F("Azure Function<br/>Validate · join · map · deliver")
+    F -->|OTLP protobuf| R("Arize<br/>Spans · I/O · tokens")
+    F --> H("Function-health App Insights<br/>Separate non-exported Log Analytics")
 
     classDef agent fill:#e8daef,stroke:#5c2d91,color:#000,stroke-width:2px;
     classDef azure fill:#cfe4fa,stroke:#0078d4,color:#000,stroke-width:2px;
-    classDef function fill:#fff4ce,stroke:#c45100,color:#000,stroke-width:3px,font-size:18px,font-weight:bold;
+    classDef focal fill:#fff4ce,stroke:#c45100,color:#000,stroke-width:3px;
     classDef destination fill:#d3f3ef,stroke:#0c756f,color:#000,stroke-width:2px;
-    classDef health fill:#f3f2f1,stroke:#605e5c,color:#000,stroke-width:1px;
-    class A agent;
-    class B,C,D azure;
-    class E function;
-    class F destination;
-    class H,I health;
-
-    style FOUNDRY fill:#fff,stroke:#c8c6c4,color:#000
-    style MONITOR fill:#fff,stroke:#c8c6c4,color:#000
-    style TRANSFORM fill:#fff,stroke:#c45100,color:#000,stroke-width:2px
-    style ARIZE fill:#fff,stroke:#c8c6c4,color:#000
-    style HEALTH fill:#fff,stroke:#c8c6c4,color:#000
+    classDef health fill:#f3f2f1,stroke:#605e5c,color:#000;
+    class C,A agent;
+    class B,L,E azure;
+    class F focal;
+    class R destination;
+    class H health;
 ```
 
-Agent telemetry follows the solid-line pipeline to Arize. Function-health telemetry
-uses a separate Application Insights component and non-exported workspace, keeping
-pipeline operations out of the agent-export source. Historical queued self-spans may
-still drain; the additional source-identity guard is not yet deployed.
+The **native service spans**, not the caller's local client span, are the subject of
+this demo. Linking Foundry to Application Insights and exporting all three tables
+are prerequisites; installing the Python caller does not configure native tracing.
 
-This is the implemented architecture, not a complete-trace or fresh-deployment validation
-claim. See the [detailed architecture and limitations](docs/current-state/architecture.md)
-and [health-isolation evidence](docs/current-state/pipeline-health-cutover.md).
+## The Function is the sample's focal point
 
-## What the Azure Function does
+| Stage | Responsibility | Source |
+| --- | --- | --- |
+| Admit | `TelemetryTransform` receives Event Hub records, enforces the exact source scope and persists them before successful return. | [Triggers](src/telemetry-pipeline/telemetry_pipeline/function_app.py) |
+| Map | Validate trace/span/parent IDs; preserve supported timing, status, model, correlation and actual token fields without inventing missing values. | [Mapper](src/telemetry-pipeline/telemetry_pipeline/mapping.py) |
+| Join | Persist a Blob ledger and join separately arriving content **to its original span**, with a 300-second first-admission deadline and explicit/inline content precedence. | [Correlator](src/telemetry-pipeline/telemetry_pipeline/durable.py), [ledger](src/telemetry-pipeline/telemetry_pipeline/durable_store.py) |
+| Deliver | `DurableGenAIOutbox` drains bounded work every 30 seconds, freezes OTLP bytes, records confirmed acknowledgment and quarantines uncertain delivery. | [Strict sender](src/telemetry-pipeline/telemetry_pipeline/strict_sender.py) |
 
-**The Function is the schema and delivery bridge, not just a JSON forwarder.** It turns
-supported Azure Monitor records into OpenTelemetry spans with OpenInference attributes
-that Arize can ingest. It does not invoke a model.
+There is one durable delivery path: no direct/console exporter mode, whole-trace
+assembly, content-created spans or model invocation inside the Function.
 
-| Stage | What the code does | Implementation |
-|---|---|---|
-| Receive | `TelemetryTransform` receives Event Hub batches and selects durable admission or direct batch transformation. | [Function triggers](src/telemetry-pipeline/telemetry_pipeline/function_app.py), [batch decoding](src/telemetry-pipeline/telemetry_pipeline/batch.py) |
-| Map | Normalize native/legacy fields, validate trace/span/parent IDs, and map available correlation, model, token usage, input/output, timing and status into an OpenTelemetry span. Invalid records are reported, not repaired with invented identities. | [`record_to_span()`](src/telemetry-pipeline/telemetry_pipeline/mapping.py) |
-| Join content | In durable mode, persist records in a Blob-backed ledger and correlate separately arriving `AppGenAIContent` with its original span. Inline content takes precedence; the content wait is bounded to 300 seconds. | [`Correlator`](src/telemetry-pipeline/telemetry_pipeline/durable.py), [Blob ledger](src/telemetry-pipeline/telemetry_pipeline/durable_store.py) |
-| Deliver | `DurableGenAIOutbox` runs every 30 seconds, drains eligible spans and sends OTLP protobuf to Arize. The durable path distinguishes confirmed acceptance, retryable rejection, rejection and ambiguous delivery rather than treating every response as success. | [Timer trigger](src/telemetry-pipeline/telemetry_pipeline/function_app.py), [OTLP encoding and strict sender](src/telemetry-pipeline/telemetry_pipeline/strict_sender.py) |
+## Try it
 
-For example, this excerpt from
-[`record_to_span()`](src/telemetry-pipeline/telemetry_pipeline/mapping.py#L552)
-shows how normalized source identities and LLM attributes are carried into the span:
+1. Follow [setup](docs/current-state/setup.md) to install locally and validate an
+   invocation with `python -m prompt_agent.foundry_responses ... --dry-run`.
+   Dry-run makes no authentication, model, Azure or Arize call.
+2. Only with separate approval, an approved managed-identity runner can invoke
+   the exact existing Agent version once using `--allow-live`. The caller sends
+   this fixed prompt, with tools disabled:
 
-```python
-trace_id = parse_trace_id(record.get("operation_Id"))
-span_id = parse_span_id(record.get("id"), trace_id)
-parent_span_id = parse_parent_span_id(record.get("operation_ParentId"), trace_id)
+   > SYNTHETIC DEMO ONLY. Reply with one short sentence: this is a fabricated benefits enquiry.
 
-context = build_span_context(trace_id, span_id)
-parent = build_parent_context(trace_id, parent_span_id)
+3. For an approved real invocation, inspect the destination project in Arize:
+   find the native AGENT/LLM spans using the **native source trace ID**; check
+   nonempty synthetic input/output, model, parent linkage and prompt/completion
+   token counts against that same source invocation. Do not substitute the
+   caller's client trace ID or label a calculated total as a source total.
+   The [mapping contract](docs/current-state/mapping-and-limitations.md) explains
+   what can and cannot survive.
 
-name, status, kind, span_kind_attrs = map_span_kind_status_fields(record, custom_dimensions)
-if record.get("Type") == "AppRequests":
-    kind = SpanKind.SERVER
+## What has been demonstrated?
 
-attributes: dict[str, Any] = {}
-attributes.update(gen_ai_attrs)
-attributes.update(map_correlation_id(custom_dimensions))
-attributes.update(map_token_fields(custom_dimensions))
-attributes.update(map_llm_io_fields(custom_dimensions))
-attributes.update(span_kind_attrs)
-```
+A previous real synthetic Foundry invocation reached Arize with nonempty native
+input/output and actual prompt/completion usage. Native `AppGenAIContent` transport
+was observed, but valid inline content won precedence. **Missing-inline fallback
+was demonstrated separately with controlled Event Hub fixtures**, not a native
+missing-inline Agent invocation. Neither observation proves complete trace graphs,
+full resource parity, exactly-once delivery or readiness of this simplified source
+in a new environment.
 
-`DURABLE_GENAI_ENABLED=true` selects the ledger/outbox path used by the existing POC;
-`false` selects direct batch transformation/export. The code above describes the
-repository implementation, not independent proof of deployed package parity.
+Function-health telemetry has been physically isolated into a non-exported workspace.
+The additional source/backlog guard is offline-tested source, **not deployed live
+proof**. Fresh/repeat deployment and private agent-runtime validation remain unverified.
 
-**Content joining is per span, not whole-trace assembly.** Genuine agent roots and
-non-LLM children remain eligible; missing source fields cannot be reconstructed.
-Ambiguous durable sends are quarantined rather than blindly replayed. See the
-[mapping/export contract](docs/current-state/telemetry-mapping-export-contract.md)
-and [durable correlation runbook](docs/current-state/durable-genai-correlation.md)
-for the full field, retry and delivery boundaries.
+## Read next
 
-## Current status
+- [Setup](docs/current-state/setup.md): prerequisites, safe dry-run and live approval boundary.
+- [Mapping and limitations](docs/current-state/mapping-and-limitations.md): fields, joining and evidence scope.
+- [Operations](docs/current-state/operations.md): configuration, delivery outcomes and recovery.
 
-| Area | What this asset supports | Evidence limit |
-|---|---|---|
-| Local Prompt Agent | Synthetic scenarios, stub responses, OpenTelemetry/OpenInference spans, correlation IDs and token attributes | The baseline client is a stub, not a live Foundry model; its token estimates are not live usage |
-| Telemetry transform | Native/legacy mapping, typed usage, opt-in durable content correlation and conservative OTLP delivery | Native content transport, inline preservation and controlled missing-inline fallback have bounded independent evidence; no exactly-once guarantee |
-| Function publication | Corrected source `f650fed` deployed and durable processing enabled in the approved demo on 2026-10-19 | Existing release evidence is not approval to deploy into another environment |
-| Destination parity | Native inline I/O and a separately injected missing-inline fixture verified in Arize | No native missing-inline Foundry capture, complete graph or full OTLP-resource parity claim |
-| Infrastructure | Modern-only private foundation implemented and checked offline under ADR-0004 | Fresh provider/private/runtime verification remains pending; do not run the fresh composition over existing resources |
-| Future work | Direct OTLP bypass | **CONCEPTUAL / NOT IMPLEMENTED**; excluded from this asset's implementation |
-
-The [mapping/export contract](docs/current-state/telemetry-mapping-export-contract.md) is the
-canonical technical status, including source-package provenance and limitations. Issue #139's
-[focused connection implementation](docs/current-state/foundry-appinsights-tracing.md) is
-deployed from reviewed source `2fb796d`: native same-name adoption and identical
-redeployment passed, followed by isolated clean creation/redeployment on
-2026-10-17 UTC. The runbook records retained test resources and bounded
-user-observed Arize Input versus independently reconciled source/export evidence;
-complete destination graph/resource parity remains unknown. The later
-[durable correlation runbook](docs/current-state/durable-genai-correlation.md)
-records #143's deployed rollout, native transport and controlled fallback evidence.
-One unrelated operational send remains quarantined with delivery unknown;
-do not resend it blindly.
-Historical private runtime allowances are **CLOSED
-3/3**; evaluation remains **PARTIAL_OR_UNKNOWN_DO_NOT_RETRY**. Offline checks do not reopen
-model, replay, registration, evaluation or deployment budgets.
-
-## One supported setup path: offline synthetic demo
-
-### Prerequisites
-
-- Git, Python **3.10+** (3.11 recommended), and PowerShell 7+.
-- A fresh shell with `APPLICATIONINSIGHTS_CONNECTION_STRING` **unset** so the Prompt Agent
-  uses console export. No Azure login, Arize key, MCP launcher or live `.env` file is needed.
-- Package access for the initial dependency installation. Keep the virtual environment local
-  and do not stage it or generated package metadata.
-
-Run these commands from the repository root after cloning:
-
-```powershell
-git clone https://github.com/rob-mckenna/foundry-otel-to-arize-demo.git
-Set-Location .\foundry-otel-to-arize-demo
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -e ".\src\prompt-agent[test]" -e ".\src\telemetry-pipeline[test,otlp]"
-```
-
-The `otlp` extra supplies the real protobuf/exporter dependencies used by offline export
-tests; installing it does not enable a live destination. Do not set live exporter credentials
-for this walkthrough.
-
-### Run synthetic scenarios
-
-```powershell
-if (Test-Path Env:\APPLICATIONINSIGHTS_CONNECTION_STRING) {
-    throw 'Use a fresh shell without Application Insights export configured.'
-}
-$env:PYTHONDONTWRITEBYTECODE = '1'
-$env:PYTEST_DISABLE_PLUGIN_AUTOLOAD = '1'
-$env:PYTHONPATH = "$(Resolve-Path .\src\prompt-agent);$(Resolve-Path .\src\telemetry-pipeline)"
-python -m prompt_agent.main --scenarios
-```
-
-Expect five fabricated member-services scenarios, stub responses, console spans, correlation
-IDs and estimated token counts. Inputs live in
-[`synthetic/scenarios.py`](src/prompt-agent/synthetic/scenarios.py). This runs neither a real
-model nor the live Event Hub/Function/Arize chain. Never substitute patient or customer data.
-
-### Verify offline
-
-In the same shell:
-
-```powershell
-python -m pytest -q -p no:cacheprovider src\prompt-agent\tests
-python -m pytest -q -p no:cacheprovider src\telemetry-pipeline\tests tests\telemetry-mapping tests\export\test_otlp_export_conformance.py
-```
-
-These synthetic tests inspect span graphs, correlation, mapping, usage preservation, Function
-binding metadata, failures and real OTLP protobuf encoding without live services. They do not
-establish destination parity. No separate telemetry lint/typecheck command is configured.
-
-## Live setup: operator review and explicit approval required
-
-The supported target is **one modern-only private deployment path**, not a classic
-AI Hub deployment or legacy compatibility switch. Follow
-[ADR-0004](docs/adr/0004-modern-only-foundry-foundation-and-cleanup-boundaries.md)
-and the [`infra/README.md`](infra/README.md) readiness status. Modern-only source
-is implemented and checked offline; fresh deployment, repeat-deployment idempotence and private agent
-runtime readiness must not be inferred from compilation or existing demo success.
-Before any live action:
-
-1. Obtain explicit scope/budget approval and follow the official Azure prepare → validate →
-   deploy lifecycle. Review the exact source/package and deployment plan; a prior exception
-   is not reusable authorization. Fresh deployment, narrow existing-resource
-   adoption and exact-resource retirement are distinct operations.
-2. Review baseline parameters: `projectToken`, `environment`, `location`, `regionToken`,
-   `ownerTag`, `costCenterTag`, explicit modern account/project names, model
-   version/deployment SKU/capacity/upgrade policy and private network ownership.
-   Confirm model availability, quota, residency and ongoing hosting cost. Keep
-   required tags and synthetic classification. Do not apply fresh examples to
-   the existing private environment.
-3. Independently reconcile Log Analytics export tables/routes, Function package publication,
-   identity permissions, networking and binding app settings. Source defaults are hub
-   `telemetry`, prefix `EventHubConnection` and consumer group `$Default`; select the actually
-   provisioned hub/group explicitly (normally `function-transform`). Preserve
-   working bindings, durable state and checkpoints during adoption.
-4. Review the HTTPS `/v1/traces` destination, Arize Space/key and project resource routing.
-   Use Key Vault and managed identity where supported; never print or commit secret values.
-5. Plan separately authorized same-invocation source capture, native delivery, OTLP
-   acknowledgment and independent Arize graph/field/token checks. Retain immutable evidence;
-   do not infer parity from a deployment response, console fallback or local protobuf tests.
-
-Preserve private networking, Entra-only authentication, Key Vault, Defender, deallocated-VM
-controls and all runtime guards. No replay, checkpoint reset, evaluation retry, role expansion
-or content-protection workaround is implied. Missing source parents, usage or content must
-remain missing rather than fabricated.
-
-## Architecture and documentation
-
-- [Current-state architecture and diagrams](docs/current-state/architecture.md): implemented
-  path and its explicit evidence limits.
-- [Current-state index](docs/current-state/README.md) and
-  [mapping/export contract](docs/current-state/telemetry-mapping-export-contract.md):
-  current canonical reading path.
-- [Future-state designs](docs/future-state/README.md): **CONCEPTUAL — NOT IMPLEMENTED**.
-- [Demo archive](demo/README.md): retained historical narratives/runbooks, **not** alternate
-  setup instructions or current validation claims.
-
-Current code lives in `src\prompt-agent` and `src\telemetry-pipeline`; infrastructure lives
-in `infra\main.bicep` and `infra\modules`. Tests use synthetic fixtures under the component
-test directories, `tests\telemetry-mapping` and `tests\export`.
-The `.squad` framework/casting is retained, not migrated. Tracked portable MCP definitions
-are optional contributor tooling, not application setup prerequisites; machine-local launcher
-overrides must not be shared.
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) and the repository's issue/PR templates. Keep current
-implementation separate from conceptual designs, preserve IDs and supplied token counts,
-add focused mapping/export tests for behavior changes, and update the canonical contract
-without rewriting dated historical evidence. Never commit credentials, runtime receipts,
-local environments, real PII/PHI or customer-identifying data.
+Use fabricated content only; keep secrets in Key Vault and prefer managed identities.
+Never commit credentials, live configuration or raw telemetry. Earlier documentation
+is recoverable from Git tag `minimal-preview-baseline-20261021`; it is not a second
+supported setup path.

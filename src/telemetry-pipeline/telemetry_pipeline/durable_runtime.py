@@ -1,4 +1,4 @@
-"""Explicit managed-identity wiring for the opt-in durable path."""
+"""Required source/destination configuration and managed-identity Blob wiring."""
 from __future__ import annotations
 
 import os
@@ -23,10 +23,10 @@ class DurableRuntime:
         policy = SourcePolicy.from_environment()
         required = (
             "DURABLE_ALLOWED_WORKSPACE_ID", "DURABLE_ALLOWED_COMPONENT_RESOURCE_ID",
-            "DURABLE_ARIZE_PROJECT", "ARIZE_OTLP_ENDPOINT", "ARIZE_SPACE_ID",
+            "DURABLE_ARIZE_PROJECT", "ARIZE_OTLP_ENDPOINT", "ARIZE_SPACE_ID", "ARIZE_API_KEY",
         )
         values = {name: os.environ.get(name, "") for name in required}
-        if not all(values.values()):
+        if not all(value.strip() for value in values.values()):
             raise AdmissionError("durable_source_destination_configuration_required")
         if not re.fullmatch(
             r"[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}",
@@ -59,7 +59,7 @@ class DurableRuntime:
             raise AdmissionError("durable_storage_requires_public_azure_blob_uri")
         self.sender = StrictSender(
             values["ARIZE_OTLP_ENDPOINT"], values["ARIZE_SPACE_ID"],
-            os.environ.get("ARIZE_API_KEY", ""),
+            values["ARIZE_API_KEY"],
         )
         scope = Scope(
             values["DURABLE_ALLOWED_WORKSPACE_ID"],

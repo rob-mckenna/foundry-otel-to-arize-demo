@@ -1,22 +1,33 @@
-# Squad: ignore runtime state (logs, inbox, sessions)
-# Note: .squad/casting/* is identity and MUST be committed to main, not ignored
-.squad/orchestration-log/
-.squad/log/
-.squad/decisions/inbox/
-.squad/sessions/
-.squad/.scratch/
-.squad/.cache/
-# Squad: SubSquad activation file (local to this machine)
-.squad-workstream
+# Local worktrees, configuration, evidence and once-only live invocation receipts.
+/.worktrees/
+/.azure-config/
+/.local/
+/.release/
+/.release-tests/
+/.tools/
+/.foundry-live-receipts/
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+local.settings.json
 
-# Squad: per-agent isolated git worktrees (local scratch space, never committed)
-.worktrees/
-
-# Azure CLI config relocated into the repo (AZURE_CONFIG_DIR) so the sandboxed
-# coding agent's workspace-scoped filesystem boundary can reach it. Contains
-# cached auth tokens - never commit.
-.azure-config/
-
-# Local immutable package staging and sanitized preflight evidence.
-.release/
+# Python environments, build artifacts and caches.
+.venv/
+.venv-*/
+venv/
+env/
 __pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.python_packages/
+.cache/
+pip-cache/
