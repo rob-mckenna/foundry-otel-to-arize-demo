@@ -16,7 +16,7 @@ def make_record(**overrides: Any) -> dict:
 
     Defaults describe a root `prompt_agent.invoke` CHAIN span (no parent),
     matching the shape used throughout
-    `docs/telemetry/trace-correlation-preservation.md` §5's validation plan.
+    `docs/current-state/mapping-and-limitations.md` identity contract.
     Override any field (including nested `customDimensions` keys via the
     `custom_dimensions` kwarg) to build a child/LLM/retry-attempt span.
     """

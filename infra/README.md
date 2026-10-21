@@ -43,7 +43,7 @@ The owner must independently attest every item; offline validation cannot:
    that component can still be exported.
 2. **Agent sink:** existing agent Application Insights component linked to the
    named LAW. Supply its `workspaceCustomerId` (LAW `properties.customerId` GUID,
-   the exported row's `WorkspaceId`), **not** the workspace ARM resource ID.
+   the exported row's `TenantId`), **not** the workspace ARM resource ID.
    The owner must confirm that UUID belongs to `workspaceName`.
    The three export tables must be supported/available in that LAW;
    the agent's native content-tracing configuration must already be in place.

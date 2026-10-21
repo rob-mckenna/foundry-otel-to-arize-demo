@@ -15,7 +15,7 @@ param functionAppName string
 param functionPrincipalId string
 param storageAccountName string
 param workspaceName string
-@description('Existing agent LAW customerId GUID (WorkspaceId in exported rows), NOT its ARM resource ID.')
+@description('Existing agent LAW customerId GUID (TenantId in exported rows), NOT its ARM resource ID.')
 @minLength(36)
 @maxLength(36)
 param workspaceCustomerId string

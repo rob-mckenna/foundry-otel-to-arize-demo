@@ -1,14 +1,27 @@
-name: Feature Request
-description: Propose a new feature or enhancement for the Foundry-to-Arize observability demo.
-title: "[Feature]: "
+name: Change or Architecture Proposal
+description: Propose a focused change, infrastructure attachment, mapping improvement or conceptual design.
+title: "[Proposal]: "
 labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
       value: |
-        Use this form for new features or enhancements to the demo, pipeline, infrastructure, or documentation.
+        Use this form for changes to the caller, durable pipeline, existing-resource attachment or documentation.
 
-        **Synthetic data only.** Do not include secrets, connection strings, or any real healthcare/personal data in this form.
+        **Synthetic data only.** No secrets, raw telemetry, connection strings or real healthcare/personal data.
+        Architectural expansion requires an accepted decision and explicit implementation approval.
+        Conceptual proposals must say **CONCEPTUAL — NOT IMPLEMENTED**; this form grants no live authority.
+  - type: dropdown
+    id: evidence-status
+    attributes:
+      label: Evidence / approval boundary
+      options:
+        - Existing-path change — offline validation only
+        - Existing-resource attachment — separate live approval required
+        - Architecture decision — implementation approval required
+        - CONCEPTUAL — NOT IMPLEMENTED
+    validations:
+      required: true
   - type: textarea
     id: feature-description
     attributes:
@@ -71,11 +84,11 @@ body:
   - type: textarea
     id: demo-validation-steps
     attributes:
-      label: Demo Validation Steps
-      description: Steps to confirm this feature works end-to-end in the live demo, using synthetic data only.
+      label: Validation and Limitations
+      description: Exact offline checks, expected evidence, known limitations and any separately approved live validation. Do not claim deployment or whole-trace/exactly-once proof.
       placeholder: |
-        1. Run demo scenario X with synthetic prompt(s)
-        2. Confirm trace/span appears correctly in Application Insights
-        3. Confirm trace/span appears correctly in Arize with correlation ID preserved
+        1. Run the relevant offline suites and standalone Bicep compilation
+        2. Describe expected identity/content/token preservation and limitations
+        3. State live approval still required, or link independently approved scope
     validations:
       required: true
