@@ -107,9 +107,10 @@ not estimates. Its local span is labeled `local_client_not_native_agent`; do not
 it as native Agent evidence or assume its trace ID equals the service trace.
 
 The repository-local `.foundry-live-receipts` directory records once-only intent/outcome.
-Preserve it: a timeout or failure may be ambiguous, not safe to retry. A fresh UUID
-does not authorize repeating the same uncertain operation. Missing or invalid actual
-usage also fails the caller without making another request.
+Keep it under secure operator custody, excluded from Git; verify that exclusion before
+any approved live use. Preserve it: a timeout or failure may be ambiguous, not safe
+to retry. A fresh UUID does not authorize repeating the same uncertain operation.
+Missing or invalid actual usage also fails the caller without making another request.
 
 ## 5. Check offline behavior, then verify approved live evidence separately
 
