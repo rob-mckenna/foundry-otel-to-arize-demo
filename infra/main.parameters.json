@@ -15,6 +15,7 @@
     "functionPrincipalId": { "value": "00000000-0000-0000-0000-000000000001" },
     "storageAccountName": { "value": "syntheticbridgestorage" },
     "workspaceName": { "value": "synthetic-agent-law" },
+    "workspaceCustomerId": { "value": "00000000-0000-0000-0000-000000000002" },
     "agentComponentResourceId": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/synthetic-demo/providers/Microsoft.Insights/components/synthetic-agent-ai" },
     "functionHealthComponentResourceId": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/synthetic-demo/providers/Microsoft.Insights/components/synthetic-health-ai" },
     "functionHealthWorkspaceResourceId": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/synthetic-demo/providers/Microsoft.OperationalInsights/workspaces/synthetic-health-law" },

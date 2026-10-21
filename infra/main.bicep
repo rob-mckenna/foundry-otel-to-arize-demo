@@ -15,6 +15,10 @@ param functionAppName string
 param functionPrincipalId string
 param storageAccountName string
 param workspaceName string
+@description('Existing agent LAW customerId GUID (WorkspaceId in exported rows), NOT its ARM resource ID.')
+@minLength(36)
+@maxLength(36)
+param workspaceCustomerId string
 param agentComponentResourceId string
 param functionHealthComponentResourceId string
 param functionHealthWorkspaceResourceId string
@@ -72,7 +76,7 @@ var runtimeSettings = {
   EVENT_HUB_CONNECTION_SETTING_PREFIX: 'EventHubConnection'
   EVENT_HUB_NAME: eventHubName
   EVENT_HUB_CONSUMER_GROUP: eventHubConsumerGroupName
-  DURABLE_ALLOWED_WORKSPACE_ID: workspace.id
+  DURABLE_ALLOWED_WORKSPACE_ID: workspaceCustomerId
   DURABLE_ALLOWED_COMPONENT_RESOURCE_ID: agentComponentResourceId
   DURABLE_ARIZE_PROJECT: arizeProjectName
   APPLICATIONINSIGHTS_CONNECTION_STRING: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/${functionHealthConnectionStringSecretName}/)'

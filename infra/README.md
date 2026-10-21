@@ -42,7 +42,10 @@ The owner must independently attest every item; offline validation cannot:
    The invocation client must select that exact version. Multiple agents sharing
    that component can still be exported.
 2. **Agent sink:** existing agent Application Insights component linked to the
-   named LAW. The three export tables must be supported/available in that LAW;
+   named LAW. Supply its `workspaceCustomerId` (LAW `properties.customerId` GUID,
+   the exported row's `WorkspaceId`), **not** the workspace ARM resource ID.
+   The owner must confirm that UUID belongs to `workspaceName`.
+   The three export tables must be supported/available in that LAW;
    the agent's native content-tracing configuration must already be in place.
    This attachment neither enables tracing on Foundry nor changes its connections.
 3. **Bridge host:** existing Linux Python 3.11 Functions v4 Elastic Premium
@@ -160,7 +163,8 @@ ARM can be invoked without this checker; it does not enforce owner attestation.
   `EventHubConnection__credential=managedidentity`,
   `EVENT_HUB_CONNECTION_SETTING_PREFIX=EventHubConnection`,
   `EVENT_HUB_NAME`, `EVENT_HUB_CONSUMER_GROUP`.
-- `DURABLE_ALLOWED_WORKSPACE_ID`, `DURABLE_ALLOWED_COMPONENT_RESOURCE_ID`,
+- `DURABLE_ALLOWED_WORKSPACE_ID=workspaceCustomerId` (LAW customer UUID, **not**
+  ARM ID), `DURABLE_ALLOWED_COMPONENT_RESOURCE_ID` (agent component ARM ID),
   `DURABLE_ARIZE_PROJECT`.
 - Key Vault references for `ARIZE_OTLP_ENDPOINT`, `ARIZE_SPACE_ID`,
   `ARIZE_API_KEY`, `APPLICATIONINSIGHTS_CONNECTION_STRING` (health only).

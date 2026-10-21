@@ -23,7 +23,7 @@ REQUIRED_EVIDENCE = {
 }
 PARAMETERS = {
     "existingAgent", "functionAppName", "functionPrincipalId", "storageAccountName",
-    "workspaceName", "agentComponentResourceId", "functionHealthComponentResourceId",
+    "workspaceName", "workspaceCustomerId", "agentComponentResourceId", "functionHealthComponentResourceId",
     "functionHealthWorkspaceResourceId", "keyVaultName",
     "functionHealthConnectionStringSecretName", "arizeEndpointSecretName",
     "arizeSpaceSecretName", "arizeApiKeySecretName", "arizeProjectName",
@@ -65,6 +65,9 @@ def validate(document):
         require(isinstance(p[key], str) and bool(p[key].strip())
                 and p[key] == p[key].strip(), f"{key} must be a nonempty exact string")
     uuid.UUID(p["functionPrincipalId"])
+    require(re.fullmatch(r"[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}",
+                         p["workspaceCustomerId"]),
+            "workspaceCustomerId must be the LAW customerId UUID, not an ARM resource ID")
     require(re.fullmatch(r"[a-z0-9]{3,24}", p["storageAccountName"]),
             "storageAccountName must be a valid existing account name")
     require(re.fullmatch(r"[a-zA-Z][a-zA-Z0-9-]{1,22}[a-zA-Z0-9]", p["keyVaultName"]),

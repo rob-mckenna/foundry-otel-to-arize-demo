@@ -56,6 +56,13 @@ class AttachmentInputTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "parameter names"):
             bridge.validate(self.document)
 
+    def test_workspace_admission_uses_customer_uuid_not_arm_resource_id(self):
+        self.p["workspaceCustomerId"]["value"] = (
+            self.p["functionHealthWorkspaceResourceId"]["value"]
+        )
+        with self.assertRaisesRegex(ValueError, "LAW customerId UUID"):
+            bridge.validate(self.document)
+
     def test_no_auth_storage_or_package_fallback(self):
         cases = (
             ("DURABLE_GENAI_ENABLED", "false", "legacy"),
@@ -148,6 +155,8 @@ class CompiledAttachmentTests(unittest.TestCase):
         self.assertIn("union(", settings["PIPELINE_EXCLUDED_SERVICE_NAMES"])
         self.assertEqual(settings["DURABLE_ALLOWED_COMPONENT_RESOURCE_ID"],
                          "[parameters('agentComponentResourceId')]")
+        self.assertEqual(settings["DURABLE_ALLOWED_WORKSPACE_ID"],
+                         "[parameters('workspaceCustomerId')]")
         self.assertEqual(set(self.template["parameters"]), bridge.PARAMETERS)
 
 
