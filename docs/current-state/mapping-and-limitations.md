@@ -33,6 +33,8 @@ be recreated merely because a destination trace appears connected.
 Only AppRequests/AppDependencies originals create spans. `AppGenAIContent` rows
 supply content candidates, never standalone spans. The durable join is scoped to
 the exact workspace, component and destination plus **trace ID + span ID**.
+The recorded exact Agent version identifies the invocation target; the bridge's
+source allowlist filters workspace/component, **not individual Agent versions**.
 Content `Id` is not a span ID. A supplied content parent must match the original;
 content does not override parent, timing, model, status or usage.
 

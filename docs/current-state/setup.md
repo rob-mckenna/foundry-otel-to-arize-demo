@@ -18,8 +18,8 @@ An operator must supply and approve:
   **AppRequests, AppDependencies and AppGenAIContent**, with an eligible table
   plan, region and network posture for native data export.
 - An existing private Function, its system-assigned identity and identity-based
-  host storage; the `genai-correlation` container; approved Blob read/write,
-  index-tag write/filter permissions and Event Hub receive access.
+  host storage on an approved Premium plan; the `genai-correlation` container;
+  approved Blob read/write, index-tag write/filter permissions and Event Hub receive access.
 - A separate Function-health Application Insights component/workspace with
   **no export or indirect route back to the agent pipeline**.
 - Existing Key Vault references for secrets, an approved Arize project/space and
@@ -31,6 +31,21 @@ parameters before any authorized preparation. It attaches to existing resources;
 it does not provision a Foundry/model/network foundation. Preserve the reviewed
 full Function-settings baseline and existing export tables. Preparation leaves
 both triggers disabled; it is not permission to enable or publish.
+
+Once the matching infra source is present, these repository-root checks are offline:
+
+```powershell
+python infra\scripts\prepare-bridge.py --parameters infra\main.parameters.json
+bicep build infra\main.bicep --stdout > $null
+python -m unittest discover -s infra\scripts -p "test_*.py" -v
+```
+
+The placeholder sample's schema pass prints a parameter fingerprint and required
+owner confirmations, **not readiness**. Optional `--attestation` checks an independently
+supplied owner's exact `parametersSha256` and all required confirmations; it does not
+generate evidence or verify those assertions against Azure. Do not fill confirmations
+with `true` merely to pass the checker. Follow Infra's contract for independently
+approved actual parameter snapshots; keep credentials out of those files.
 
 Fresh/repeat deployment, provider acceptance, private runtime connectivity and
 the simplified source's live end-to-end behavior require independent validation.
