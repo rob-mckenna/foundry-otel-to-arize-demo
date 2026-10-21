@@ -9,7 +9,6 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
-from opentelemetry.sdk.trace.export import SpanExportResult
 
 
 def make_record(**overrides: Any) -> dict:
@@ -41,37 +40,6 @@ def make_record(**overrides: Any) -> dict:
     }
     record.update(overrides)
     return record
-
-
-class StubSpanExporter:
-    """Minimal `SpanExporter` test-double recording every exported batch.
-
-    Mirrors the `_StubSpanExporter` pattern already used in
-    `src/prompt-agent/tests/test_telemetry_export_observability.py`.
-    """
-
-    def __init__(self, result: SpanExportResult = SpanExportResult.SUCCESS) -> None:
-        self._result = result
-        self.export_calls: list[list] = []
-
-    def export(self, spans):
-        self.export_calls.append(list(spans))
-        return self._result
-
-    def shutdown(self) -> None:
-        pass
-
-    def force_flush(self, timeout_millis: int = 30000) -> bool:
-        return True
-
-    @property
-    def all_exported_spans(self) -> list:
-        return [span for call in self.export_calls for span in call]
-
-
-@pytest.fixture
-def stub_exporter() -> StubSpanExporter:
-    return StubSpanExporter()
 
 
 @pytest.fixture(scope="session")

@@ -1,9 +1,7 @@
 """Per-record field-group transform logic: Azure Monitor record -> OTLP span.
 
-This module implements every mapping in `docs/telemetry/field-mapping.md`'s
-summary table and its four detail docs (`docs/telemetry/mapping/*.md`,
-issues #89-#92), plus the correlation-ID handling documented in
-`docs/telemetry/trace-correlation-preservation.md` (#37) §1.
+The supported mapping and its limits are documented in
+`docs/current-state/mapping-and-limitations.md`.
 
 It has no dependency on `azure.functions` or any live Azure/Arize SDK -
 only `opentelemetry-api`/`opentelemetry-sdk`, the same OTel packages
@@ -33,19 +31,12 @@ logger = logging.getLogger(__name__)
 
 
 class MalformedRecordError(ValueError):
-    """Raised when a source record fails identity-field validation.
-
-    Per `docs/telemetry/mapping/identity-correlation-fields.md` §2 step 2:
-    "The Function must explicitly validate length/hex-format and reject or
-    flag malformed rows rather than silently truncating or coercing them."
-    Callers (see `batch.py`) catch this per-record and flag/skip rather than
-    letting one malformed row take down an entire batch.
-    """
+    """Invalid source fields; durable admission propagates a sanitized failure."""
 
 
 # ---------------------------------------------------------------------------
 # Identity/correlation fields (#89) - trace_id / span_id / parent_span_id /
-# correlation.id. See trace-correlation-preservation.md §1: App Insights'
+# correlation.id. App Insights'
 # operation_Id/id and real parent IDs retain their exact OTel byte widths.
 # Native dependency root markers are handled during row normalization.
 # Strict |trace.span. wrappers are unwrapped without regenerating IDs.
@@ -170,9 +161,7 @@ def parse_custom_dimensions(record: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def coerce_int(value: Any) -> int | None:
-    """App Insights exports every customDimensions value as a string - cast
-    to `int` explicitly (see field-mapping.md's "Transform-wide rule" and
-    `docs/telemetry/mapping/token-fields.md` §2 step 3). Returns `None` for
+    """Cast string customDimensions counts explicitly. Returns `None` for
     an absent field so the caller can decide whether to omit the attribute.
     """
     if value is None:
@@ -227,9 +216,7 @@ _TOKEN_FIELDS = (
 def map_token_fields(custom_dimensions: Mapping[str, Any]) -> dict[str, int]:
     """string -> int cast for the three `llm.token_count.*` attributes.
 
-    Per `docs/telemetry/mapping/token-fields.md` §2: this is the single
-    highest-risk correctness bug class in the transform - omission here
-    would let Arize's numeric aggregation views receive quoted strings.
+    Arize's numeric aggregation views must not receive quoted counts.
     Fields absent from the source record are simply omitted (not
     synthesized as zero).
     """
@@ -296,9 +283,7 @@ def map_gen_ai_fields(custom_dimensions: Mapping[str, Any]) -> dict[str, Any]:
 def map_llm_io_fields(custom_dimensions: Mapping[str, Any]) -> dict[str, str]:
     """Preserve explicit I/O; bridge inline GenAI role/parts messages as JSON.
 
-    Per `docs/telemetry/mapping/llm-io-fields.md` §2: no *additional*
-    truncation is introduced here beyond whatever the App Insights 8KB
-    customDimensions limit already did upstream.
+    No additional truncation is introduced here beyond source-side limits.
     """
     attributes = _string_attributes(custom_dimensions, _LLM_IO_FIELDS)
     for side in ("input", "output"):
@@ -386,7 +371,6 @@ def map_span_kind_status_fields(
 ) -> tuple[str, Status, SpanKind, dict[str, Any]]:
     """Returns (span name, Status, SpanKind, extra attributes dict).
 
-    Per `docs/telemetry/mapping/span-kind-status-fields.md` §2:
       - `Name` -> span name, unchanged.
       - `Success` (bool) -> `STATUS_CODE_OK`/`STATUS_CODE_ERROR`.
       - `openinference.span.kind` -> passthrough attribute; absent on
@@ -552,9 +536,7 @@ def normalize_dependency_record(record: Mapping[str, Any]) -> dict[str, Any]:
 def record_to_span(record: Mapping[str, Any]) -> ReadableSpan:
     """Transform one Azure Monitor record into an OTel SDK `ReadableSpan`.
 
-    Implements every mapping in `docs/telemetry/field-mapping.md`'s summary
-    table. Raises `MalformedRecordError` (caught by `batch.py`, never
-    silently swallowed) for identity fields that fail validation, a missing
+    Raises `MalformedRecordError` for identity fields that fail validation, a missing
     `Name`, or a missing/non-boolean `Success`.
     """
     record = normalize_dependency_record(record)

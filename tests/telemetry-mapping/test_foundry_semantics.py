@@ -9,8 +9,6 @@ from pathlib import Path
 
 import pytest
 
-from opentelemetry.sdk.trace.export import SpanExportResult
-from telemetry_pipeline.batch import transform_batch
 from telemetry_pipeline.mapping import MalformedRecordError, record_to_span
 
 
@@ -150,16 +148,10 @@ def test_invalid_messages_omit_only_affected_io_without_logging_content(
         "gen_ai.output.messages": [{"role": "assistant", "parts": []}],
     })
 
-    class InMemoryExporter:
-        def export(self, spans):
-            return SpanExportResult.SUCCESS
-
     neighbor = {**service_chat, "Id": "4444444444444444", "Properties": {}}
-    result = transform_batch([json.dumps([service_chat, neighbor])], InMemoryExporter())
-    assert len(result.spans) == 2
-    assert result.skipped == []
-    assert result.export_result == SpanExportResult.SUCCESS
-    attributes = result.spans[0].attributes
+    spans = [record_to_span(row) for row in (service_chat, neighbor)]
+    assert len(spans) == 2
+    attributes = spans[0].attributes
     assert "input.value" not in attributes
     assert "input.mime_type" not in attributes
     assert json.loads(attributes["output.value"]) == [{"role": "assistant", "parts": []}]

@@ -1,128 +1,87 @@
-# src/telemetry-pipeline
+# Telemetry pipeline
 
-**Status: CURRENT-STATE implementation; scoped live evidence and remaining limits
-are recorded in the [durable runbook](../../docs/current-state/durable-genai-correlation.md).**
+**CURRENT-STATE source; this simplification has not been deployed or live-validated.**
+Only synthetic data is supported. Full same-invocation graph/field/token parity
+in Arize remains unproven; no whole-trace or exactly-once guarantee is made.
 
-Historical inline-baseline publication evidence (2026-10-16):
-The baseline source reconciles the eight-file package published on 2026-10-16 under an explicit
-user-approved package-only exception, not completed generic official validation. Independent
-Arize graph/field/token parity remains **UNKNOWN**. The inline GenAI message-content
-enhancement source `e2c557fa58b27f68ef4706722544df76e7b17e5b` is pushed and deployed:
-deployment `3f880a64-208b-498a-8f84-d6bbcd329ecb` completed successfully/active at
-`2026-10-16T23:04:08.7902273Z`. All eight active source hashes match the immutable
-source ZIP `55448a28fd31f28c38c5227603982d86ba57bb09a384fc8c0af1f34aa19b2b4a`;
-host Running, Event Hub trigger enabled/indexed, three references Resolved, and safe
-control projections unchanged. **Arize UI not independently validated.** The ignored
-operator receipt is `.azure-sandbox\genai-e2c557f-20261016-reconciled-proof.json`.
-See the scoped
-[native mapping and export contract](../../docs/current-state/telemetry-mapping-export-contract.md)
-for provenance, source-field mappings, failure handling, binding prerequisites, and held work.
+One runtime path:
 
-**#143 addition (2026-10-19): opt-in durable content joining is deployed and enabled
-in the approved demo.** Native content transport and unchanged full inline delivery
-are verified. A separately approved synthetic Event Hub fixture with no original
-I/O verifies controlled live content fallback into Arize; this is not a native
-missing-inline Foundry capture. See the
-[durable correlation runbook](../../docs/current-state/durable-genai-correlation.md)
-and [ADR-0003](../../docs/adr/0003-opt-in-durable-genai-content-correlation.md)
-for the approved 300-second join, Blob/identity configuration, immutable outbox,
-ambiguous-send quarantine, 24h orphan cleanup and initial 48h tombstone gate.
-`DURABLE_GENAI_ENABLED` defaults to false; source publication enables neither the
-runtime feature nor native content-table export.
+`AppRequests + AppDependencies + AppGenAIContent → Event Hub → TelemetryTransform
+→ Blob correlation ledger → DurableGenAIOutbox → StrictSender → Arize OTLP`
 
-**#153 addition: exact pipeline-health source guard (offline-tested, not deployed).**
-`PIPELINE_EXCLUDED_SERVICE_NAMES` and `PIPELINE_EXCLUDED_COMPONENT_RESOURCE_IDS`
-accept JSON arrays of exact source identities, defaulting to `[]`; malformed values
-fail explicitly. Service roles are case-sensitive; component ARM IDs are
-case-insensitive. The shared guard covers legacy export, durable admission and
-queued unsent originals. Durable `excluded` entries are content-free 48-hour
-tombstones, not successful export acknowledgments; existing delivery quarantine
-is preserved. Genuine non-LLM spans and GenAI's existing 300-second join remain.
-See [guard behavior and limitations](../../docs/current-state/pipeline-health-guard.md)
-and the separate Infra cutover runbook before configuring the Function role and
-dedicated health component. Source isolation remains the primary remedy.
+`TelemetryTransform` returns after durable admission, not destination delivery.
+Admission errors propagate for three bounded exponential host retries (5–60s).
+Checkpoints can advance after exhaustion; persistent failures need operator recovery.
+`DurableGenAIOutbox` runs every 30 seconds (`*/30 * * * * *`), never on startup.
+Both functions require valid live source/destination and managed-identity storage
+configuration. There is no runtime mode selector, immediate exporter, or console
+fallback; obsolete `DURABLE_GENAI_ENABLED` values have no effect.
 
-This directory holds the Azure Function transform/mapping code and Event Hub consumer logic for the
-telemetry pipeline:
+## Settings contract
 
-`Application Insights -> Log Analytics -> Event Hub -> Azure Function (transform/map) -> Arize (OTLP)`
+Secrets must be Key Vault references, never source/local committed values.
 
-## What exists now (issue #37 follow-on)
+| Setting | Required / default | Meaning |
+|---|---|---|
+| `DURABLE_ALLOWED_WORKSPACE_ID` | Required | Source workspace UUID (`TenantId` in rows), not its ARM resource ID |
+| `DURABLE_ALLOWED_COMPONENT_RESOURCE_ID` | Required | Source agent Application Insights component ARM ID |
+| `DURABLE_ARIZE_PROJECT` | Required | Explicit `openinference.project.name` destination |
+| `ARIZE_OTLP_ENDPOINT` | Required, Key Vault reference | Full HTTPS trace URL ending `/v1/traces`; no userinfo/query/fragment |
+| `ARIZE_SPACE_ID` | Required, Key Vault reference | Actual destination Space ID |
+| `ARIZE_API_KEY` | Required, Key Vault reference | Arize credential; no managed-identity alternative |
+| `AzureWebJobsStorage__blobServiceUri` | Required unless account name supplied | HTTPS public-Azure Blob URI (private routing may resolve the same hostname) |
+| `AzureWebJobsStorage__accountName` | Alternative to Blob URI | Storage account name; derives `https://<account>.blob.core.windows.net` |
+| `AzureWebJobsStorage__credential` | Host identity configuration: `managedidentity` | Keyless Functions host storage; ledger uses system-assigned managed identity |
+| `EVENT_HUB_CONNECTION_SETTING_PREFIX` | `EventHubConnection` | Identity-based binding setting prefix |
+| `<prefix>__fullyQualifiedNamespace` | Required by Functions host | Event Hub namespace FQDN |
+| `<prefix>__credential` | `managedidentity` in infrastructure | System-assigned Event Hub receiver identity |
+| `EVENT_HUB_NAME` | `telemetry` | Event Hub name |
+| `EVENT_HUB_CONSUMER_GROUP` | `$Default` | Consumer group |
+| `PIPELINE_EXCLUDED_SERVICE_NAMES` | `[]` | JSON array of exact, case-sensitive source roles |
+| `PIPELINE_EXCLUDED_COMPONENT_RESOURCE_IDS` | `[]` | JSON array of exact, case-insensitive component ARM IDs |
+| `AzureWebJobs.TelemetryTransform.Disabled` | Host switch | Infra preparation keeps `true` |
+| `AzureWebJobs.DurableGenAIOutbox.Disabled` | Host switch | Infra preparation keeps `true` |
 
-`telemetry_pipeline/` is a real, importable Python package implementing every mapping in
-[`/docs/telemetry/field-mapping.md`](../../docs/telemetry/field-mapping.md)'s summary table and its
-four detail docs (`/docs/telemetry/mapping/*.md`, issues #89–#92):
+The private `genai-correlation` container must already exist. Identity needs
+conditional Blob read/write/delete and Blob tag write/filter access; host storage,
+Event Hub receiver and Key Vault resolution permissions are separate prerequisites.
+Health monitoring must use its physically separate Application Insights/workspace,
+not the exported agent component. SourcePolicy guard source is merged but **not
+deployed**; separate health monitoring is live. Publication does not enable triggers.
 
-- `mapping.py` — per-record field-group transform logic (identity/correlation, token,
-  LLM I/O, span kind/status), including the critical "App Insights exports every
-  `customDimensions` value as a JSON string" type-coercion rule (string→int for token counts and
-  `retry.attempt`/`max_attempts`, string→bool for `retry.will_retry`, bool→OTLP status code for
-  `Success`), and the root-span-has-no-parent handling documented in
-  [`trace-correlation-preservation.md`](../../docs/telemetry/trace-correlation-preservation.md) §1
-  (an empty/absent `operation_ParentId` becomes `None`, never a zero-filled span ID).
-  Inline `gen_ai.input.messages` / `gen_ai.output.messages` role/parts arrays (native or
-  JSON-encoded) fill missing OpenInference `input.value` / `output.value` as JSON strings
-  with `application/json` MIME. Explicit values and their MIME win independently; stale
-  MIME without a value is replaced on conversion or omitted. Invalid message content
-  emits a key/reason-only warning and omits that side's generated I/O, retaining the
-  span. Nested parts are preserved; the default mapper adds no truncation or content
-  joins and never copies content to parents.
-- `batch.py` — decodes an Event Hub message batch (single record, JSON array, or the Log Analytics
-  Data Export `{"records": [...]}` envelope) into OTel SDK `ReadableSpan` objects and exports the
-  whole batch in one `exporter.export()` call (per §4's whole-batch-checkpointing recommendation),
-  flagging malformed individual records rather than failing the entire batch.
-- `source_policy.py` — exact source-role/component exclusions, independent of
-  operation name, span kind, mapper fallback service or trace membership.
-- `exporter.py` — the OTLP-to-Arize export path is injected via a factory/DI seam
-  (`get_default_exporter()` / `build_arize_otlp_exporter()`), mirroring
-  `src/prompt-agent/prompt_agent/telemetry.py`'s `_CountingSpanExporter` pattern. No live network
-  call to Arize is made by default or by the test suite.
-- `function_app.py` — the actual `azure.functions` (Python v2 programming model) Event Hub trigger
-  wiring, matching the identity-based binding app-setting prefix documented in
-  `infra/modules/function-app.bicep`. This is the only module requiring the `azure-functions`
-  package; the transform logic above does not depend on it and is unit-testable without it.
-- `durable.py`, `durable_store.py`, `durable_runtime.py`, `strict_sender.py` — the
-  disabled-by-default cross-batch correlator, conditional Blob ledger, managed-identity
-  wiring and single-attempt OTLP sender. A separately gated timer drains bounded work.
-  Confirmed delivery removes active content; uncertain delivery retains immutable
-  recovery state without automatic resend. Install `.[durable]` for this mode;
-  `.[test]` and deployment requirements include its dependencies. No live validation
-  or deployment is implied by offline tests.
+## Retained semantics and limits
 
-**Unit tests** (`tests/`) cover every field group, the type-coercion rule, the root-span-no-parent
-edge case, and a synthetic 3-span batch (`prompt_agent.invoke` → `tool.lookup_plan_details` +
-`llm.chat_completion`) proving one shared `trace_id` and correct parent linkage survive an in-memory
-Event Hub message batch — entirely via mocked message objects, no live Azure required to run them.
+- Original trace/span/parent IDs, timing, status, model, available source correlation,
+  and available token counts are preserved by `mapping.py`; missing facts are not invented.
+- Each side independently prefers explicit OpenInference I/O, then inline GenAI
+  messages, then unique eligible content-table messages. No child content is copied
+  to parents. Incomplete GenAI originals wait up to 300s from durable receipt;
+  complete inline and non-GenAI originals need no content wait.
+- `durable.py` / `durable_store.py` retain source/destination scoping, conditional
+  writes, duplicate suppression, receipt deadlines, frozen payloads, bounded scans
+  (16 entries, at most 4 sends/drain), 8 CAS attempts, and per-side candidate cap 4.
+  Bounds: 1 MiB/message, 256 records/message, 1024 records/batch, 128 KiB/record,
+  256 KiB OTLP payload, bounded ledger reads.
+- `strict_sender.py` performs one HTTP attempt. Only explicit 429 rejection gets
+  bounded retry (at most 5 attempts). Ambiguous delivery, including uncertain ack,
+  is quarantined, never automatically resent. Orphans expire after 24h;
+  acknowledged/excluded content-free tombstones remain 48h. No automatic recovery
+  of quarantined/rejected work or exactly-once destination claim.
+- `envelope.py` reuses the former batch parser: single row, array, or synthetic
+  compatibility `{"records": [...]}` wrapper. Invalid admission is an explicit
+  failure, not a success-shaped skipped/exported count.
 
-## What remains open
+## Offline validation (repository root, PowerShell)
 
-Publication/source parity, retained native preflight delivery, source capture, and destination
-parity are separate evidence gates. Publication did not establish a fresh Event Hub delivery or
-OTLP acknowledgment. Full same-invocation graph/field/token parity in Arize is still unproven.
-The separately authorized package-only deployment is recorded above; this document
-authorizes no replay, model, registration, evaluation, settings, infrastructure, or
-further deployment operation.
+```powershell
+py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e ".\src\telemetry-pipeline[test]"
+.\.venv\Scripts\python.exe -m pytest src\telemetry-pipeline\tests tests\telemetry-mapping tests\export -q
+```
 
-The future-state idea of bypassing this pipeline with a direct OTLP exporter is conceptual only and
-lives under `/docs/future-state` — it must never be partially implemented here ahead of an accepted
-architecture decision.
-
-## Known gap (tracked, historical)
-
-This README previously stated an incorrect `validated, implemented` status while this directory
-held no code — surfaced by Lead during the Milestone 4 current-state/future-state separation audit
-(issue #14, see `/docs/current-state/separation-audit.md` Finding 3; also reflected as a "Partial"
-capability in `/docs/architecture/capability-matrix.md`, issue #60 capability #7). Corrected in
-PR #121. See `.squad/decisions/inbox/lead-telemetry-pipeline-readme-drift.md` and
-`.squad/decisions/inbox/telemetry-readme-drift-and-issue-37-followup.md` for that history, and
-`.squad/decisions/inbox/telemetry-issue-37-function-transform.md` for this pass's follow-up.
-
-## Known gap (tracked)
-
-This README previously stated an incorrect `validated, implemented` status while this directory
-held no code — surfaced by Lead during the Milestone 4 current-state/future-state separation audit
-(issue #14, see `/docs/current-state/separation-audit.md` Finding 3; also reflected as a "Partial"
-capability in `/docs/architecture/capability-matrix.md`, issue #60 capability #7). Corrected here.
-See `.squad/decisions/inbox/lead-telemetry-pipeline-readme-drift.md` for the full finding and
-`.squad/decisions/inbox/telemetry-readme-drift-and-issue-37-followup.md` for this fix and the
-related issue #37 follow-up.
+`opentelemetry-exporter-otlp-proto-common` supplies protobuf encoding, **not**
+the SDK's retrying HTTP exporter; no `otlp` or `durable` install extra is needed.
+Tests use synthetic records, fake Blob responses and injected connections only.
+See [setup](../../docs/current-state/setup.md),
+[mapping and limitations](../../docs/current-state/mapping-and-limitations.md),
+and [operations](../../docs/current-state/operations.md).

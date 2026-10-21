@@ -1,10 +1,14 @@
-# tests/export
+# OTLP export regression tests
 
-**Status: CURRENT-STATE (validated, implemented)**
+Synthetic offline tests use the production mapper and frozen OTLP serializer,
+covering a 50-span graph, native agent/child shapes, source timing/status,
+typed available usage, I/O, and explicit project routing. No live Arize ingestion
+is implied. Durable restart, correlation, deduplication, bounded retry and
+ambiguous-delivery quarantine tests live in
+[`src/telemetry-pipeline/tests`](../../src/telemetry-pipeline/tests).
 
-Tests validating OTLP export behavior from the Azure Function transform step to Arize — correct
-OTLP span construction, successful ingestion handling, and bounded retry/backoff behavior on
-transient failures (see `/.github/copilot-instructions.md` §11, §14, §15).
+Run from the repository root after installing the pipeline's `.[test]` dependencies:
 
-Use synthetic fixtures only — no real telemetry captures from production systems, and never real
-PII/PHI, even as test data.
+```powershell
+.\.venv\Scripts\python.exe -m pytest src\telemetry-pipeline\tests tests\telemetry-mapping tests\export -q
+```
