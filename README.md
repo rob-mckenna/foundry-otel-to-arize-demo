@@ -5,6 +5,19 @@ Microsoft Foundry Agent telemetry into OpenTelemetry/OpenInference spans for Ari
 Use an **existing, versioned Foundry Agent** and an approved existing Azure environment.
 This is not a turnkey fresh deployment or a production-readiness claim.
 
+## Preview scope
+
+This sample illustrates native Foundry Agent telemetry flowing through Azure Monitor
+and an Azure Function into Arize, including span relationships, prompt/response content
+and token usage where available.
+
+It is intended for a guided demonstration using an existing, configured environment,
+not turnkey deployment or production use. The simplified implementation has not yet
+completed live end-to-end acceptance. Complete trace graphs, full field/resource parity
+and exactly-once delivery are not guaranteed. Detailed evidence and deployment
+boundaries are documented in [Mapping and limitations](docs/current-state/mapping-and-limitations.md)
+and [Operations](docs/current-state/operations.md).
+
 ## Architecture
 
 ```mermaid
@@ -66,20 +79,6 @@ assembly, content-created spans or model invocation inside the Function.
    caller's client trace ID or label a calculated total as a source total.
    The [mapping contract](docs/current-state/mapping-and-limitations.md) explains
    what can and cannot survive.
-
-## What has been demonstrated?
-
-A previous real synthetic Foundry invocation reached Arize with nonempty native
-input/output and actual prompt/completion usage. Native `AppGenAIContent` transport
-was observed, but valid inline content won precedence. **Missing-inline fallback
-was demonstrated separately with controlled Event Hub fixtures**, not a native
-missing-inline Agent invocation. Neither observation proves complete trace graphs,
-full resource parity, exactly-once delivery or readiness of this simplified source
-in a new environment.
-
-Function-health telemetry has been physically isolated into a non-exported workspace.
-The additional source/backlog guard is offline-tested source, **not deployed live
-proof**. Fresh/repeat deployment and private agent-runtime validation remain unverified.
 
 ## Read next
 
