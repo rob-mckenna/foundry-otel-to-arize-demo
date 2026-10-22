@@ -61,6 +61,16 @@ are prerequisites; installing the Python caller does not configure native tracin
 There is one durable delivery path: no direct/console exporter mode, whole-trace
 assembly, content-created spans or model invocation inside the Function.
 
+## Example Arize view
+
+![Arize trace list showing AGENT and LLM entries, synthetic healthcare benefits input and output, token usage, latency and cost.](images/arize-screenshot1.png)
+
+The screenshot shows synthetic demo traffic in Arize: AGENT and LLM entries with
+input/output content, per-entry latency and cost, and an aggregate token count.
+It illustrates the destination UI; by itself, it does not establish complete
+trace graphs, source-to-destination field parity or live end-to-end acceptance
+of the simplified implementation.
+
 ## Try it
 
 1. Follow [setup](docs/current-state/setup.md) to install locally and validate an
